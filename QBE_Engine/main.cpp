@@ -45,6 +45,8 @@ Create and destroy a Vulkan surface on an SDL window.
 
 int main()
 {
+	std::cout << "Hello Vulkan!";
+
     // Create an SDL window that supports Vulkan rendering.
     if(SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cout << "Could not initialize SDL." << std::endl;
