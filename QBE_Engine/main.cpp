@@ -43,11 +43,15 @@ Create and destroy a Vulkan surface on an SDL window.
 #include <iostream>
 #include <vector>
 
+#include "Config.h"
+
 int init();
+
 
 int main()
 {
-	
+	Config config;
+	config.Load("Config.ini");
 }
 
 int init() {
