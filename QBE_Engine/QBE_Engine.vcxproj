@@ -156,16 +156,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Config.cpp" />
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="nodedictionary.cpp" />
+    <ClCompile Include="nodetype.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="INIReader.h" />
+    <ClInclude Include="nodedictionary.h" />
+    <ClInclude Include="nodetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="INIReader_LICENSE.txt" />
     <Text Include="Config.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Blue.qbenode" />
+    <None Include="Green.qbenode" />
+    <None Include="Red.qbenode" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

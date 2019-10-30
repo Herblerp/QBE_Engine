@@ -10,12 +10,21 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Node Types">
+      <UniqueIdentifier>{f3fa9e68-3bb0-4b52-a8c7-7f1328570038}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
+    <ClCompile Include="nodetype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="nodedictionary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -23,12 +32,29 @@
     <ClInclude Include="INIReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="nodetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nodedictionary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="INIReader_LICENSE.txt" />
     <Text Include="Config.ini" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Red.qbenode">
+      <Filter>Node Types</Filter>
+    </None>
+    <None Include="Green.qbenode">
+      <Filter>Node Types</Filter>
+    </None>
+    <None Include="Blue.qbenode">
+      <Filter>Node Types</Filter>
+    </None>
   </ItemGroup>
 </Project>
