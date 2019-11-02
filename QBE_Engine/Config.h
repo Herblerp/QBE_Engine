@@ -6,9 +6,9 @@ class Config
 {
 public:
 	Config();
-	bool Load(string fileName);
+	bool load(string fileName);
 
-	string GetString();
+	string getString();
 private:
 	string myString;
 };

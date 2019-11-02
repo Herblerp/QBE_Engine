@@ -13,6 +13,9 @@
     <Filter Include="Node Types">
       <UniqueIdentifier>{f3fa9e68-3bb0-4b52-a8c7-7f1328570038}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Exceptions">
+      <UniqueIdentifier>{4ae6dc06-b57a-42ce-a873-1b08d3f4c560}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,13 +50,13 @@
     <Text Include="Config.ini" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Red.qbenode">
+    <None Include="Nodetypes\Blue.qbenode">
       <Filter>Node Types</Filter>
     </None>
-    <None Include="Green.qbenode">
+    <None Include="Nodetypes\Green.qbenode">
       <Filter>Node Types</Filter>
     </None>
-    <None Include="Blue.qbenode">
+    <None Include="Nodetypes\Red.qbenode">
       <Filter>Node Types</Filter>
     </None>
   </ItemGroup>

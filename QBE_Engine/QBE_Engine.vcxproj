@@ -104,6 +104,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)\Include;$(VULKAN_SDK)\Third-Party\Include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,9 +173,9 @@
     <Text Include="Config.ini" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Blue.qbenode" />
-    <None Include="Green.qbenode" />
-    <None Include="Red.qbenode" />
+    <None Include="Nodetypes\Blue.qbenode" />
+    <None Include="Nodetypes\Green.qbenode" />
+    <None Include="Nodetypes\Red.qbenode" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

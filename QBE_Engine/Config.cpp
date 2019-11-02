@@ -7,7 +7,7 @@ Config::Config()
 	//Do some setup
 }
 
-bool Config::Load(string fileName) 
+bool Config::load(string fileName) 
 {
 	INIReader reader(fileName);
 
@@ -17,12 +17,12 @@ bool Config::Load(string fileName)
 	}
 
 	//Get values here
-	Config::myString = reader.Get("" , "myString" , "UNKNOWN");
+	Config::myString = reader.Get("" , "" , "UNKNOWN");
 
-	std::cout << "File loaded\n";
+	std::cout << "Config file successfully loaded\n";
 }
 
-string Config::GetString()
+string Config::getString()
 {
 	return this->myString;
 }

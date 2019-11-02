@@ -44,6 +44,7 @@ Create and destroy a Vulkan surface on an SDL window.
 #include <vector>
 
 #include "Config.h"
+#include "nodedictionary.h"
 
 int init();
 
@@ -51,7 +52,12 @@ int init();
 int main()
 {
 	Config config;
-	config.Load("Config.ini");
+	config.load("Config.ini");
+
+	Nodedictionary dict;
+	if (dict.loadTypes()) {
+		cout << "Dictionary loaded\n";
+	}
 }
 
 int init() {
