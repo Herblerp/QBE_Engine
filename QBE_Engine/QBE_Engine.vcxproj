@@ -157,14 +157,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="nodedictionary.cpp" />
     <ClCompile Include="nodetype.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="INIReader.h" />
+    <ClInclude Include="map.h" />
     <ClInclude Include="nodedictionary.h" />
     <ClInclude Include="nodetype.h" />
   </ItemGroup>

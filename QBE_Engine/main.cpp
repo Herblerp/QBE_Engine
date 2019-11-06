@@ -45,6 +45,7 @@ Create and destroy a Vulkan surface on an SDL window.
 
 #include "Config.h"
 #include "nodedictionary.h"
+#include "map.h"
 
 int init();
 
@@ -52,11 +53,13 @@ int init();
 int main()
 {
 	Config config;
+	Nodedictionary dict;
+
 	config.load("Config.ini");
 
-	Nodedictionary dict;
 	if (dict.loadTypes()) {
-		cout << "Dictionary loaded\n";
+		Map* map = new Map;
+		system("pause");
 	}
 }
 
