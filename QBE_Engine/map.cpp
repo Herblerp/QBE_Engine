@@ -2,19 +2,19 @@
 
 Map::Map()
 {
-	activeChunks = new Chunk * *[renderDistance];
-	for (auto i = 0; i < renderDistance; i++) {
-		activeChunks[i] = new Chunk * [renderDistance];
-		for (auto j = 0; j < renderDistance; j++) {
-			activeChunks[i][j] = new Chunk[renderDistance];
+	activeChunks = new Chunk * *[mapDIM];
+	for (auto i = 0; i < mapDIM; i++) {
+		activeChunks[i] = new Chunk * [mapDIM];
+		for (auto j = 0; j < mapDIM; j++) {
+			activeChunks[i][j] = new Chunk[mapDIM];
 		}
 	}
 }
 
 Map::~Map()
 {
-	for (auto i = 0; i < renderDistance; i++) {
-		for (auto j = 0; j < renderDistance; j++) {
+	for (auto i = 0; i < mapDIM; i++) {
+		for (auto j = 0; j < mapDIM; j++) {
 
 			delete[] activeChunks[i][j];
 		}
