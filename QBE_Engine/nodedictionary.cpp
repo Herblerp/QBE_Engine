@@ -27,7 +27,7 @@ Nodetype& Nodedictionary::GetNodeType(int id) {
 //Iterate trough all qbenode files and add the types to the dictionary.
 bool Nodedictionary::loadTypes()
 {
-	vector<string> typeNames;
+	vector<string> fileNames;
 	uint8_t color_r_value, color_g_value, color_b_value;
 
 	try {
@@ -35,9 +35,9 @@ bool Nodedictionary::loadTypes()
 		std::string path = "Nodetypes";
 
 		for (const auto& entry : fs::directory_iterator(path))
-			typeNames.push_back(entry.path().filename().string());
+			fileNames.push_back(entry.path().filename().string());
 
-		for (auto fileName : typeNames) {
+		for (auto fileName : fileNames) {
 
 			uint16_t id_counter = 1;
 
@@ -60,6 +60,8 @@ bool Nodedictionary::loadTypes()
 
 				throw runtime_error{"Invalid RGB value in " + fileName + "\n" };
 			}
+
+			cout << "Loaded file " << fileName << "." << "\n";
 
 			nodeDict.push_back(Nodetype(id_counter, color_r_value, color_g_value, color_b_value));
 			id_counter++;

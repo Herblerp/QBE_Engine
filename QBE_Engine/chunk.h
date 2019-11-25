@@ -4,20 +4,23 @@
 
 using namespace std;
 
-enum SerializeDirection{X,Z};
-enum ChunkStatus { LOADING, LOADED, SAVING, SAVED };
+namespace NS_Data {
 
-class Chunk
-{
-public:
-	Chunk();
-	~Chunk();
-private:
-	const int chunkDIM = 128;
-	ChunkStatus status;
-	uint16_t*** nodeData;
-	int x_pos;
-	int y_pos;
-	int z_pos;
-};
+	struct ChunkPos 
+	{
+		int pos_x, pos_y, pos_z;
+	};
+
+	class Chunk
+	{
+	public:
+		Chunk(uint16_t*** _nodeData);
+		~Chunk();
+	private:
+		const int chunkDIM = 128;
+		uint16_t*** nodeData;
+		ChunkPos chunkPos;
+	};
+
+}
 
