@@ -8,7 +8,7 @@ namespace NS_Data {
 		Map(Pos _userPos, int _mapDim);
 		~Map();
 		bool UpdateUserPos(Pos _userpos);
-		int blokCount;
+		int blockCount;
 	private:
 		const int MAPDIM;
 

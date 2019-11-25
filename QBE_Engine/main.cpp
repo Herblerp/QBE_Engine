@@ -63,9 +63,15 @@ int main()
 	config.load("Config.ini");
 
 	if (dict.loadTypes()) {
-		Pos pos{ 0,0,0 };
-		Map map = Map(pos,20);
+		int i = 0;
+		while (i < 10) {
+			Pos pos{ 0,0,0 };
+			Map map = Map(pos, 40);
+			cout << "\n Loaded " << map.blockCount << " blocks.\n";
+			i++;
+		}
 	}
+
 	system("pause");
 }
 

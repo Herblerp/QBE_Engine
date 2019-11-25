@@ -2,7 +2,7 @@
 namespace NS_Data {
 	Map::Map(Pos _userPos, int _mapDim) : MAPDIM(_mapDim) 
 	{
-		blokCount = 0;
+		blockCount = 0;
 
 		mapData = new Chunk*** [MAPDIM];
 		for (auto i = 0; i < MAPDIM; i++) {
@@ -10,7 +10,8 @@ namespace NS_Data {
 			for (auto j = 0; j < MAPDIM; j++) {
 				mapData[i][j] = new Chunk*[MAPDIM];
 				for (auto k = 0; k < MAPDIM; k++) {
-					mapData[i][j][k] = LoadChunk(Pos{});
+					//TODO: Load oppropriate position
+					mapData[i][j][k] = LoadChunk(Pos{ 0,0,0 });
 				}
 			}
 		}
@@ -37,17 +38,13 @@ namespace NS_Data {
 	Chunk* Map::LoadChunk(Pos _chunkPos)
 	{
 		const int chunkDIM = 32;
+		const int arrLength = pow(chunkDIM, 3);
 
-		uint16_t*** nodeData = new uint16_t * *[chunkDIM];
-		for (auto i = 0; i < chunkDIM; i++) {
-			nodeData[i] = new uint16_t * [chunkDIM];
-			for (auto j = 0; j < chunkDIM; j++) {
-				nodeData[i][j] = new uint16_t[chunkDIM];
-				for (auto k = 0; k < chunkDIM; k++) {
-					nodeData[i][j][k] = 5;
-					blokCount++;
-				}
-			}
+		uint16_t* nodeData = new uint16_t [arrLength];
+		for (auto i = 0; i < arrLength; i++) {
+			//TODO: Load appropriate node value
+			nodeData[i] = uint16_t(5000);
+			blockCount++;
 		}
 
 		Chunk* chunk = new Chunk(nodeData);
@@ -55,7 +52,7 @@ namespace NS_Data {
 	}
 	bool Map::SaveChunk(Chunk* _chunk)
 	{
-		//Destroy chunks here!
+		delete _chunk;
 		return false;
 	}
 }

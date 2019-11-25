@@ -10,8 +10,8 @@ namespace NS_Data {
 		RegionFile(Pos _regionPos);
 		~RegionFile();
 
-		uint16_t*** ReadChunkData(Pos _chunkPos);
-		bool SaveChunkData(uint16_t*** _chunkData);
+		uint16_t* ReadChunkData(Pos _chunkPos);
+		bool SaveChunkData(uint16_t* _chunkData);
 
 	private:
 		Pos regionPos;
