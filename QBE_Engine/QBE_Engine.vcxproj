@@ -163,7 +163,7 @@
     <ClCompile Include="map.cpp" />
     <ClCompile Include="nodedictionary.cpp" />
     <ClCompile Include="nodetype.cpp" />
-    <ClCompile Include="region.cpp" />
+    <ClCompile Include="regionFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chunk.h" />
@@ -173,6 +173,7 @@
     <ClInclude Include="nodedictionary.h" />
     <ClInclude Include="nodetype.h" />
     <ClInclude Include="regionFile.h" />
+    <ClInclude Include="structs.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="INIReader_LICENSE.txt" />

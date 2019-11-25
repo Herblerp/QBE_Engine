@@ -47,20 +47,26 @@ Create and destroy a Vulkan surface on an SDL window.
 #include "nodedictionary.h"
 #include "map.h"
 
+using namespace NS_Data;
+
 int init();
 
 
 int main()
 {
+	cout << sizeof(uint16_t);
+	cout << sizeof(Chunk);
+
 	Config config;
 	Nodedictionary dict;
 
 	config.load("Config.ini");
 
 	if (dict.loadTypes()) {
-		Map* map = new Map;
-		system("pause");
+		Pos pos{ 0,0,0 };
+		Map map = Map(pos,20);
 	}
+	system("pause");
 }
 
 int init() {

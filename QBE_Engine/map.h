@@ -2,24 +2,19 @@
 #include"chunk.h"
 
 namespace NS_Data {
-
-	struct UserPos
-	{
-		int pos_x, pos_y, pos_z;
-	};
-
-
 	class Map
 	{
 	public:
-		Map(UserPos _userPos, int _mapDIM);
+		Map(Pos _userPos, int _mapDim);
 		~Map();
-		bool UpdateUserPos(UserPos _userpos);
+		bool UpdateUserPos(Pos _userpos);
+		int blokCount;
 	private:
-		const int mapDIM;
+		const int MAPDIM;
+
 		Chunk**** mapData;
-		UserPos userPos;
-		Chunk* LoadChunk(ChunkPos _chunkPos);
+		Pos userPos;
+		Chunk* LoadChunk(Pos _chunkPos);
 		bool SaveChunk(Chunk* _chunk);
 	};
 }

@@ -1,25 +1,21 @@
 #pragma once
 #include <vector>
-#include "chunk.h"
+#include "structs.h"
 
 namespace NS_Data {
-
-	struct RegionPos 
-	{
-		int pos_x, pos_y, pos_z;
-	};
 
 	class RegionFile
 	{
 	public:
-		RegionFile(RegionPos _regionPos);
+		RegionFile(Pos _regionPos);
 		~RegionFile();
 
-		Chunk* ReadChunkData(ChunkPos _chunkPos);
-		bool SaveChunkData(Chunk*)
+		uint16_t*** ReadChunkData(Pos _chunkPos);
+		bool SaveChunkData(uint16_t*** _chunkData);
 
 	private:
-		RegionPos regionPos;
+		Pos regionPos;
+		const int chunkDIM = 128;
 	};
 
 }

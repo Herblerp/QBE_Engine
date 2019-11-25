@@ -1,15 +1,11 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "structs.h"
 
 using namespace std;
 
 namespace NS_Data {
-
-	struct ChunkPos 
-	{
-		int pos_x, pos_y, pos_z;
-	};
 
 	class Chunk
 	{
@@ -17,9 +13,8 @@ namespace NS_Data {
 		Chunk(uint16_t*** _nodeData);
 		~Chunk();
 	private:
-		const int chunkDIM = 128;
+		Pos chunkPos;
 		uint16_t*** nodeData;
-		ChunkPos chunkPos;
 	};
 
 }
