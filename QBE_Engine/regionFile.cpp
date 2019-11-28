@@ -1,5 +1,6 @@
 #include "regionFile.h"
 #include "includes/lz4.h"
+#include "includes/lz4hc.h"
 #include <iostream>
 
 using namespace std;
@@ -111,7 +112,7 @@ char* NS_Data::RegionFile::compressData(char* srcBuf)
 {
 	char* dstBuf = new char[dstBufSize];
 
-	this->outBufSize = LZ4_compress_default(srcBuf, dstBuf, srcBufSize, dstBufSize);
+	this->outBufSize = LZ4_compress_HC(srcBuf, dstBuf, srcBufSize, dstBufSize, 4);
 	cout << "Chunk data compressed to " << outBufSize << " bytes." << "\n";
 
 	char* outBuf = new char[outBufSize];

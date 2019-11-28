@@ -43,7 +43,7 @@ namespace NS_Data {
 		uint16_t* nodeData = new uint16_t[arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
-			nodeData[i] = 50;
+			nodeData[i] = rand()%50;
 			blockCount++;
 		}
 
