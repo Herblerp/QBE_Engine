@@ -81,4 +81,7 @@
       <Filter>Node Types</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\liblz4_static.lib" />
+  </ItemGroup>
 </Project>

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <stdexcept>
 #include "structs.h"
 
 namespace NS_Data {
@@ -14,8 +15,25 @@ namespace NS_Data {
 		bool SaveChunkData(uint16_t* _chunkData);
 
 	private:
+
+		enum class SystemEndianness{LITTLE, BIG};
+
+		SystemEndianness eSystemEndianness;
+
 		Pos regionPos;
 		const int chunkDIM = 128;
+
+		int inputBufSize;
+		int outputBufSize;
+
+		char* chunkDataInputBuffer;
+		char* chunkDataOutputBuffer;
+
+		char* toByte_lEndian(uint16_t*);
+		char* toByte_bEndian(uint16_t*);
+
+		char* compressData(char*);
+		char* decompressData(char*);
 	};
 
 }

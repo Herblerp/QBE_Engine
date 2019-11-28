@@ -17,12 +17,12 @@
  * limitations under the License.
  */
 
-/*
-Vulkan C++ Windowed Project Template
-Create and destroy a Vulkan surface on an SDL window.
-*/
+ /*
+ Vulkan C++ Windowed Project Template
+ Create and destroy a Vulkan surface on an SDL window.
+ */
 
-// Enable the WSI extensions
+ // Enable the WSI extensions
 #if defined(__ANDROID__)
 #define VK_USE_PLATFORM_ANDROID_KHR
 #elif defined(__linux__)
@@ -43,6 +43,8 @@ Create and destroy a Vulkan surface on an SDL window.
 #include <iostream>
 #include <vector>
 
+#include "includes/lz4.h"
+
 #include "Config.h"
 #include "nodedictionary.h"
 #include "map.h"
@@ -54,8 +56,7 @@ int init();
 
 int main()
 {
-	cout << sizeof(uint16_t);
-	cout << sizeof(Chunk);
+	cout << LZ4_COMPRESSBOUND(150) << "\n";
 
 	Config config;
 	Nodedictionary dict;
@@ -63,13 +64,6 @@ int main()
 	config.load("Config.ini");
 
 	if (dict.loadTypes()) {
-		int i = 0;
-		while (i < 10) {
-			Pos pos{ 0,0,0 };
-			Map map = Map(pos, 40);
-			cout << "\n Loaded " << map.blockCount << " blocks.\n";
-			i++;
-		}
 	}
 
 	system("pause");

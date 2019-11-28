@@ -10,7 +10,7 @@ namespace NS_Data {
 			for (auto j = 0; j < MAPDIM; j++) {
 				mapData[i][j] = new Chunk*[MAPDIM];
 				for (auto k = 0; k < MAPDIM; k++) {
-					//TODO: Load oppropriate position
+					//TODO: Load appropriate position
 					mapData[i][j][k] = LoadChunk(Pos{ 0,0,0 });
 				}
 			}
@@ -43,7 +43,7 @@ namespace NS_Data {
 		uint16_t* nodeData = new uint16_t [arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
-			nodeData[i] = uint16_t(5000);
+			nodeData[i] = uint16_t(rand()%5000);
 			blockCount++;
 		}
 

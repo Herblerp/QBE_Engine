@@ -184,6 +184,9 @@
     <None Include="Nodetypes\Green.qbenode" />
     <None Include="Nodetypes\Red.qbenode" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\liblz4_static.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
