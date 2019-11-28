@@ -22,14 +22,12 @@ namespace NS_Data {
 
 		Pos regionPos;
 
-		int inputBufSize;
-		int outputBufSize;
-
-		char* chunkDataInputBuffer;
-		char* chunkDataOutputBuffer;
-
-		char* toByte_lEndian(uint16_t*);
+		int srcBufSize;
+		int dstBufSize;
+		int outBufSize;
+		
 		char* toByte_bEndian(uint16_t*);
+		char* toByte_lEndian(uint16_t*);
 
 		char* compressData(char*);
 		char* decompressData(char*);

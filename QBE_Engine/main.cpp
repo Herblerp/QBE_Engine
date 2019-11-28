@@ -66,10 +66,8 @@ int main()
 
 	if (dict.loadTypes()) {
 		Map map = Map(Pos{ 0,0,0 });
-		cout << "Loaded " << map.blockCount << " blocks.";
+		cout << "Loaded " << map.blockCount << " blocks." <<"\n";
 	}
-
-	system("pause");
 }
 
 int init() {

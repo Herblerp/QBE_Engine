@@ -1,14 +1,15 @@
 #include "map.h"
+#include <iostream>
 namespace NS_Data {
-	Map::Map(Pos _userPos)
+	Map::Map(Pos _userPos) : reg(Pos{ 0,0,0 })
 	{
 		blockCount = 0;
-
-		mapData = new Chunk*** [MAP_DIM];
+		chunkCount = 0;
+		mapData = new Chunk * **[MAP_DIM];
 		for (auto i = 0; i < MAP_DIM; i++) {
-			mapData[i] = new Chunk** [MAP_DIM];
+			mapData[i] = new Chunk * *[MAP_DIM];
 			for (auto j = 0; j < MAP_DIM; j++) {
-				mapData[i][j] = new Chunk*[MAP_DIM];
+				mapData[i][j] = new Chunk * [MAP_DIM];
 				for (auto k = 0; k < MAP_DIM; k++) {
 					//TODO: Load appropriate position
 					mapData[i][j][k] = LoadChunk(Pos{ 0,0,0 });
@@ -39,7 +40,7 @@ namespace NS_Data {
 	{
 		const int arrLength = pow(CHUNK_DIM, 3);
 
-		uint16_t* nodeData = new uint16_t [arrLength];
+		uint16_t* nodeData = new uint16_t[arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
 			nodeData[i] = 50;
@@ -51,6 +52,7 @@ namespace NS_Data {
 	}
 	bool Map::SaveChunk(Chunk* _chunk)
 	{
+		reg.SaveChunkData(_chunk->nodeData);
 		delete _chunk;
 		return false;
 	}

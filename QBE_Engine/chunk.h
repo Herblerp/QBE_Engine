@@ -12,9 +12,9 @@ namespace NS_Data {
 	public:
 		Chunk(uint16_t* _nodeData);
 		~Chunk();
+		uint16_t* nodeData;
 	private:
 		Pos chunkPos;
-		uint16_t* nodeData;
 	};
 
 }
