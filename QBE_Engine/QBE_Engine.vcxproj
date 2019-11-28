@@ -168,12 +168,12 @@
   <ItemGroup>
     <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="globals.h" />
     <ClInclude Include="INIReader.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="nodedictionary.h" />
     <ClInclude Include="nodetype.h" />
     <ClInclude Include="regionFile.h" />
-    <ClInclude Include="structs.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="INIReader_LICENSE.txt" />

@@ -18,7 +18,7 @@ NS_Data::RegionFile::RegionFile(Pos _regionPos)
 		this->eSystemEndianness = SystemEndianness::BIG;
 	}
 
-	this->inputBufSize = pow(chunkDIM, 3) * 2;
+	this->inputBufSize = pow(CHUNK_DIM, 3) * 2;
 	this->outputBufSize = LZ4_compressBound(inputBufSize);
 
 	chunkDataInputBuffer = new char[inputBufSize];
@@ -39,8 +39,8 @@ uint16_t* NS_Data::RegionFile::ReadChunkData(Pos _chunkPos)
 	//TODO: Load chunk data
 	//TODO: Decopress chunk data
 
-	uint16_t* nodeData = new uint16_t [chunkDIM];
-	for (auto i = 0; i < pow(chunkDIM, 3); i++) {
+	uint16_t* nodeData = new uint16_t [CHUNK_DIM];
+	for (auto i = 0; i < pow(CHUNK_DIM, 3); i++) {
 
 	}
 

@@ -1,16 +1,16 @@
 #pragma once
-#include"chunk.h"
+#include "chunk.h"
+#include "globals.h"
 
 namespace NS_Data {
 	class Map
 	{
 	public:
-		Map(Pos _userPos, int _mapDim);
+		Map(Pos _userPos);
 		~Map();
 		bool UpdateUserPos(Pos _userpos);
 		int blockCount;
 	private:
-		const int MAPDIM;
 
 		Chunk**** mapData;
 		Pos userPos;

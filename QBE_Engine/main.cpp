@@ -48,6 +48,7 @@
 #include "Config.h"
 #include "nodedictionary.h"
 #include "map.h"
+#include "globals.h"
 
 using namespace NS_Data;
 
@@ -64,6 +65,8 @@ int main()
 	config.load("Config.ini");
 
 	if (dict.loadTypes()) {
+		Map map = Map(Pos{ 0,0,0 });
+		cout << "Loaded " << map.blockCount << " blocks.";
 	}
 
 	system("pause");

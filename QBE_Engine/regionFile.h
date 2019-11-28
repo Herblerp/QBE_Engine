@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
-#include "structs.h"
+#include "globals.h"
 
 namespace NS_Data {
 
@@ -21,7 +21,6 @@ namespace NS_Data {
 		SystemEndianness eSystemEndianness;
 
 		Pos regionPos;
-		const int chunkDIM = 128;
 
 		int inputBufSize;
 		int outputBufSize;

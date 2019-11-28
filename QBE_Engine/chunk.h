@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "structs.h"
+#include "globals.h"
 
 using namespace std;
 
