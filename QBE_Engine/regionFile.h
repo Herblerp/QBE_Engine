@@ -22,6 +22,7 @@ namespace NS_Data {
 
 		Pos regionPos;
 
+		int dataSize;
 		int srcBufSize;
 		int dstBufSize;
 		int outBufSize;

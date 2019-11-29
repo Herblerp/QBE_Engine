@@ -50,8 +50,12 @@
 #include "nodedictionary.h"
 #include "map.h"
 #include "globals.h"
+#include <chrono>
 
+using namespace std;
 using namespace NS_Data;
+
+typedef chrono::high_resolution_clock Clock;
 
 int init();
 
@@ -66,11 +70,17 @@ int main()
 	Nodedictionary dict;
 
 	config.load("Config.ini");
-
+	auto t1 = Clock::now();
+	
 	if (dict.loadTypes()) {
 		Map map = Map(Pos{ 0,0,0 });
 		cout << "Loaded " << map.blockCount << " blocks." <<"\n";
+		t1 = Clock::now();
 	}
+	auto t2 = Clock::now();
+
+	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
+	system("pause");
 }
 
 int init() {

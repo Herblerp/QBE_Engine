@@ -20,8 +20,9 @@ NS_Data::RegionFile::RegionFile(Pos _regionPos)
 		this->eSystemEndianness = SystemEndianness::BIG;
 	}
 
-	this->srcBufSize = pow(CHUNK_DIM, 3) * 2;
-	this->dstBufSize = LZ4_compressBound(srcBufSize);
+	this->dataSize = pow(CHUNK_DIM, 3);
+	this->srcBufSize = -1;
+	this->dstBufSize = -1;
 	this->outBufSize = -1;
 }
 
@@ -72,19 +73,64 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 //Each short will be split into 2 bytes, the least significant byte will be put first (little endian).
 char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 {
-	if (this->eSystemEndianness == SystemEndianness::BIG)
+	if (eSystemEndianness == SystemEndianness::BIG)
 		throw logic_error{"Trying to convert for big endianness on little endian system."};
+	
+	int byteCount = 0;
+	bool byteMode = false;
+	char* temp = new char[dataSize*2];
 
-	char* srcBuf = new char[srcBufSize];
-	int dataSize = pow(CHUNK_DIM, 3);
+	for (int i = 0; i < dataSize; i++) 
+	{
+		unsigned char lowBit = data[i] & 0x00ff;
+		unsigned char highBit = data[i] >> 8;
+		
+		//Check if need to switch to 1 byte mode
+		if (!byteMode && highBit == 0) {
+			if (i < dataSize - 2)
+			{
+				unsigned char highBit1 = data[i + 1] >> 8;
+				unsigned char highBit2 = data[i + 2] >> 8;
 
-	for (int i = 0; i < dataSize; i++) {
-		char lowBit = (char)(data[i] & 0xFF);
-		char highBit = (char)(data[i] >> 8);
+				if(highBit == 0 && highBit1 == 0 && highBit2 == 0)
+				{
+					temp[byteCount] = 0;
+					temp[byteCount + 1] = 0;
+					byteCount += 2;
+					byteMode = true;
+				}
+			}
+		}
+		//Check if need to switch to 2 bytes mode
+		else if (byteMode && highBit > 0) 
+		{
+			temp[byteCount] = 0;
+			byteCount++;
+			byteMode = false;
+		}
 
-		srcBuf[2 * i] = lowBit;
-		srcBuf[(2 * i) + 1] = highBit;
+		if (byteMode) 
+		{
+			temp[byteCount] = (char)lowBit;
+			byteCount++;
+		}
+		else 
+		{
+			temp[byteCount] = (char)lowBit;
+			temp[byteCount + 1] = (char)highBit;
+			byteCount += 2;
+		}
 	}
+	//Set buf sizes
+	this->srcBufSize = byteCount;
+	this->dstBufSize = LZ4_compressBound(byteCount);
+
+	//Copy values to new array
+	char* srcBuf = new char[byteCount];
+	memcpy(srcBuf, temp, byteCount);
+
+	//Delete temp and return srcBuf
+	delete[] temp;
 	return srcBuf;
 }
 
@@ -113,7 +159,7 @@ char* NS_Data::RegionFile::compressData(char* srcBuf)
 	char* dstBuf = new char[dstBufSize];
 
 	this->outBufSize = LZ4_compress_HC(srcBuf, dstBuf, srcBufSize, dstBufSize, 4);
-	cout << "Chunk data compressed to " << outBufSize << " bytes." << "\n";
+	//cout << "Chunk data compressed to " << outBufSize << " bytes." << "\n";
 
 	char* outBuf = new char[outBufSize];
 	for (int i = 0; i < outBufSize; i++) 
