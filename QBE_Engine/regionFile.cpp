@@ -87,12 +87,13 @@ char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 		
 		//Check if need to switch to 1 byte mode
 		if (!byteMode && highBit == 0) {
-			if (i < _dataSize - 2)
+			if (i < _dataSize - 3)
 			{
 				unsigned char highBit1 = data[i + 1] >> 8;
 				unsigned char highBit2 = data[i + 2] >> 8;
+				unsigned char highBit3 = data[i + 3] >> 8;
 
-				if(highBit == 0 && highBit1 == 0 && highBit2 == 0)
+				if(highBit == 0 && highBit1 == 0 && highBit2 == 0 && highBit3 == 0)
 				{
 					temp[byteCount] = 0;
 					temp[byteCount + 1] = 0;
@@ -101,7 +102,7 @@ char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 				}
 			}
 		}
-		//Check if need to switch to 2 bytes mode
+		//Check if need to switch to 2 byte mode
 		else if (byteMode && highBit > 0) 
 		{
 			temp[byteCount] = 0;
