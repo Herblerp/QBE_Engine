@@ -5,25 +5,25 @@
 
 using namespace std;
 
-NS_Data::RegionFile::RegionFile(Pos _regionPos)
+NS_Data::RegionFile::RegionFile(Pos regionPos)
 {
-	this->regionPos = _regionPos;
+	_regionPos = regionPos;
 
 	int n = 1;
 	// little endian if true
 	if (*(char*)&n == 1)
 	{
-		this->eSystemEndianness = SystemEndianness::LITTLE;
+		_systemEndianness = SystemEndianness::LITTLE;
 	}
 	else
 	{
-		this->eSystemEndianness = SystemEndianness::BIG;
+		_systemEndianness = SystemEndianness::BIG;
 	}
 
-	this->dataSize = pow(CHUNK_DIM, 3);
-	this->srcBufSize = -1;
-	this->dstBufSize = -1;
-	this->outBufSize = -1;
+	_dataSize = pow(CHUNK_DIM, 3);
+	_srcBufSize = -1;
+	_dstBufSize = -1;
+	_outBufSize = -1;
 }
 
 NS_Data::RegionFile::~RegionFile()
@@ -31,7 +31,7 @@ NS_Data::RegionFile::~RegionFile()
 
 }
 
-uint16_t* NS_Data::RegionFile::ReadChunkData(Pos _chunkPos)
+uint16_t* NS_Data::RegionFile::ReadChunkData(Pos chunkPos)
 {
 	//TODO: Globalize chunkDIM
 	//TODO: Read file
@@ -51,7 +51,7 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 {
 	char* srcBuf;
 
-	if (eSystemEndianness == SystemEndianness::LITTLE) 
+	if (_systemEndianness == SystemEndianness::LITTLE) 
 	{
 		srcBuf = toByte_lEndian(data);
 	}
@@ -73,21 +73,21 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 //Each short will be split into 2 bytes, the least significant byte will be put first (little endian).
 char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 {
-	if (eSystemEndianness == SystemEndianness::BIG)
+	if (_systemEndianness == SystemEndianness::BIG)
 		throw logic_error{"Trying to convert for big endianness on little endian system."};
 	
 	int byteCount = 0;
 	bool byteMode = false;
-	char* temp = new char[dataSize*2];
+	char* temp = new char[_dataSize*2];
 
-	for (int i = 0; i < dataSize; i++) 
+	for (int i = 0; i < _dataSize; i++) 
 	{
 		unsigned char lowBit = data[i] & 0x00ff;
 		unsigned char highBit = data[i] >> 8;
 		
 		//Check if need to switch to 1 byte mode
 		if (!byteMode && highBit == 0) {
-			if (i < dataSize - 2)
+			if (i < _dataSize - 2)
 			{
 				unsigned char highBit1 = data[i + 1] >> 8;
 				unsigned char highBit2 = data[i + 2] >> 8;
@@ -122,12 +122,12 @@ char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 		}
 	}
 	//Set buf sizes
-	this->srcBufSize = byteCount;
-	this->dstBufSize = LZ4_compressBound(byteCount);
+	SetSrcBuffSize(byteCount);
+	SetDstBuffSize(LZ4_compressBound(byteCount));
 
 	//Copy values to new array
-	char* srcBuf = new char[byteCount];
-	memcpy(srcBuf, temp, byteCount);
+	char* srcBuf = new char[_srcBufSize];
+	memcpy(srcBuf, temp, _srcBufSize);
 
 	//Delete temp and return srcBuf
 	delete[] temp;
@@ -136,12 +136,13 @@ char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 
 //Converts the given array to an array of bytes on big endian systems.
 //Each short will be split into 2 bytes, the least significant byte will be put first (little endian).
+//TODO:Update to new algorithm
 char* NS_Data::RegionFile::toByte_bEndian(uint16_t* data)
 {
-	if (this->eSystemEndianness == SystemEndianness::LITTLE)
+	if (this->_systemEndianness == SystemEndianness::LITTLE)
 		throw logic_error{ "Trying to convert for little endianness on big endian system." };
 
-	char* srcBuf = new char[srcBufSize];
+	char* srcBuf = new char[_srcBufSize];
 	int dataSize = pow(CHUNK_DIM, 3);
 
 	for (int i = 0; i < dataSize; i++) {
@@ -156,13 +157,13 @@ char* NS_Data::RegionFile::toByte_bEndian(uint16_t* data)
 
 char* NS_Data::RegionFile::compressData(char* srcBuf)
 {
-	char* dstBuf = new char[dstBufSize];
+	char* dstBuf = new char[_dstBufSize];
 
-	this->outBufSize = LZ4_compress_HC(srcBuf, dstBuf, srcBufSize, dstBufSize, 4);
+	_outBufSize = LZ4_compress_HC(srcBuf, dstBuf, _srcBufSize, _dstBufSize, 4);
 	//cout << "Chunk data compressed to " << outBufSize << " bytes." << "\n";
 
-	char* outBuf = new char[outBufSize];
-	for (int i = 0; i < outBufSize; i++) 
+	char* outBuf = new char[_outBufSize];
+	for (int i = 0; i < _outBufSize; i++) 
 	{
 		outBuf[i] = dstBuf[i];
 	}
@@ -173,4 +174,24 @@ char* NS_Data::RegionFile::compressData(char* srcBuf)
 char* NS_Data::RegionFile::decompressData(char*)
 {
 	return nullptr;
+}
+
+void NS_Data::RegionFile::SetDataSize(int size)
+{
+	this->_dataSize = size;
+}
+
+void NS_Data::RegionFile::SetSrcBuffSize(int size)
+{
+	this->_srcBufSize = size;
+}
+
+void NS_Data::RegionFile::SetDstBuffSize(int size)
+{
+	this->_dstBufSize = size;
+}
+
+void NS_Data::RegionFile::SetOutBuffSize(int size)
+{
+	this->_outBufSize = size;
 }

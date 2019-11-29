@@ -14,18 +14,24 @@ namespace NS_Data {
 		uint16_t* ReadChunkData(Pos _chunkPos);
 		bool SaveChunkData(uint16_t* _chunkData);
 
+		void SetDataSize(int size);
+		void SetSrcBuffSize(int size);
+		void SetDstBuffSize(int size);
+		void SetOutBuffSize(int size);
+
+
 	private:
 
 		enum class SystemEndianness{LITTLE, BIG};
 
-		SystemEndianness eSystemEndianness;
+		SystemEndianness _systemEndianness;
 
-		Pos regionPos;
+		Pos _regionPos;
 
-		int dataSize;
-		int srcBufSize;
-		int dstBufSize;
-		int outBufSize;
+		int _dataSize;
+		int _srcBufSize;
+		int _dstBufSize;
+		int _outBufSize;
 		
 		char* toByte_bEndian(uint16_t*);
 		char* toByte_lEndian(uint16_t*);
