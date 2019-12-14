@@ -164,7 +164,7 @@ unsigned char* NS_Data::RegionFile::compressLZMA(unsigned char* srcBuf) {
 	unsigned char* dstBuf = new unsigned char[_dstBufSize];
 	unsigned char* props = new unsigned char[LZMA_PROPS_SIZE];
 
-	LzmaCompress(dstBuf, &_outBufSize, srcBuf, _srcBufSize, props, &_propSize, -1, 0, -1, -1, -1, -1, -1);
+	LzmaCompress(dstBuf, &_outBufSize, srcBuf, _srcBufSize, props, &_propSize, -1, 0, -1, -1, -1, -1, 2);
 
 	cout << "Chunk compressed to " << _outBufSize << " bytes. \n";
 

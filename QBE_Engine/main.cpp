@@ -74,11 +74,11 @@ int main()
 	
 	if (dict.loadTypes()) {
 		Map map = Map(Pos{ 0,0,0 });
-		cout << "Loaded " << map.blockCount << " blocks." <<"\n";
+		cout << "Loaded " << map.blockCount << " blocks and " << map.chunkCount << " chunks." <<"\n";
 		t1 = Clock::now();
+		map.SaveMap();	
 	}
 	auto t2 = Clock::now();
-
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
 	system("pause");
 }

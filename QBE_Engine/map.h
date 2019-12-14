@@ -9,6 +9,7 @@ namespace NS_Data {
 	{
 	public:
 		Map(Pos _userPos);
+		void SaveMap();
 		~Map();
 		bool UpdateUserPos(Pos _userpos);
 		int blockCount;
@@ -18,8 +19,7 @@ namespace NS_Data {
 		Chunk**** mapData;
 		Pos userPos;
 		Chunk* LoadChunk(Pos _chunkPos);
-		std::thread SpawnSaveThread(Chunk* _chunk);
-		void SaveChunk(Chunk* _chunk);
+		std::thread* SpawnSaveThread(Chunk* _chunk);
 	};
 }
 
