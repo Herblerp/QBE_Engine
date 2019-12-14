@@ -1,4 +1,5 @@
 #pragma once
+#include <thread>
 #include "chunk.h"
 #include "globals.h"
 #include "regionFile.h"
@@ -17,7 +18,8 @@ namespace NS_Data {
 		Chunk**** mapData;
 		Pos userPos;
 		Chunk* LoadChunk(Pos _chunkPos);
-		bool SaveChunk(Chunk* _chunk);
+		std::thread SpawnSaveThread(Chunk* _chunk);
+		void SaveChunk(Chunk* _chunk);
 	};
 }
 

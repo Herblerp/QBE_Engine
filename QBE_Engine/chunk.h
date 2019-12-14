@@ -14,7 +14,7 @@ namespace NS_Data {
 		~Chunk();
 		uint16_t* nodeData;
 	private:
-		Pos chunkPos;
+		globals::Pos chunkPos;
 	};
 
 }

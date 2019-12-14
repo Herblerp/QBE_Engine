@@ -43,13 +43,13 @@
 #include <iostream>
 #include <vector>
 
+#include "globals.h"
 #include "includes/lz4.h"
 #include "includes/lz4hc.h"
 
 #include "Config.h"
 #include "nodedictionary.h"
 #include "map.h"
-#include "globals.h"
 #include <chrono>
 
 using namespace std;

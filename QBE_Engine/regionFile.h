@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include "globals.h"
 
+using namespace globals;
+
 namespace NS_Data {
 
 	class RegionFile
@@ -19,7 +21,6 @@ namespace NS_Data {
 		void SetDstBuffSize(int size);
 		void SetOutBuffSize(int size);
 
-
 	private:
 
 		enum class SystemEndianness{LITTLE, BIG};
@@ -29,12 +30,15 @@ namespace NS_Data {
 		Pos _regionPos;
 
 		int _dataSize;
-		int _srcBufSize;
-		int _dstBufSize;
-		int _outBufSize;
+		size_t _srcBufSize;
+		size_t _dstBufSize;
+		size_t _outBufSize;
+		size_t _propSize;
 		
-		char* toByte_bEndian(uint16_t*);
-		char* toByte_lEndian(uint16_t*);
+		unsigned char* toByte_bEndian(uint16_t*);
+		unsigned char* compressLZMA(unsigned char* srcBuf);
+		unsigned char* compressLZ4(unsigned char* srcBuf);
+		unsigned char* toByte_lEndian(uint16_t*);
 
 		char* compressData(char*);
 		char* decompressData(char*);

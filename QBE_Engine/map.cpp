@@ -1,5 +1,6 @@
 #include "map.h"
 #include <iostream>
+#include <thread>
 namespace NS_Data {
 	Map::Map(Pos _userPos) : reg(Pos{ 0,0,0 })
 	{
@@ -43,17 +44,25 @@ namespace NS_Data {
 		uint16_t* nodeData = new uint16_t[arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
-			nodeData[i] = rand()%50+230;
+			nodeData[i] = rand()%50+253;
 			blockCount++;
 		}
 
 		Chunk* chunk = new Chunk(nodeData);
 		return chunk;
 	}
-	bool Map::SaveChunk(Chunk* _chunk)
+
+	std::thread Map::SpawnSaveThread(Chunk* _chunk) {
+		return std::thread([=] {SaveChunk(_chunk); });
+	}
+
+	void Map::SaveChunk(Chunk* _chunk)
 	{
 		reg.SaveChunkData(_chunk->nodeData);
 		delete _chunk;
-		return false;
+	}
+
+	void kak() {
+		
 	}
 }

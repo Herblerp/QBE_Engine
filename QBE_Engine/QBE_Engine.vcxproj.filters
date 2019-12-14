@@ -39,6 +39,9 @@
     <ClCompile Include="regionFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="globals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="nodetype.h">
@@ -83,5 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="lib\liblz4_static.lib" />
+    <Library Include="lib\LZMA.lib" />
   </ItemGroup>
 </Project>

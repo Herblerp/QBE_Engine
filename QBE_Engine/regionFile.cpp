@@ -1,6 +1,7 @@
 #include "regionFile.h"
-#include "includes/lz4.h"
-#include "includes/lz4hc.h"
+#include "lz4.h"
+#include "lz4hc.h"
+#include "LzmaLib.h"
 #include <iostream>
 
 using namespace std;
@@ -20,10 +21,7 @@ NS_Data::RegionFile::RegionFile(Pos regionPos)
 		_systemEndianness = SystemEndianness::BIG;
 	}
 
-	_dataSize = pow(CHUNK_DIM, 3);
-	_srcBufSize = -1;
-	_dstBufSize = -1;
-	_outBufSize = -1;
+	_dataSize = (int)pow(CHUNK_DIM, 3);
 }
 
 NS_Data::RegionFile::~RegionFile()
@@ -49,7 +47,7 @@ uint16_t* NS_Data::RegionFile::ReadChunkData(Pos chunkPos)
 
 bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 {
-	char* srcBuf;
+	unsigned char* srcBuf;
 
 	if (_systemEndianness == SystemEndianness::LITTLE) 
 	{
@@ -60,7 +58,13 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 		srcBuf = toByte_bEndian(data);
 	}
 
-	char* outBuf = compressData(srcBuf);
+	unsigned char* outBuf;
+
+	if(CHUNK_COMPRESSION_ALGORITHM == COMPRESSION_ALGORITHM::LZMA)
+		outBuf = compressLZMA(srcBuf);
+	if(CHUNK_COMPRESSION_ALGORITHM == COMPRESSION_ALGORITHM::LZ4)
+		outBuf = compressLZ4(srcBuf);
+
 	delete[] srcBuf;
 	delete[] outBuf;
 	//TODO: Save data to file
@@ -71,63 +75,75 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 
 //Converts the given array to an array of bytes on little endian systems.
 //Each short will be split into 2 bytes, the least significant byte will be put first (little endian).
-char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
+unsigned char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 {
 	if (_systemEndianness == SystemEndianness::BIG)
 		throw logic_error{"Trying to convert for big endianness on little endian system."};
 	
 	int byteCount = 0;
 	bool byteMode = false;
-	char* temp = new char[_dataSize*2];
+	unsigned char* temp = new unsigned char[_dataSize*2];
 
 	for (int i = 0; i < _dataSize; i++) 
 	{
 		unsigned char lowBit = data[i] & 0x00ff;
 		unsigned char highBit = data[i] >> 8;
 		
-		//Check if need to switch to 1 byte mode
-		if (!byteMode && highBit == 0) {
+		if (byteMode && highBit == 0) 
+		{
+			temp[byteCount] = lowBit;
+			byteCount++;
+		}
+		else if (!byteMode && highBit == 0) 
+		{
 			if (i < _dataSize - 3)
 			{
 				unsigned char highBit1 = data[i + 1] >> 8;
 				unsigned char highBit2 = data[i + 2] >> 8;
-				unsigned char highBit3 = data[i + 3] >> 8;
 
-				if(highBit == 0 && highBit1 == 0 && highBit2 == 0 && highBit3 == 0)
+				if(highBit == 0 && highBit1 == 0 && highBit2 == 0 )
 				{
 					temp[byteCount] = 0;
 					temp[byteCount + 1] = 0;
 					byteCount += 2;
 					byteMode = true;
+
+					temp[byteCount] = lowBit;
+					byteCount++;
+				}
+				else
+				{
+					temp[byteCount] = lowBit;
+					temp[byteCount + 1] = highBit;
+					byteCount += 2;
 				}
 			}
+			else 
+			{
+				temp[byteCount] = lowBit;
+				temp[byteCount + 1] = highBit;
+				byteCount += 2;
+			}
 		}
-		//Check if need to switch to 2 byte mode
-		else if (byteMode && highBit > 0) 
+		else if (byteMode && highBit != 0) 
 		{
 			temp[byteCount] = 0;
 			byteCount++;
 			byteMode = false;
 		}
-
-		if (byteMode) 
-		{
-			temp[byteCount] = (char)lowBit;
-			byteCount++;
-		}
 		else 
 		{
-			temp[byteCount] = (char)lowBit;
-			temp[byteCount + 1] = (char)highBit;
+			temp[byteCount] = lowBit;
+			temp[byteCount + 1] = highBit;
 			byteCount += 2;
 		}
 	}
 	//Set buf sizes
 	SetSrcBuffSize(byteCount);
-	SetDstBuffSize(LZ4_compressBound(byteCount));
+	SetDstBuffSize(byteCount + ceil(byteCount * 0.01) + 600);
 
 	//Copy values to new array
-	char* srcBuf = new char[_srcBufSize];
+	unsigned char* srcBuf = new unsigned char[_srcBufSize];
 	memcpy(srcBuf, temp, _srcBufSize);
 
 	//Delete temp and return srcBuf
@@ -137,36 +153,43 @@ char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 
 //Converts the given array to an array of bytes on big endian systems.
 //Each short will be split into 2 bytes, the least significant byte will be put first (little endian).
-//TODO:Update to new algorithm
-char* NS_Data::RegionFile::toByte_bEndian(uint16_t* data)
+//TODO:Implement
+unsigned char* NS_Data::RegionFile::toByte_bEndian(uint16_t* data)
 {
-	if (this->_systemEndianness == SystemEndianness::LITTLE)
-		throw logic_error{ "Trying to convert for little endianness on big endian system." };
-
-	char* srcBuf = new char[_srcBufSize];
-	int dataSize = pow(CHUNK_DIM, 3);
-
-	for (int i = 0; i < dataSize; i++) {
-		char highBit = (char)(data[i] & 0xFF);
-		char lowBit = (char)(data[i] >> 8);
-
-		srcBuf[2 * i] = lowBit;
-		srcBuf[(2 * i) + 1] = highBit;
-	}
-	return srcBuf;
+	return nullptr;
 }
 
-char* NS_Data::RegionFile::compressData(char* srcBuf)
+unsigned char* NS_Data::RegionFile::compressLZMA(unsigned char* srcBuf) {
+
+	unsigned char* dstBuf = new unsigned char[_dstBufSize];
+	unsigned char* props = new unsigned char[LZMA_PROPS_SIZE];
+
+	LzmaCompress(dstBuf, &_outBufSize, srcBuf, _srcBufSize, props, &_propSize, -1, 0, -1, -1, -1, -1, -1);
+
+	cout << "Chunk compressed to " << _outBufSize << " bytes. \n";
+
+	unsigned char* outBuf = new unsigned char[_outBufSize];
+	memcpy(outBuf, dstBuf, _outBufSize);
+	return outBuf;
+}
+
+unsigned char* NS_Data::RegionFile::compressLZ4(unsigned char* srcBuf)
 {
+	char* temp = new char[_srcBufSize];
+	for(int i = 0; i<_srcBufSize; i++)
+	{
+		temp[i] = (char)srcBuf[i];
+	}
+
 	char* dstBuf = new char[_dstBufSize];
 
-	_outBufSize = LZ4_compress_HC(srcBuf, dstBuf, _srcBufSize, _dstBufSize, 4);
-	//cout << "Chunk data compressed to " << outBufSize << " bytes." << "\n";
+	_outBufSize = LZ4_compress_HC(temp, dstBuf, _srcBufSize, _dstBufSize, 4);
+	cout << "Chunk data compressed to " << _outBufSize << " bytes." << "\n";
 
-	char* outBuf = new char[_outBufSize];
-	for (int i = 0; i < _outBufSize; i++) 
+	unsigned char* outBuf = new unsigned char[_outBufSize];
+	for (int i = 0; i < _outBufSize; i++)
 	{
-		outBuf[i] = dstBuf[i];
+		outBuf[i] = (unsigned char)dstBuf[i];
 	}
 	delete[] dstBuf;
 	return outBuf;
