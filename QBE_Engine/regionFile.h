@@ -36,14 +36,13 @@ namespace NS_Data {
 		size_t _propSize;
 		
 		unsigned char* toByte_bEndian(uint16_t*);
+		unsigned char* toByte_lEndian(uint16_t*);
 		unsigned char* compressLZMA(unsigned char* srcBuf);
 		unsigned char* compressLZ4(unsigned char* srcBuf);
-		unsigned char* toByte_lEndian(uint16_t*);
 
 		char* compressData(char*);
 		char* decompressData(char*);
 	};
-
 }
 
 

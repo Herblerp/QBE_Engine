@@ -11,5 +11,33 @@ namespace NS_Data {
 	{
 		delete[] nodeData;
 	}
+	char* Chunk::compressChunk(char*)
+	{
+		return nullptr;
+	}
+	char* Chunk::decompressChunk(char*)
+	{
+		return nullptr;
+	}
+	unsigned char* Chunk::encodeRLE(uint16_t*)
+	{
+		return nullptr;
+	}
+	unsigned char* Chunk::toByte_bEndian(uint16_t*)
+	{
+		return nullptr;
+	}
+	unsigned char* Chunk::toByte_lEndian(uint16_t*)
+	{
+		return nullptr;
+	}
+	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf)
+	{
+		return nullptr;
+	}
+	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf)
+	{
+		return nullptr;
+	}
 }
 

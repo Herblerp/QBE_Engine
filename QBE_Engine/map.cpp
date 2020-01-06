@@ -152,6 +152,7 @@ namespace NS_Data {
 	{
 		return false;
 	}
+
 	Chunk* Map::LoadChunk(Pos _chunkPos)
 	{
 		const int arrLength = pow(CHUNK_DIM, 3);

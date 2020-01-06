@@ -17,7 +17,6 @@ namespace config {
 	};
 
 	bool load_config_file(std::string filename);
-
 };
 
 #endif
