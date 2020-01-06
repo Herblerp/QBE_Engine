@@ -33,6 +33,7 @@ namespace NS_Data {
 		std::thread* t5 = nullptr;
 		std::thread* t6 = nullptr;
 
+		//TODO: Clean this up and make it scalable!
 		for (auto i = 0; i < MAP_DIM; i++) {
 			for (auto j = 0; j < MAP_DIM; j++) {
 				for (auto k = 0; k < MAP_DIM; k++) {

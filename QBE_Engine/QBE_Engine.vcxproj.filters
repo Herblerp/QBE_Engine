@@ -16,6 +16,9 @@
     <Filter Include="Exceptions">
       <UniqueIdentifier>{4ae6dc06-b57a-42ce-a873-1b08d3f4c560}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Includes">
+      <UniqueIdentifier>{e8a7c861-60c0-49a8-be95-a041ba1ba95c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,9 +30,6 @@
     <ClCompile Include="nodedictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,7 +39,7 @@
     <ClCompile Include="regionFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="globals.cpp">
+    <ClCompile Include="config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,9 +53,6 @@
     <ClInclude Include="map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="chunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,7 +62,22 @@
     <ClInclude Include="regionFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="globals.h">
+    <ClInclude Include="includes\7zTypes.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\lz4.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\lz4frame.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\lz4hc.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\LzmaLib.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -87,5 +99,8 @@
   <ItemGroup>
     <Library Include="lib\liblz4_static.lib" />
     <Library Include="lib\LZMA.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="LZMA.dll" />
   </ItemGroup>
 </Project>

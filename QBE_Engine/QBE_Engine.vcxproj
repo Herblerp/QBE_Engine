@@ -163,7 +163,6 @@
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
-    <ClCompile Include="globals.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="nodedictionary.cpp" />
@@ -173,7 +172,11 @@
   <ItemGroup>
     <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="globals.h" />
+    <ClInclude Include="includes\7zTypes.h" />
+    <ClInclude Include="includes\lz4.h" />
+    <ClInclude Include="includes\lz4frame.h" />
+    <ClInclude Include="includes\lz4hc.h" />
+    <ClInclude Include="includes\LzmaLib.h" />
     <ClInclude Include="INIReader.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="nodedictionary.h" />
@@ -185,6 +188,9 @@
     <Text Include="Config.ini" />
   </ItemGroup>
   <ItemGroup>
+    <CopyFileToFolders Include="LZMA.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="Nodetypes\Blue.qbenode" />
     <None Include="Nodetypes\Green.qbenode" />
     <None Include="Nodetypes\Red.qbenode" />

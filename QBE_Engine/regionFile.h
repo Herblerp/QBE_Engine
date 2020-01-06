@@ -1,9 +1,9 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
-#include "globals.h"
+#include "config.h"
 
-using namespace globals;
+using namespace config;
 
 namespace NS_Data {
 

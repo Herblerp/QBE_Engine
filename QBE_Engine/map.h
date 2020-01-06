@@ -1,7 +1,7 @@
 #pragma once
 #include <thread>
 #include "chunk.h"
-#include "globals.h"
+#include "config.h"
 #include "regionFile.h"
 
 namespace NS_Data {
