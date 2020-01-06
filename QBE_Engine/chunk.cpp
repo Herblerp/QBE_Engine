@@ -19,10 +19,36 @@ namespace NS_Data {
 	{
 		return nullptr;
 	}
-	unsigned char* Chunk::encodeRLE(uint16_t*)
+
+	unsigned char* Chunk::encodeRLE(uint16_t* data, int size)
 	{
+		uint16_t* temp = new uint16_t[size];
+
+		for (int i = 0; i < size; i++) 
+		{
+			int pos = 0;
+			int count = 1;
+
+			while (data[i] == data[i + 1]) 
+			{
+				count++;
+				i++;
+			}
+			if (count > 1) 
+			{
+				//Flag
+				temp[pos] = 0;
+				//Count
+				temp[pos] = data[i];
+				pos++;
+			}
+			//Value
+			temp[pos] = data[i];
+			pos++;
+		}
 		return nullptr;
 	}
+
 	unsigned char* Chunk::toByte_bEndian(uint16_t*)
 	{
 		return nullptr;

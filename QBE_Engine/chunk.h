@@ -19,6 +19,7 @@ namespace NS_Data {
 
 	private:
 
+		enum class RleDirection { XYZ, YXZ };
 		enum class SystemEndianness { LITTLE, BIG };
 		SystemEndianness _systemEndianness;
 
@@ -33,7 +34,7 @@ namespace NS_Data {
 		char* compressChunk(char*);
 		char* decompressChunk(char*);
 
-		unsigned char* encodeRLE(uint16_t*);
+		unsigned char* encodeRLE(uint16_t*,int);
 		unsigned char* toByte_bEndian(uint16_t*);
 		unsigned char* toByte_lEndian(uint16_t*);
 		unsigned char* compressLZMA(unsigned char* srcBuf);
