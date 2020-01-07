@@ -1,5 +1,8 @@
 #include "chunk.h"
 #include <stdexcept>
+#include <LzmaLib.h>
+#include <iostream>
+#include <lz4hc.h>
 
 namespace NS_Data {
 
@@ -62,7 +65,7 @@ namespace NS_Data {
 		dstSize = pos;
 
 		uint16_t* dstBuf = new uint16_t[dstSize];
-		memcpy(tmpBuf, dstBuf, dstSize);
+		memcpy(dstBuf, tmpBuf, dstSize);
 		return dstBuf;
 	}
 
@@ -124,10 +127,15 @@ namespace NS_Data {
 				pos += 2;
 			}
 		}
+
+		if (pos > tmpSize) {
+			throw new runtime_error("Buffer overflow!");
+		}
+
 		dstSize = pos;
 
 		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(tmpBuf, dstBuf, dstSize);
+		memcpy(dstBuf, tmpBuf, dstSize);
 
 		return dstBuf;
 	}
@@ -137,10 +145,10 @@ namespace NS_Data {
 		bool byteMode = false;
 
 		//The max size of the result should be size * 2
-		const int maxSize = srcSize * 2;
+		const int tmpSize = srcSize * 2;
 
 		//Allocate a temporary array to hold the values.
-		unsigned char* tmpBuf = new unsigned char[maxSize];
+		unsigned char* tmpBuf = new unsigned char[tmpSize];
 
 		//Keep the current index of the temp array
 		int pos = 0;
@@ -189,50 +197,63 @@ namespace NS_Data {
 				pos += 2;
 			}
 		}
+
+		if (pos > tmpSize) {
+			throw new runtime_error("Buffer overflow!");
+		}
+
 		dstSize = pos;
 
 		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(tmpBuf, dstBuf, dstSize);
+		memcpy(dstBuf, tmpBuf, dstSize);
 
 		return dstBuf;
 	}
 
-	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf, int srcSize, int& dstSize) {
+	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf, int srcSize, size_t& dstSize) {
 
-		/*const int tmpSize = byteCount + ceil(byteCount * 0.01) + 600;
+		const int tmpSize = srcSize + ceil(srcSize * 0.01) + 600;
+		size_t propSize;
 
-		unsigned char* tmpBuf = new unsigned char[_dstBufSize];
+		unsigned char* tmpBuf = new unsigned char[tmpSize];
 		unsigned char* props = new unsigned char[LZMA_PROPS_SIZE];
 
-		LzmaCompress(tmpBuf, &_outBufSize, srcBuf, _srcBufSize, props, &_propSize, -1, 0, -1, -1, -1, -1, 2);
+		LzmaCompress(tmpBuf, &dstSize, srcBuf, srcSize, props, &propSize, -1, 0, -1, -1, -1, -1, 2);
 
-		cout << "Chunk compressed to " << _outBufSize << " bytes. \n";
+		cout << "Chunk compressed to " << dstSize << " bytes. \n";
 
-		unsigned char* outBuf = new unsigned char[_outBufSize];
-		memcpy(outBuf, tmpBuf, _outBufSize);
-		return outBuf;*/
+		unsigned char* dstBuf = new unsigned char[dstSize];
+		memcpy(dstBuf, tmpBuf, dstSize);
+
+		delete[]tmpBuf;
+		delete[]props;
+
+		return dstBuf;
 	}
-
-	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf)
+	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf, int srcSize, size_t& dstSize)
 	{
-		/*char* temp = new char[_srcBufSize];
-		for (int i = 0; i < _srcBufSize; i++)
+		int tmpSrcSize = srcSize;
+
+		char* tmpSrcBuf = new char[srcSize];
+		for (int i = 0; i < srcSize; i++)
 		{
-			temp[i] = (char)srcBuf[i];
+			tmpSrcBuf[i] = (char)srcBuf[i];
 		}
 
-		char* dstBuf = new char[_dstBufSize];
+		int tmpDstSize = srcSize + ceil(srcSize * 0.01) + 600;
 
-		_outBufSize = LZ4_compress_HC(temp, dstBuf, _srcBufSize, _dstBufSize, 4);
-		cout << "Chunk data compressed to " << _outBufSize << " bytes." << "\n";
+		char* tmpDstBuf = new char[tmpDstSize];
 
-		unsigned char* outBuf = new unsigned char[_outBufSize];
-		for (int i = 0; i < _outBufSize; i++)
-		{
-			outBuf[i] = (unsigned char)dstBuf[i];
-		}
-		delete[] dstBuf;
-		return outBuf;*/
+		dstSize = LZ4_compress_HC(tmpSrcBuf, tmpDstBuf, tmpSrcSize, tmpDstSize, 4);
+		cout << "Chunk data compressed to " << dstSize << " bytes." << "\n";
+
+		unsigned char* dstBuf = new unsigned char[dstSize];
+		memcpy(dstBuf, tmpDstBuf, dstSize);
+
+		delete[] tmpSrcBuf;
+		delete[] tmpDstBuf;
+		
+		return dstBuf;
 	}
 
 	#pragma endregion

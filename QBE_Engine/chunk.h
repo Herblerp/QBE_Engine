@@ -31,8 +31,8 @@ namespace NS_Data {
 		uint16_t* encodeRLE(uint16_t*,int,int&);
 		unsigned char* toByte_bEndian(uint16_t*,int,int&);
 		unsigned char* toByte_lEndian(uint16_t*,int,int&);
-		unsigned char* compressLZMA(unsigned char* srcBuf);
-		unsigned char* compressLZ4(unsigned char* srcBuf);
+		unsigned char* compressLZMA(unsigned char*, int, size_t&);
+		unsigned char* compressLZ4(unsigned char*, int, size_t&);
 
 		//Other compression methods here
 
