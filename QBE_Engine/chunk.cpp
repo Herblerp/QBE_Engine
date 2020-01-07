@@ -67,6 +67,41 @@ namespace NS_Data {
 
 	#pragma region Compression_algorithms
 
+	uint16_t* Chunk::decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+	{
+		const int tmpSize = pow(config::CHUNK_DIM, 3);
+
+		uint16_t* tmpBuf = new uint16_t[tmpSize];
+		int pos = 0;
+
+		for (int i = 0; i < srcSize; i++)
+		{
+			if (srcBuf[i] == 0) 
+			{
+				int count = srcBuf[i + 1];
+				uint16_t value = srcBuf[i + 2];
+				i += 2;
+
+				for (count, count > 0; count--;) {
+					tmpBuf[pos] = value;
+					pos++;
+				}
+			}
+			else
+			{
+				tmpBuf[pos] = srcBuf[i];
+				pos++;
+			}
+		}
+		dstSize = pos;
+
+		uint16_t* dstBuf = new uint16_t[dstSize];
+		memcpy(dstBuf, tmpBuf, dstSize);
+		return dstBuf;
+
+		return nullptr;
+	}
+
 	uint16_t* Chunk::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 	{
 		const int tmpSize = srcSize;

@@ -10,6 +10,10 @@ namespace NS_Data {
 
 	class Chunk
 	{
+		#ifdef UNIT_TEST
+			friend CompressionTests;
+		#endif
+
 	public:
 		Chunk(uint16_t* _nodeData);
 		~Chunk();
@@ -18,7 +22,7 @@ namespace NS_Data {
 		void SaveChunk();
 		void LoadChunk();
 
-	private:
+	//private:
 
 		enum class SystemEndianness { LITTLE, BIG };
 		SystemEndianness _systemEndianness;
@@ -29,6 +33,7 @@ namespace NS_Data {
 		char* compressChunk();
 		char* decompressChunk(char*);
 
+		uint16_t* decodeRLE(uint16_t*, size_t, size_t&);
 		uint16_t* encodeRLE(uint16_t*, size_t, size_t&);
 		unsigned char* toByte_bEndian(uint16_t*, size_t, size_t&);
 		unsigned char* toByte_lEndian(uint16_t*, size_t, size_t&);

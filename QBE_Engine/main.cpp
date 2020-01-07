@@ -51,7 +51,6 @@
 #include "nodedictionary.h"
 #include "map.h"
 #include <chrono>
-#include "HuffmanCoding.h"
 
 using namespace std;
 using namespace NS_Data;
