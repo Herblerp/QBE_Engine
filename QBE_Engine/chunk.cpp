@@ -14,9 +14,51 @@ namespace NS_Data {
 	{
 		delete[] nodeData;
 	}
-	char* Chunk::compressChunk(char*)
+
+	void Chunk::SaveChunk()
 	{
-		return nullptr;
+		compressChunk();
+	}
+
+	void Chunk::LoadChunk()
+	{
+	}
+
+	char* Chunk::compressChunk()
+	{
+		size_t nodeDataSize = pow(config::CHUNK_DIM, 3);
+
+		size_t rleBufSize;
+		uint16_t* rleBuf = encodeRLE(nodeData, nodeDataSize, rleBufSize);
+
+		size_t byteBufSize;
+		unsigned char* byteBuf;
+
+		if (config::ENDIANNESS == config::SYS_ENDIANNESS::LITTLE)
+		{
+			byteBuf = toByte_lEndian(rleBuf, rleBufSize, byteBufSize);
+		}
+		else
+		{
+			byteBuf = toByte_bEndian(rleBuf, rleBufSize, byteBufSize);
+		}
+		delete[] rleBuf;
+
+		size_t dstBufSize;
+		unsigned char* dstBuf;
+
+		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
+			dstBuf = compressLZMA(byteBuf, byteBufSize, dstBufSize);
+		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZ4)
+			dstBuf = compressLZ4(byteBuf, byteBufSize, dstBufSize);
+
+		delete[] byteBuf;
+		delete[] dstBuf;
+
+		//TODO: Save data to file
+		//TODO: Edit header
+
+		return false;
 	}
 	char* Chunk::decompressChunk(char*)
 	{
@@ -25,7 +67,7 @@ namespace NS_Data {
 
 	#pragma region Compression_algorithms
 
-	uint16_t* Chunk::encodeRLE(uint16_t* srcBuf, int srcSize, int& dstSize)
+	uint16_t* Chunk::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 	{
 		const int tmpSize = srcSize;
 
@@ -69,7 +111,7 @@ namespace NS_Data {
 		return dstBuf;
 	}
 
-	unsigned char* Chunk::toByte_lEndian(uint16_t* srcBuf, int srcSize, int& dstSize)
+	unsigned char* Chunk::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 	{
 		//Start with bytemode false
 		bool byteMode = false;
@@ -139,7 +181,7 @@ namespace NS_Data {
 
 		return dstBuf;
 	}
-	unsigned char* Chunk::toByte_bEndian(uint16_t* srcBuf, int srcSize, int& dstSize)
+	unsigned char* Chunk::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 	{
 		//Start with bytemode false
 		bool byteMode = false;
@@ -210,7 +252,7 @@ namespace NS_Data {
 		return dstBuf;
 	}
 
-	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf, int srcSize, size_t& dstSize) {
+	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize) {
 
 		const int tmpSize = srcSize + ceil(srcSize * 0.01) + 600;
 		size_t propSize;
@@ -230,7 +272,7 @@ namespace NS_Data {
 
 		return dstBuf;
 	}
-	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf, int srcSize, size_t& dstSize)
+	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 	{
 		int tmpSrcSize = srcSize;
 

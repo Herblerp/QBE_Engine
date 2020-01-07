@@ -8,12 +8,24 @@ namespace config
 	int MAP_DIM = 5;
 	int COMPRESSION_THREAD_COUNT = 6;
 
-	COMPRESSION_ALGORITHM CHUNK_COMPRESSION_ALGORITHM = COMPRESSION_ALGORITHM::LZMA;
+	COMPRESSION_ALGORITHM ALGORITHM = COMPRESSION_ALGORITHM::LZMA;
+	SYS_ENDIANNESS ENDIANNESS = SYS_ENDIANNESS::LITTLE;
 
 }
 
 bool config::load_config_file(std::string fileName)
 {
+	int n = 1;
+	// little endian if true
+	if (*(char*)&n == 1)
+	{
+		config::ENDIANNESS = SYS_ENDIANNESS::LITTLE;
+	}
+	else
+	{
+		config::ENDIANNESS = SYS_ENDIANNESS::BIG;
+	}
+
 	INIReader reader(fileName);
 
 	if (reader.ParseError() != 0) {

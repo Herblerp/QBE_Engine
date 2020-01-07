@@ -60,9 +60,9 @@ bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
 
 	unsigned char* outBuf;
 
-	if(CHUNK_COMPRESSION_ALGORITHM == COMPRESSION_ALGORITHM::LZMA)
+	if(ALGORITHM == COMPRESSION_ALGORITHM::LZMA)
 		outBuf = compressLZMA(srcBuf);
-	if(CHUNK_COMPRESSION_ALGORITHM == COMPRESSION_ALGORITHM::LZ4)
+	if(ALGORITHM == COMPRESSION_ALGORITHM::LZ4)
 		outBuf = compressLZ4(srcBuf);
 
 	delete[] srcBuf;

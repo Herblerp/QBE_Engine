@@ -37,7 +37,8 @@ namespace NS_Data {
 		for (auto i = 0; i < MAP_DIM; i++) {
 			for (auto j = 0; j < MAP_DIM; j++) {
 				for (auto k = 0; k < MAP_DIM; k++) {
-					if (threadNumber == 1)
+					SaveChunk(mapData[i][j][k]);
+					/*if (threadNumber == 1)
 					{
 						if (t1 != nullptr && t1->joinable())
 						{
@@ -96,7 +97,7 @@ namespace NS_Data {
 						}
 						t6 = SpawnSaveThread(mapData[i][j][k]);
 						threadNumber = 1;
-					}
+					}*/
 				}
 			}
 		}
@@ -160,7 +161,7 @@ namespace NS_Data {
 		uint16_t* nodeData = new uint16_t[arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
-			nodeData[i] = rand() % 50 + 2000;
+			nodeData[i] = rand() % 50 +230;
 			blockCount++;
 		}
 
@@ -174,8 +175,7 @@ namespace NS_Data {
 
 	void SaveChunk(Chunk* _chunk)
 	{
-		RegionFile reg(Pos{ 0,0,0 });
-		reg.SaveChunkData(_chunk->nodeData);
+		_chunk->SaveChunk();
 		delete _chunk;
 	}
 }
