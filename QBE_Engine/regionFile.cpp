@@ -80,64 +80,63 @@ unsigned char* NS_Data::RegionFile::toByte_lEndian(uint16_t* data)
 	if (_systemEndianness == SystemEndianness::BIG)
 		throw logic_error{"Trying to convert for big endianness on little endian system."};
 	
-	int byteCount = 0;
+	//Start with bytemode false
 	bool byteMode = false;
-	unsigned char* temp = new unsigned char[_dataSize*2];
 
-	for (int i = 0; i < _dataSize; i++) 
+	//The max size of the result should be size * 2
+	const int maxSize = _dataSize * 2;
+
+	//Allocate a temporary array to hold the values.
+	unsigned char* temp = new unsigned char[maxSize];
+
+	//Keep the current index of the temp array
+	int byteCount = 0;
+
+	for (int i = 0; i < _dataSize; i++)
 	{
 		unsigned char lowBit = data[i] & 0x00ff;
 		unsigned char highBit = data[i] >> 8;
-		
-		if (byteMode && highBit == 0) 
+
+		//Block for checking mode and setting flags
+		if (!byteMode && highBit == 0)
+		{
+			int count = 1;
+
+			while ((data[i + count] >> 8) == 0)
+			{
+				count++;
+			}
+			if (count > 2)
+			{
+				//Flag for bytemode true
+				byteMode = true;
+				temp[byteCount] = 0;
+				temp[byteCount + 1] = 0;
+				byteCount += 2;
+			}
+		}
+		else if (byteMode && highBit != 0)
+		{
+			byteMode = false;
+			//Flag for bytemode false
+			temp[byteCount] = 0;
+			byteCount++;
+		}
+
+		//Block for inserting values according to mode
+		if (byteMode)
 		{
 			temp[byteCount] = lowBit;
 			byteCount++;
 		}
-		else if (!byteMode && highBit == 0) 
-		{
-			if (i < _dataSize - 3)
-			{
-				unsigned char highBit1 = data[i + 1] >> 8;
-				unsigned char highBit2 = data[i + 2] >> 8;
-
-				if(highBit == 0 && highBit1 == 0 && highBit2 == 0 )
-				{
-					temp[byteCount] = 0;
-					temp[byteCount + 1] = 0;
-					byteCount += 2;
-					byteMode = true;
-
-					temp[byteCount] = lowBit;
-					byteCount++;
-				}
-				else
-				{
-					temp[byteCount] = lowBit;
-					temp[byteCount + 1] = highBit;
-					byteCount += 2;
-				}
-			}
-			else 
-			{
-				temp[byteCount] = lowBit;
-				temp[byteCount + 1] = highBit;
-				byteCount += 2;
-			}
-		}
-		else if (byteMode && highBit != 0) 
-		{
-			temp[byteCount] = 0;
-			byteCount++;
-			byteMode = false;
-		}
-		else 
+		else
 		{
 			temp[byteCount] = lowBit;
 			temp[byteCount + 1] = highBit;
 			byteCount += 2;
 		}
 	}
+
 	//Set buf sizes
 	SetSrcBuffSize(byteCount);
 	SetDstBuffSize(byteCount + ceil(byteCount * 0.01) + 600);
