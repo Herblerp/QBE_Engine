@@ -51,6 +51,7 @@
 #include "nodedictionary.h"
 #include "map.h"
 #include <chrono>
+#include "HuffmanCoding.h"
 
 using namespace std;
 using namespace NS_Data;
@@ -80,6 +81,14 @@ int main()
 	auto t2 = Clock::now();
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
 	system("pause");
+
+	/*std::cout << "Hello World!\n";
+	unsigned char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
+	int freq[] = { 5, 9, 12, 13, 16, 45 };
+
+	int size = sizeof(arr);
+
+	HuffmanCoding::HuffmanCodes(arr, freq, size);*/
 }
 
 int init() {
