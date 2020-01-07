@@ -163,7 +163,6 @@
   <ItemGroup>
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
-    <ClCompile Include="HuffmanCoding.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="nodedictionary.cpp" />
@@ -173,7 +172,6 @@
   <ItemGroup>
     <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="HuffmanCoding.h" />
     <ClInclude Include="includes\7zTypes.h" />
     <ClInclude Include="includes\lz4.h" />
     <ClInclude Include="includes\lz4frame.h" />

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include "config.h"
+#include <bitset>
 
 using namespace std;
 
