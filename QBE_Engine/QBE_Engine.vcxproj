@@ -199,6 +199,11 @@
     <Library Include="lib\liblz4_static.lib" />
     <Library Include="lib\LZMA.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QBE_Engine_Compression\QBE_Engine_Compression.vcxproj">
+      <Project>{77948bf8-0b23-43e0-a67f-8316d1a5c617}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
