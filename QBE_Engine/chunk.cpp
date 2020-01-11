@@ -1,9 +1,9 @@
 #include "chunk.h"
 #include <stdexcept>
-#include <LzmaLib.h>
 #include <iostream>
-#include <lz4hc.h>
 #include "../QBE_Engine_Compression/rlEncoder.h"
+#include "../QBE_Engine_Compression/byteEncoder.h"
+#include "../QBE_Engine_Compression/compression.h"
 
 namespace NS_Data {
 
@@ -37,11 +37,11 @@ namespace NS_Data {
 
 		if (config::ENDIANNESS == config::SYS_ENDIANNESS::LITTLE)
 		{
-			byteBuf = toByte_lEndian(rleBuf, rleBufSize, byteBufSize);
+			byteBuf = byteEncoder::toByte_lEndian(rleBuf, rleBufSize, byteBufSize);
 		}
 		else
 		{
-			byteBuf = toByte_bEndian(rleBuf, rleBufSize, byteBufSize);
+			byteBuf = byteEncoder::toByte_bEndian(rleBuf, rleBufSize, byteBufSize);
 		}
 		delete[] rleBuf;
 
@@ -49,9 +49,9 @@ namespace NS_Data {
 		unsigned char* dstBuf;
 
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
-			dstBuf = compressLZMA(byteBuf, byteBufSize, dstBufSize);
+			dstBuf = compression::compressLZMA(byteBuf, byteBufSize, dstBufSize);
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZ4)
-			dstBuf = compressLZ4(byteBuf, byteBufSize, dstBufSize);
+			dstBuf = compression::compressLZ4(byteBuf, byteBufSize, dstBufSize);
 
 		delete[] byteBuf;
 		delete[] dstBuf;
@@ -65,196 +65,5 @@ namespace NS_Data {
 	{
 		return nullptr;
 	}
-
-	#pragma region Compression_algorithms
-
-	unsigned char* Chunk::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
-	{
-		//Start with bytemode false
-		bool byteMode = false;
-
-		//The max size of the result should be size * 2
-		const int tmpSize = srcSize * 2;
-
-		//Allocate a temporary array to hold the values.
-		unsigned char* tmpBuf = new unsigned char[tmpSize];
-
-		//Keep the current index of the temp array
-		int pos = 0;
-
-		for (int i = 0; i < srcSize; i++)
-		{
-			unsigned char lowBit = srcBuf[i] & 0x00ff;
-			unsigned char highBit = srcBuf[i] >> 8;
-
-			//Block for checking mode and setting flags
-			if (!byteMode && highBit == 0)
-			{
-				int count = 1;
-
-				while ((srcBuf[i + count] >> 8) == 0)
-				{
-					count++;
-				}
-				if (count > 2)
-				{
-					//Flag for bytemode true
-					byteMode = true;
-					tmpBuf[pos] = 0;
-					tmpBuf[pos + 1] = 0;
-					pos += 2;
-				}
-			}
-			else if (byteMode && highBit != 0)
-			{
-				byteMode = false;
-				//Flag for bytemode false
-				tmpBuf[pos] = 0;
-				pos++;
-			}
-
-			//Block for inserting values according to mode
-			if (byteMode)
-			{
-				tmpBuf[pos] = lowBit;
-				pos++;
-			}
-			else
-			{
-				tmpBuf[pos] = lowBit;
-				tmpBuf[pos + 1] = highBit;
-				pos += 2;
-			}
-		}
-
-		if (pos > tmpSize) {
-			throw new runtime_error("Buffer overflow!");
-		}
-
-		dstSize = pos;
-
-		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(dstBuf, tmpBuf, dstSize);
-
-		return dstBuf;
-	}
-	unsigned char* Chunk::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
-	{
-		//Start with bytemode false
-		bool byteMode = false;
-
-		//The max size of the result should be size * 2
-		const int tmpSize = srcSize * 2;
-
-		//Allocate a temporary array to hold the values.
-		unsigned char* tmpBuf = new unsigned char[tmpSize];
-
-		//Keep the current index of the temp array
-		int pos = 0;
-
-		for (int i = 0; i < srcSize; i++)
-		{
-			unsigned char lowBit = srcBuf[i] & 0x00ff;
-			unsigned char highBit = srcBuf[i] >> 8;
-
-			//Block for checking mode and setting flags
-			if (!byteMode && highBit == 0)
-			{
-				int count = 1;
-
-				while ((srcBuf[i + count] >> 8) == 0)
-				{
-					count++;
-				}
-				if (count > 2)
-				{
-					//Flag for bytemode true
-					byteMode = true;
-					tmpBuf[pos] = 0;
-					tmpBuf[pos + 1] = 0;
-					pos += 2;
-				}
-			}
-			else if (byteMode && highBit != 0)
-			{
-				byteMode = false;
-				//Flag for bytemode false
-				tmpBuf[pos] = 0;
-				pos++;
-			}
-
-			//Block for inserting values according to mode
-			if (byteMode)
-			{
-				tmpBuf[pos] = lowBit;
-				pos++;
-			}
-			else
-			{
-				tmpBuf[pos] = lowBit;
-				tmpBuf[pos + 1] = highBit;
-				pos += 2;
-			}
-		}
-
-		if (pos > tmpSize) {
-			throw new runtime_error("Buffer overflow!");
-		}
-
-		dstSize = pos;
-
-		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(dstBuf, tmpBuf, dstSize);
-
-		return dstBuf;
-	}
-
-	unsigned char* Chunk::compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize) {
-
-		const int tmpSize = srcSize + ceil(srcSize * 0.01) + 600;
-		size_t propSize;
-
-		unsigned char* tmpBuf = new unsigned char[tmpSize];
-		unsigned char* props = new unsigned char[LZMA_PROPS_SIZE];
-
-		LzmaCompress(tmpBuf, &dstSize, srcBuf, srcSize, props, &propSize, -1, 0, -1, -1, -1, -1, 2);
-
-		cout << "Chunk compressed to " << dstSize << " bytes. \n";
-
-		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(dstBuf, tmpBuf, dstSize);
-
-		delete[]tmpBuf;
-		delete[]props;
-
-		return dstBuf;
-	}
-	unsigned char* Chunk::compressLZ4(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
-	{
-		int tmpSrcSize = srcSize;
-
-		char* tmpSrcBuf = new char[srcSize];
-		for (int i = 0; i < srcSize; i++)
-		{
-			tmpSrcBuf[i] = (char)srcBuf[i];
-		}
-
-		int tmpDstSize = srcSize + ceil(srcSize * 0.01) + 600;
-
-		char* tmpDstBuf = new char[tmpDstSize];
-
-		dstSize = LZ4_compress_HC(tmpSrcBuf, tmpDstBuf, tmpSrcSize, tmpDstSize, 4);
-		cout << "Chunk data compressed to " << dstSize << " bytes." << "\n";
-
-		unsigned char* dstBuf = new unsigned char[dstSize];
-		memcpy(dstBuf, tmpDstBuf, dstSize);
-
-		delete[] tmpSrcBuf;
-		delete[] tmpDstBuf;
-		
-		return dstBuf;
-	}
-
-	#pragma endregion
 }
 

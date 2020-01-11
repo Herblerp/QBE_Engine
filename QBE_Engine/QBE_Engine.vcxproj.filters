@@ -16,9 +16,6 @@
     <Filter Include="Exceptions">
       <UniqueIdentifier>{4ae6dc06-b57a-42ce-a873-1b08d3f4c560}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Includes">
-      <UniqueIdentifier>{e8a7c861-60c0-49a8-be95-a041ba1ba95c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -62,21 +59,6 @@
     <ClInclude Include="regionFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\7zTypes.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lz4.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lz4frame.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\lz4hc.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
-    <ClInclude Include="includes\LzmaLib.h">
-      <Filter>Includes</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -95,12 +77,5 @@
     <None Include="Nodetypes\Red.qbenode">
       <Filter>Node Types</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\liblz4_static.lib" />
-    <Library Include="lib\LZMA.lib" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="LZMA.dll" />
   </ItemGroup>
 </Project>

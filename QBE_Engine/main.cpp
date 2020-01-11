@@ -44,8 +44,6 @@
 #include <vector>
 
 #include "config.h"
-#include "includes/lz4.h"
-#include "includes/lz4hc.h"
 
 #include "Config.h"
 #include "nodedictionary.h"
@@ -62,10 +60,6 @@ int init();
 
 int main()
 {
-	cout << LZ4HC_CLEVEL_MAX << "\n";
-	cout << LZ4HC_CLEVEL_DEFAULT << "\n";
-	cout << LZ4_COMPRESSBOUND(150) << "\n";
-
 	Nodedictionary dict;
 
 	config::load_config_file("ELLO");
