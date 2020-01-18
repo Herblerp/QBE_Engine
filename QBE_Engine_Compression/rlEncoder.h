@@ -18,7 +18,7 @@ namespace Compression {
 			Decodes the given source buffer using run-length encoding. 
 
 			@param[in] srcBuf A pointer to the input buffer.
-			@param[in] srcSize The size of the source buffer.
+			@param[in] srcSize The size of the source buffer. 
 			@param[out] dstSize The size of the target buffer.
 			@return The target buffer, gets created automatically.
 		*/

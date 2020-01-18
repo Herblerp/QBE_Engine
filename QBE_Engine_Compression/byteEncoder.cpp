@@ -2,7 +2,9 @@
 #include <wchar.h>
 #include <stdexcept>
 
-unsigned char* byteEncoder::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+using namespace Compression;
+
+unsigned char* ByteEncoder::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	//Start with bytemode false
 	bool byteMode = false;
@@ -72,7 +74,7 @@ unsigned char* byteEncoder::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, siz
 
 	return dstBuf;
 }
-unsigned char* byteEncoder::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+unsigned char* ByteEncoder::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	//Start with bytemode false
 	bool byteMode = false;
