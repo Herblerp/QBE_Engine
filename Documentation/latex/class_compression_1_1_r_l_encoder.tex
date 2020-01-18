@@ -1,0 +1,72 @@
+\hypertarget{class_compression_1_1_r_l_encoder}{}\doxysection{Compression\+::R\+L\+Encoder Class Reference}
+\label{class_compression_1_1_r_l_encoder}\index{Compression::RLEncoder@{Compression::RLEncoder}}
+
+
+A class that provides methods for performing run-\/length encoding.  
+
+
+
+
+{\ttfamily \#include $<$rl\+Encoder.\+h$>$}
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static uint16\+\_\+t $\ast$ \mbox{\hyperlink{class_compression_1_1_r_l_encoder_a71a029100489f9b9691ec6269f826968}{decode\+R\+LE}} (uint16\+\_\+t $\ast$src\+Buf, size\+\_\+t src\+Size, size\+\_\+t \&dst\+Size)
+\item 
+static uint16\+\_\+t $\ast$ \mbox{\hyperlink{class_compression_1_1_r_l_encoder_a39de4e1f6452e5129d795205053df25d}{encode\+R\+LE}} (uint16\+\_\+t $\ast$src\+Buf, size\+\_\+t src\+Size, size\+\_\+t \&dst\+Size)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that provides methods for performing run-\/length encoding. 
+
+As run-\/length encoding is the first step of the compression stack, the methods accept and return uint16\+\_\+t$\ast$. For converting to char$\ast$ the \mbox{\hyperlink{class_compression_1_1byte_encoder}{byte\+Encoder}} class should be used. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_compression_1_1_r_l_encoder_a71a029100489f9b9691ec6269f826968}\label{class_compression_1_1_r_l_encoder_a71a029100489f9b9691ec6269f826968}} 
+\index{Compression::RLEncoder@{Compression::RLEncoder}!decodeRLE@{decodeRLE}}
+\index{decodeRLE@{decodeRLE}!Compression::RLEncoder@{Compression::RLEncoder}}
+\doxysubsubsection{\texorpdfstring{decodeRLE()}{decodeRLE()}}
+{\footnotesize\ttfamily uint16\+\_\+t $\ast$ R\+L\+Encoder\+::decode\+R\+LE (\begin{DoxyParamCaption}\item[{uint16\+\_\+t $\ast$}]{src\+Buf,  }\item[{size\+\_\+t}]{src\+Size,  }\item[{size\+\_\+t \&}]{dst\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Decodes the given source buffer using run-\/length encoding.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src\+Buf} & A pointer to the input buffer. \\
+\hline
+\mbox{\texttt{ in}}  & {\em src\+Size} & The size of the source buffer. \\
+\hline
+\mbox{\texttt{ out}}  & {\em dst\+Size} & The size of the target buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The target buffer, gets created automatically. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_compression_1_1_r_l_encoder_a39de4e1f6452e5129d795205053df25d}\label{class_compression_1_1_r_l_encoder_a39de4e1f6452e5129d795205053df25d}} 
+\index{Compression::RLEncoder@{Compression::RLEncoder}!encodeRLE@{encodeRLE}}
+\index{encodeRLE@{encodeRLE}!Compression::RLEncoder@{Compression::RLEncoder}}
+\doxysubsubsection{\texorpdfstring{encodeRLE()}{encodeRLE()}}
+{\footnotesize\ttfamily uint16\+\_\+t $\ast$ R\+L\+Encoder\+::encode\+R\+LE (\begin{DoxyParamCaption}\item[{uint16\+\_\+t $\ast$}]{src\+Buf,  }\item[{size\+\_\+t}]{src\+Size,  }\item[{size\+\_\+t \&}]{dst\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Decodes the given source buffer using run-\/length encoding.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src\+Buf} & A pointer to the input buffer. \\
+\hline
+\mbox{\texttt{ in}}  & {\em src\+Size} & The size of the source buffer. \\
+\hline
+\mbox{\texttt{ out}}  & {\em dst\+Size} & The size of the target buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The target buffer, gets created automatically. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/quent/source/repos/\+Q\+B\+E\+\_\+\+Engine/\+Q\+B\+E\+\_\+\+Engine\+\_\+\+Compression/rl\+Encoder.\+h\item 
+C\+:/\+Users/quent/source/repos/\+Q\+B\+E\+\_\+\+Engine/\+Q\+B\+E\+\_\+\+Engine\+\_\+\+Compression/rl\+Encoder.\+cpp\end{DoxyCompactItemize}

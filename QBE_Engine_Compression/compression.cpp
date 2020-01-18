@@ -5,8 +5,9 @@
 #include <wchar.h>
 #include <iostream>
 
+using namespace Compression;
 
-unsigned char* compression::compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize) {
+unsigned char* Algorithms::compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize) {
 
 	const int tmpSize = srcSize + ceil(srcSize * 0.01) + 600;
 	size_t propSize;
@@ -26,7 +27,7 @@ unsigned char* compression::compressLZMA(unsigned char* srcBuf, size_t srcSize, 
 
 	return dstBuf;
 }
-unsigned char* compression::compressLZ4(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+unsigned char* Algorithms::compressLZ4(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	int tmpSrcSize = srcSize;
 

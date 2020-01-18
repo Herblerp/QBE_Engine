@@ -1,8 +1,9 @@
 #include "rlEncoder.h"
 #include <iostream>
 
+using namespace Compression;
 
-uint16_t* rlEncoder::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+uint16_t* RLEncoder::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	const int tmpSize = srcSize;
 
@@ -45,8 +46,7 @@ uint16_t* rlEncoder::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize
 	memcpy(dstBuf, tmpBuf, dstSize * 2);
 	return dstBuf;
 }
-
-uint16_t* rlEncoder::decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t dstSize)
+uint16_t* RLEncoder::decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	uint16_t* tmpBuf = new uint16_t[dstSize];
 	int pos = 0;
@@ -70,14 +70,10 @@ uint16_t* rlEncoder::decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t dstSize)
 			pos++;
 		}
 	}
-	size_t size = pos;
+	dstSize = pos;
 
-	if (size != dstSize) {
-		throw std::runtime_error("Destination buffsizes must be equal!");
-	}
-
-	uint16_t* dstBuf = new uint16_t[size];
-	memcpy(dstBuf, tmpBuf, size * 2);
+	uint16_t* dstBuf = new uint16_t[dstSize];
+	memcpy(dstBuf, tmpBuf, dstSize * 2);
 
 	return dstBuf;
 }
