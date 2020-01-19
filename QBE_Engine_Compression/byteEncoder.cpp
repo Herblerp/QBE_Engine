@@ -1,11 +1,50 @@
 #include "byteEncoder.h"
 #include <wchar.h>
 #include <stdexcept>
+#include <iostream>
 
+using namespace std;
 using namespace Compression;
 
-unsigned char* ByteEncoder::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+unsigned char* Compression::ByteEncoder::toChar(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
+	if (isBigEndian())
+	{
+		return toChar_bEndian(srcBuf, srcSize, dstSize);
+	}
+	else
+	{
+		return toChar_lEndian(srcBuf, srcSize, dstSize);
+	}
+}
+uint16_t* Compression::ByteEncoder::toShort(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+{
+	if (isBigEndian())
+	{
+		return toShort_bEndian(srcBuf, srcSize, dstSize);
+	}
+	else
+	{
+		return toShort_lEndian(srcBuf, srcSize, dstSize);
+	}
+}
+
+bool Compression::ByteEncoder::isBigEndian()
+{
+	int n = 1;
+	// little endian if true
+	if (*(char*)&n == 1)
+	{
+		return false;
+	}
+	return true;
+}
+
+unsigned char* ByteEncoder::toChar_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+{
+	if(isBigEndian)
+		throw runtime_error{ "Incompatible endianness." };
+
 	//Start with bytemode false
 	bool byteMode = false;
 
@@ -74,8 +113,17 @@ unsigned char* ByteEncoder::toByte_lEndian(uint16_t* srcBuf, size_t srcSize, siz
 
 	return dstBuf;
 }
-unsigned char* ByteEncoder::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+uint16_t* Compression::ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
+	if (isBigEndian)
+		throw runtime_error{ "Incompatible endianness." };
+}
+
+unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+{
+	if (!isBigEndian)
+		throw runtime_error{ "Incompatible endianness." };
+
 	//Start with bytemode false
 	bool byteMode = false;
 
@@ -144,3 +192,11 @@ unsigned char* ByteEncoder::toByte_bEndian(uint16_t* srcBuf, size_t srcSize, siz
 
 	return dstBuf;
 }
+uint16_t* Compression::ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+{
+	if (isBigEndian)
+		throw runtime_error{ "Incompatible endianness." };
+	return nullptr;
+}
+
+

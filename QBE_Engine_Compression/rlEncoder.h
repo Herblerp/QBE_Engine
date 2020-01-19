@@ -20,7 +20,7 @@ namespace Compression {
 			@param[in] srcBuf A pointer to the input buffer.
 			@param[in] srcSize The size of the source buffer. 
 			@param[out] dstSize The size of the target buffer.
-			@return The target buffer, gets created automatically.
+			@return The target buffer, containing the encoded data.
 		*/
 		static uint16_t* decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize);
 
@@ -30,7 +30,7 @@ namespace Compression {
 			@param[in] srcBuf A pointer to the input buffer.
 			@param[in] srcSize The size of the source buffer.
 			@param[out] dstSize The size of the target buffer.
-			@return The target buffer, gets created automatically.
+			@return The target buffer, containing the decoded data.
 		*/
 		static uint16_t* encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize);
 	private:
