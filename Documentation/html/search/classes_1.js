@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['byteencoder_7',['byteEncoder',['../class_compression_1_1byte_encoder.html',1,'Compression']]]
+  ['byteencoder_9',['ByteEncoder',['../class_compression_1_1_byte_encoder.html',1,'Compression']]]
 ];

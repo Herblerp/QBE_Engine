@@ -4,7 +4,7 @@
 
 //! Namespace containing classes used for compression.
 namespace Compression {
-	/*!	\brief A class that provides methods for performing run-length encoding.
+	/*!	A class that provides methods for performing run-length encoding.
 		
 		As run-length encoding is the first step of the compression stack,
 		the methods accept and return uint16_t*. For converting to char*

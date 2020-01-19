@@ -1,0 +1,80 @@
+\hypertarget{class_compression_1_1_byte_encoder}{}\doxysection{Compression\+::Byte\+Encoder Class Reference}
+\label{class_compression_1_1_byte_encoder}\index{Compression::ByteEncoder@{Compression::ByteEncoder}}
+
+
+A class that provides methods for performing byte encoding.  
+
+
+
+
+{\ttfamily \#include $<$byte\+Encoder.\+h$>$}
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static unsigned char $\ast$ \mbox{\hyperlink{class_compression_1_1_byte_encoder_a7a5967083962ea94ccd3500a0e6c2def}{to\+Byte\+\_\+b\+Endian}} (uint16\+\_\+t $\ast$src\+Buf, size\+\_\+t src\+Size, size\+\_\+t \&dst\+Size)
+\begin{DoxyCompactList}\small\item\em Encodes the given source buffer using byte encoding. \end{DoxyCompactList}\item 
+static unsigned char $\ast$ \mbox{\hyperlink{class_compression_1_1_byte_encoder_a36e1b80b0e2023b4eea8edd84c34a049}{to\+Byte\+\_\+l\+Endian}} (uint16\+\_\+t $\ast$src\+Buf, size\+\_\+t src\+Size, size\+\_\+t \&dst\+Size)
+\begin{DoxyCompactList}\small\item\em Encodes the given source buffer using byte encoding. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that provides methods for performing byte encoding. 
+
+This class should be used to convert between char buffers and uint16\+\_\+t buffers. Runs greater than 2 shorts with a value smaller than 128 will be compressed by dropping the most significant byte. Decoding is done using a system of flags encoded into the resulting buffer. Byte encoding is the second step in the compression stack for chunk data. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_compression_1_1_byte_encoder_a7a5967083962ea94ccd3500a0e6c2def}\label{class_compression_1_1_byte_encoder_a7a5967083962ea94ccd3500a0e6c2def}} 
+\index{Compression::ByteEncoder@{Compression::ByteEncoder}!toByte\_bEndian@{toByte\_bEndian}}
+\index{toByte\_bEndian@{toByte\_bEndian}!Compression::ByteEncoder@{Compression::ByteEncoder}}
+\doxysubsubsection{\texorpdfstring{toByte\_bEndian()}{toByte\_bEndian()}}
+{\footnotesize\ttfamily unsigned char $\ast$ Byte\+Encoder\+::to\+Byte\+\_\+b\+Endian (\begin{DoxyParamCaption}\item[{uint16\+\_\+t $\ast$}]{src\+Buf,  }\item[{size\+\_\+t}]{src\+Size,  }\item[{size\+\_\+t \&}]{dst\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Encodes the given source buffer using byte encoding. 
+
+Must be used on big-\/endian systems or a runtime error will be thrown.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src\+Buf} & A pointer to the input buffer. \\
+\hline
+\mbox{\texttt{ in}}  & {\em src\+Size} & The size of the source buffer. \\
+\hline
+\mbox{\texttt{ out}}  & {\em dst\+Size} & The size of the target buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The target buffer, gets created automatically. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_compression_1_1_byte_encoder_a36e1b80b0e2023b4eea8edd84c34a049}\label{class_compression_1_1_byte_encoder_a36e1b80b0e2023b4eea8edd84c34a049}} 
+\index{Compression::ByteEncoder@{Compression::ByteEncoder}!toByte\_lEndian@{toByte\_lEndian}}
+\index{toByte\_lEndian@{toByte\_lEndian}!Compression::ByteEncoder@{Compression::ByteEncoder}}
+\doxysubsubsection{\texorpdfstring{toByte\_lEndian()}{toByte\_lEndian()}}
+{\footnotesize\ttfamily unsigned char $\ast$ Byte\+Encoder\+::to\+Byte\+\_\+l\+Endian (\begin{DoxyParamCaption}\item[{uint16\+\_\+t $\ast$}]{src\+Buf,  }\item[{size\+\_\+t}]{src\+Size,  }\item[{size\+\_\+t \&}]{dst\+Size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Encodes the given source buffer using byte encoding. 
+
+Must be used on little-\/endian systems or a runtime error will be thrown.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ in}}  & {\em src\+Buf} & A pointer to the input buffer. \\
+\hline
+\mbox{\texttt{ in}}  & {\em src\+Size} & The size of the source buffer. \\
+\hline
+\mbox{\texttt{ out}}  & {\em dst\+Size} & The size of the target buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The target buffer, gets created automatically. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/quent/source/repos/\+Q\+B\+E\+\_\+\+Engine/\+Q\+B\+E\+\_\+\+Engine\+\_\+\+Compression/byte\+Encoder.\+h\item 
+C\+:/\+Users/quent/source/repos/\+Q\+B\+E\+\_\+\+Engine/\+Q\+B\+E\+\_\+\+Engine\+\_\+\+Compression/byte\+Encoder.\+cpp\end{DoxyCompactItemize}

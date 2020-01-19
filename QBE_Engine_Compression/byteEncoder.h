@@ -4,7 +4,7 @@
 //! Namespace containing classes used for compression.
 namespace Compression {
 
-	/*!	\brief A class that provides methods for performing byte encoding.
+	/*!	A class that provides methods for performing byte encoding.
 
 		This class should be used to convert between char buffers and uint16_t buffers.
 		Runs greater than 2 shorts with a value smaller than 128 will be compressed 
