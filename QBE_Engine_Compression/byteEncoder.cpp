@@ -42,8 +42,8 @@ bool ByteEncoder::isBigEndian()
 
 unsigned char* ByteEncoder::toChar_lEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if(isBigEndian)
-		throw runtime_error{ "Incompatible endianness." };
+	if(isBigEndian())
+		throw runtime_error{ "Incompatible endianness in toChar_lEndian." };
 
 	//Start with bytemode false
 	bool byteMode = false;
@@ -115,8 +115,8 @@ unsigned char* ByteEncoder::toChar_lEndian(uint16_t* srcBuf, size_t srcSize, siz
 }
 uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if (!isBigEndian)
-		throw runtime_error{ "Incompatible endianness." };
+	if (isBigEndian())
+		throw runtime_error{ "Incompatible endianness in toShort_lEndian." };
 
 	bool byteMode = false;
 
@@ -179,8 +179,8 @@ uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, si
 
 unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if (!isBigEndian)
-		throw runtime_error{ "Incompatible endianness." };
+	if (!isBigEndian())
+		throw runtime_error{ "Incompatible endianness in toChar_bEndian." };
 
 	//Start with bytemode false
 	bool byteMode = false;
@@ -252,8 +252,8 @@ unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, siz
 }
 uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if (!isBigEndian)
-		throw runtime_error{ "Incompatible endianness." };
+	if (!isBigEndian())
+		throw runtime_error{ "Incompatible endianness toShort_bEndian." };
 
 	bool byteMode = false;
 
