@@ -34,7 +34,7 @@ namespace NS_Data {
 		size_t rleBufSize;
 		uint16_t* rleBuf = RLEncoder::encodeRLE(nodeData, nodeDataSize, rleBufSize);
 
-		size_t byteBufSize;
+		size_t byteBufSize = 0;
 		unsigned char* byteBuf;
 
 		byteBuf = ByteEncoder::toChar(rleBuf, rleBufSize, byteBufSize);

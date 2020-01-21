@@ -102,36 +102,36 @@ namespace NS_Data {
 			}
 		}
 
-		if (t1 != nullptr && t1->joinable())
-		{
-			t1->join();
-			delete t1;
-		}
-		if (t2 != nullptr && t2->joinable())
-		{
-			t2->join();
-			delete t2;
-		}
-		if (t3 != nullptr && t3->joinable())
-		{
-			t3->join();
-			delete t3;
-		}
-		if (t4 != nullptr && t4->joinable())
-		{
-			t4->join();
-			delete t4;
-		}
-		if (t5 != nullptr && t5->joinable())
-		{
-			t5->join();
-			delete t5;
-		}
-		if (t6 != nullptr && t6->joinable())
-		{
-			t6->join();
-			delete t6;
-		}
+		//if (t1 != nullptr && t1->joinable())
+		//{
+		//	t1->join();
+		//	delete t1;
+		//}
+		//if (t2 != nullptr && t2->joinable())
+		//{
+		//	t2->join();
+		//	delete t2;
+		//}
+		//if (t3 != nullptr && t3->joinable())
+		//{
+		//	t3->join();
+		//	delete t3;
+		//}
+		//if (t4 != nullptr && t4->joinable())
+		//{
+		//	t4->join();
+		//	delete t4;
+		//}
+		//if (t5 != nullptr && t5->joinable())
+		//{
+		//	t5->join();
+		//	delete t5;
+		//}
+		//if (t6 != nullptr && t6->joinable())
+		//{
+		//	t6->join();
+		//	delete t6;
+		//}
 
 
 		for (auto i = 0; i < MAP_DIM; i++) {
