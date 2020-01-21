@@ -123,7 +123,7 @@ uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, si
 	size_t maxSize = srcSize * 2;
 	uint16_t* tmpBuf = new uint16_t[maxSize];
 
-	size_t tmpSize = 0;
+	size_t pos = 0;
 
 	for (int i = 0; i < srcSize; i++) {
 
@@ -152,7 +152,8 @@ uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, si
 			unsigned char highBit = (unsigned char)0;
 			unsigned short y = highBit << 8 | lowBit;
 
-			tmpSize++;
+			tmpBuf[pos] = y;
+			pos++;
 		}
 		else
 		{
@@ -160,14 +161,15 @@ uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, si
 			unsigned char highBit = srcBuf[i + 1];
 			unsigned short y = highBit << 8 | lowBit;
 
+			tmpBuf[pos] = y;
+			pos++;
 			i++;
-			tmpSize++;
 		}
 	}
-	dstSize = tmpSize;
+	dstSize = pos;
 
 	uint16_t* dstBuf = new uint16_t[dstSize];
-	memcpy(dstBuf, tmpBuf, dstSize);
+	memcpy(dstBuf, tmpBuf, dstSize*2);
 
 	return dstBuf;
 }
@@ -255,7 +257,7 @@ uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, si
 	size_t maxSize = srcSize * 2;
 	uint16_t* tmpBuf = new uint16_t[maxSize];
 
-	size_t tmpSize = 0;
+	size_t pos = 0;
 
 	for (int i = 0; i < srcSize; i++) {
 
@@ -284,7 +286,9 @@ uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, si
 			unsigned char highBit = (unsigned char)0;
 			unsigned short y = lowBit << 8 | highBit;
 
-			tmpSize++;
+			tmpBuf[pos] = y;
+			pos++;
+			i++;
 		}
 		else
 		{
@@ -292,14 +296,15 @@ uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, si
 			unsigned char highBit = srcBuf[i + 1];
 			unsigned short y = lowBit << 8 | highBit;
 
+			tmpBuf[pos] = y;
+			pos++;
 			i++;
-			tmpSize++;
 		}
 	}
-	dstSize = tmpSize;
+	dstSize = pos;
 
 	uint16_t* dstBuf = new uint16_t[dstSize];
-	memcpy(dstBuf, tmpBuf, dstSize);
+	memcpy(dstBuf, tmpBuf, dstSize*2);
 
 	return dstBuf;
 }
