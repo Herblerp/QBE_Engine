@@ -6,7 +6,7 @@
 using namespace std;
 using namespace Compression;
 
-unsigned char* Compression::ByteEncoder::toChar(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
+unsigned char* ByteEncoder::toChar(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	if (isBigEndian())
 	{
@@ -17,7 +17,7 @@ unsigned char* Compression::ByteEncoder::toChar(uint16_t* srcBuf, size_t srcSize
 		return toChar_lEndian(srcBuf, srcSize, dstSize);
 	}
 }
-uint16_t* Compression::ByteEncoder::toShort(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+uint16_t* ByteEncoder::toShort(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	if (isBigEndian())
 	{
@@ -29,7 +29,7 @@ uint16_t* Compression::ByteEncoder::toShort(unsigned char* srcBuf, size_t srcSiz
 	}
 }
 
-bool Compression::ByteEncoder::isBigEndian()
+bool ByteEncoder::isBigEndian()
 {
 	int n = 1;
 	// little endian if true
@@ -113,10 +113,63 @@ unsigned char* ByteEncoder::toChar_lEndian(uint16_t* srcBuf, size_t srcSize, siz
 
 	return dstBuf;
 }
-uint16_t* Compression::ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if (isBigEndian)
+	if (!isBigEndian)
 		throw runtime_error{ "Incompatible endianness." };
+
+	bool byteMode = false;
+
+	size_t maxSize = srcSize * 2;
+	uint16_t* tmpBuf = new uint16_t[maxSize];
+
+	size_t tmpSize = 0;
+
+	for (int i = 0; i < srcSize; i++) {
+
+		//If-block for checking flags
+		if (byteMode)
+		{
+			if (srcBuf[i] == 0)
+			{
+				byteMode = false;
+				i++;
+			}
+		}
+		else
+		{
+			if (srcBuf[i] == 0 && srcBuf[i + 1] == 0)
+			{
+				byteMode = true;
+				i += 2;
+			}
+		}
+
+		//If-block for getting values
+		if (byteMode)
+		{
+			unsigned char lowBit = srcBuf[i];
+			unsigned char highBit = (unsigned char)0;
+			unsigned short y = highBit << 8 | lowBit;
+
+			tmpSize++;
+		}
+		else
+		{
+			unsigned char lowBit = srcBuf[i];
+			unsigned char highBit = srcBuf[i + 1];
+			unsigned short y = highBit << 8 | lowBit;
+
+			i++;
+			tmpSize++;
+		}
+	}
+	dstSize = tmpSize;
+
+	uint16_t* dstBuf = new uint16_t[dstSize];
+	memcpy(dstBuf, tmpBuf, dstSize);
+
+	return dstBuf;
 }
 
 unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
@@ -141,7 +194,7 @@ unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, siz
 		unsigned char highBit = srcBuf[i] & 0x00ff;
 		unsigned char lowBit = srcBuf[i] >> 8;
 
-		//Block for checking mode and setting flags
+		//If-block for checking mode and setting flags
 		if (!byteMode && highBit == 0)
 		{
 			int count = 1;
@@ -167,7 +220,7 @@ unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, siz
 			pos++;
 		}
 
-		//Block for inserting values according to mode
+		//If-block for inserting values according to mode
 		if (byteMode)
 		{
 			tmpBuf[pos] = lowBit;
@@ -192,11 +245,63 @@ unsigned char* ByteEncoder::toChar_bEndian(uint16_t* srcBuf, size_t srcSize, siz
 
 	return dstBuf;
 }
-uint16_t* Compression::ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
+uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	if (isBigEndian)
+	if (!isBigEndian)
 		throw runtime_error{ "Incompatible endianness." };
-	return nullptr;
+
+	bool byteMode = false;
+
+	size_t maxSize = srcSize * 2;
+	uint16_t* tmpBuf = new uint16_t[maxSize];
+
+	size_t tmpSize = 0;
+
+	for (int i = 0; i < srcSize; i++) {
+
+		//If-block for checking flags
+		if (byteMode)
+		{
+			if (srcBuf[i] == 0)
+			{
+				byteMode = false;
+				i++;
+			}
+		}
+		else
+		{
+			if (srcBuf[i] == 0 && srcBuf[i + 1] == 0)
+			{
+				byteMode = true;
+				i += 2;
+			}
+		}
+
+		//If-block for getting values
+		if (byteMode)
+		{
+			unsigned char lowBit = srcBuf[i];
+			unsigned char highBit = (unsigned char)0;
+			unsigned short y = lowBit << 8 | highBit;
+
+			tmpSize++;
+		}
+		else
+		{
+			unsigned char lowBit = srcBuf[i];
+			unsigned char highBit = srcBuf[i + 1];
+			unsigned short y = lowBit << 8 | highBit;
+
+			i++;
+			tmpSize++;
+		}
+	}
+	dstSize = tmpSize;
+
+	uint16_t* dstBuf = new uint16_t[dstSize];
+	memcpy(dstBuf, tmpBuf, dstSize);
+
+	return dstBuf;
 }
 
 
