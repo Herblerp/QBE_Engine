@@ -1,6 +1,7 @@
 #include "rlEncoder.h"
 #include <iostream>
 
+using namespace std;
 using namespace Compression;
 
 uint16_t* RLEncoder::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
@@ -48,11 +49,16 @@ uint16_t* RLEncoder::encodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize
 }
 uint16_t* RLEncoder::decodeRLE(uint16_t* srcBuf, size_t srcSize, size_t& dstSize)
 {
-	uint16_t* tmpBuf = new uint16_t[dstSize];
+	//Max dst size, this corresponds to max chunkdim of 64
+	size_t maxDstSize = 262.144;
+	uint16_t* tmpBuf = new uint16_t[maxDstSize];
 	int pos = 0;
 
 	for (int i = 0; i < srcSize; i++)
 	{
+		if (pos == maxDstSize)
+			throw runtime_error{ "Buffer overflow when decoding RLE." };
+
 		if (srcBuf[i] == 0)
 		{
 			int count = srcBuf[i + 1];

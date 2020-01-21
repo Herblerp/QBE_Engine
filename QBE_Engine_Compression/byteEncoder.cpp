@@ -127,6 +127,9 @@ uint16_t* ByteEncoder::toShort_lEndian(unsigned char* srcBuf, size_t srcSize, si
 
 	for (int i = 0; i < srcSize; i++) {
 
+		if (pos == maxSize)
+			throw runtime_error{ "Buffer overflow when decoding in toShort_bEndian." };
+
 		//If-block for checking flags
 		if (byteMode)
 		{
@@ -260,6 +263,9 @@ uint16_t* ByteEncoder::toShort_bEndian(unsigned char* srcBuf, size_t srcSize, si
 	size_t pos = 0;
 
 	for (int i = 0; i < srcSize; i++) {
+
+		if (pos == maxSize)
+			throw runtime_error{ "Buffer overflow when decoding in toShort_bEndian." };
 
 		//If-block for checking flags
 		if (byteMode)
