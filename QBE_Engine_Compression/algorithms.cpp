@@ -1,4 +1,4 @@
-#include "compression.h"
+#include "algorithms.h"
 #include <lz4.h>
 #include <lz4hc.h>
 #include <LzmaLib.h>

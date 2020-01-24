@@ -161,7 +161,8 @@ namespace NS_Data {
 		uint16_t* nodeData = new uint16_t[arrLength];
 		for (auto i = 0; i < arrLength; i++) {
 			//TODO: Load appropriate node value
-			nodeData[i] = rand() % 200 ;
+			uint16_t x = rand() % 2 + 36;
+			nodeData[i] = x;
 			blockCount++;
 		}
 

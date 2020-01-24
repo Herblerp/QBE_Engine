@@ -175,12 +175,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="byteEncoder.cpp" />
-    <ClCompile Include="compression.cpp" />
+    <ClCompile Include="algorithms.cpp" />
     <ClCompile Include="rlEncoder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="byteEncoder.h" />
-    <ClInclude Include="compression.h" />
+    <ClInclude Include="algorithms.h" />
     <ClInclude Include="includes\7zTypes.h" />
     <ClInclude Include="includes\lz4.h" />
     <ClInclude Include="includes\lz4frame.h" />
