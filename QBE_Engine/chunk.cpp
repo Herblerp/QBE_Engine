@@ -43,7 +43,7 @@ namespace NS_Data {
 
 		delete[] rleBuf;
 
-		size_t dstBufSize;
+		size_t dstBufSize = pow(config::CHUNK_DIM, 3);
 		unsigned char* dstBuf;
 			
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)

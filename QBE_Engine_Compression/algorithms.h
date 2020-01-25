@@ -16,10 +16,20 @@ namespace Compression {
 
 			@param[in] srcBuf A pointer to the input buffer.
 			@param[in] srcSize The size of the source buffer.
-			@param[out] dstSize The size of the target buffer.
+			@param[in,out] dstSize The size of the target buffer, recommended value is max nodes per chunk.
 			@return The target buffer.
 		*/
 		static unsigned char* compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize);
+
+		/*!
+			Decompresses the given source buff using the LZMA compression algorithm.
+
+			@param[in] srcBuf A pointer to the input buffer.
+			@param[in] srcSize The size of the source buffer.
+			@param[in,out] dstSize The size of the target buffer, recommended value is max nodes per chunk.
+			@return The target buffer.
+		*/
+		static unsigned char* decompressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize);
 
 		/*!
 			Compresses the given source buff using the LZ4 compression algorithm.
