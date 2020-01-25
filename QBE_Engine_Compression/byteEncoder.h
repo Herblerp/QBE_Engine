@@ -12,7 +12,7 @@ namespace Compression {
 		encoded into the resulting buffer. Byte encoding is the second step in the compression
 		stack for chunk data.
 	*/
-	static class ByteEncoder
+	class ByteEncoder
 	{
 	public:
 

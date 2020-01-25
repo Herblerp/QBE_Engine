@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['tobyte_5fbendian_14',['toByte_bEndian',['../class_compression_1_1_byte_encoder.html#a7a5967083962ea94ccd3500a0e6c2def',1,'Compression::ByteEncoder']]],
-  ['tobyte_5flendian_15',['toByte_lEndian',['../class_compression_1_1_byte_encoder.html#a36e1b80b0e2023b4eea8edd84c34a049',1,'Compression::ByteEncoder']]]
+  ['encoderle_17',['encodeRLE',['../class_compression_1_1_r_l_encoder.html#a39de4e1f6452e5129d795205053df25d',1,'Compression::RLEncoder']]]
 ];

@@ -4,7 +4,6 @@
 #include "../QBE_Engine_Compression/rlEncoder.h"
 #include "../QBE_Engine_Compression/byteEncoder.h"
 #include "../QBE_Engine_Compression/algorithms.h"
-#include "../QBE_Engine_Compression/huffmanCoding.h"
 
 using namespace Compression;
 
@@ -35,6 +34,8 @@ namespace NS_Data {
 		size_t rleBufSize;
 		uint16_t* rleBuf = RLEncoder::encodeRLE(nodeData, nodeDataSize, rleBufSize);
 
+		std::cout << rleBufSize * 2 << "\n";
+
 		size_t byteBufSize = 0;
 		unsigned char* byteBuf;
 
@@ -45,9 +46,9 @@ namespace NS_Data {
 		size_t dstBufSize;
 		unsigned char* dstBuf;
 			
-		//if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
+		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
 			dstBuf = Algorithms::compressLZMA(byteBuf, byteBufSize, dstBufSize);
-		//if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZ4)
+		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZ4)
 			dstBuf = Algorithms::compressLZ4(byteBuf, byteBufSize, dstBufSize);
 
 		delete[] byteBuf;

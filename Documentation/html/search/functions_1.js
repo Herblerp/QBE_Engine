@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['encoderle_13',['encodeRLE',['../class_compression_1_1_r_l_encoder.html#a39de4e1f6452e5129d795205053df25d',1,'Compression::RLEncoder']]]
+  ['decoderle_16',['decodeRLE',['../class_compression_1_1_r_l_encoder.html#a71a029100489f9b9691ec6269f826968',1,'Compression::RLEncoder']]]
 ];

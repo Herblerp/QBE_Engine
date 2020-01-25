@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.17"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: Compression::ByteEncoder Class Reference</title>
+<title>QBE_Engine: Compression::ByteEncoder Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">QBE_Engine
    </div>
   </td>
  </tr>
@@ -80,19 +80,19 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a7a5967083962ea94ccd3500a0e6c2def"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_compression_1_1_byte_encoder.html#a7a5967083962ea94ccd3500a0e6c2def">toByte_bEndian</a> (uint16_t *srcBuf, size_t srcSize, size_t &amp;dstSize)</td></tr>
-<tr class="memdesc:a7a5967083962ea94ccd3500a0e6c2def"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes the given source buffer using byte encoding.  <a href="class_compression_1_1_byte_encoder.html#a7a5967083962ea94ccd3500a0e6c2def">More...</a><br /></td></tr>
-<tr class="separator:a7a5967083962ea94ccd3500a0e6c2def"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36e1b80b0e2023b4eea8edd84c34a049"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_compression_1_1_byte_encoder.html#a36e1b80b0e2023b4eea8edd84c34a049">toByte_lEndian</a> (uint16_t *srcBuf, size_t srcSize, size_t &amp;dstSize)</td></tr>
-<tr class="memdesc:a36e1b80b0e2023b4eea8edd84c34a049"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes the given source buffer using byte encoding.  <a href="class_compression_1_1_byte_encoder.html#a36e1b80b0e2023b4eea8edd84c34a049">More...</a><br /></td></tr>
-<tr class="separator:a36e1b80b0e2023b4eea8edd84c34a049"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b8aaceb9f0f73af71c4aa29780f4bbf"><td class="memItemLeft" align="right" valign="top">static unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_compression_1_1_byte_encoder.html#a9b8aaceb9f0f73af71c4aa29780f4bbf">toChar</a> (uint16_t *srcBuf, size_t srcSize, size_t &amp;dstSize)</td></tr>
+<tr class="memdesc:a9b8aaceb9f0f73af71c4aa29780f4bbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encodes the given source buffer using byte encoding.  <a href="class_compression_1_1_byte_encoder.html#a9b8aaceb9f0f73af71c4aa29780f4bbf">More...</a><br /></td></tr>
+<tr class="separator:a9b8aaceb9f0f73af71c4aa29780f4bbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62c1c053bcf39d8c7fd4f26cd5ac5169"><td class="memItemLeft" align="right" valign="top">static uint16_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_compression_1_1_byte_encoder.html#a62c1c053bcf39d8c7fd4f26cd5ac5169">toShort</a> (unsigned char *srcBuf, size_t srcSize, size_t &amp;dstSize)</td></tr>
+<tr class="memdesc:a62c1c053bcf39d8c7fd4f26cd5ac5169"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decodes the given source buffer using byte encoding.  <a href="class_compression_1_1_byte_encoder.html#a62c1c053bcf39d8c7fd4f26cd5ac5169">More...</a><br /></td></tr>
+<tr class="separator:a62c1c053bcf39d8c7fd4f26cd5ac5169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class that provides methods for performing byte encoding. </p>
 <p>This class should be used to convert between char buffers and uint16_t buffers. Runs greater than 2 shorts with a value smaller than 128 will be compressed by dropping the most significant byte. Decoding is done using a system of flags encoded into the resulting buffer. Byte encoding is the second step in the compression stack for chunk data. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7a5967083962ea94ccd3500a0e6c2def"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a5967083962ea94ccd3500a0e6c2def">&#9670;&nbsp;</a></span>toByte_bEndian()</h2>
+<a id="a9b8aaceb9f0f73af71c4aa29780f4bbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b8aaceb9f0f73af71c4aa29780f4bbf">&#9670;&nbsp;</a></span>toChar()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -101,7 +101,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned char * ByteEncoder::toByte_bEndian </td>
+          <td class="memname">unsigned char * ByteEncoder::toChar </td>
           <td>(</td>
           <td class="paramtype">uint16_t *&#160;</td>
           <td class="paramname"><em>srcBuf</em>, </td>
@@ -132,8 +132,7 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Encodes the given source buffer using byte encoding. </p>
-<p>Must be used on big-endian systems or a runtime error will be thrown.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Determines the endianness of the system and calls the appropriate toChar function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">srcBuf</td><td>A pointer to the input buffer. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">srcSize</td><td>The size of the source buffer. </td></tr>
@@ -141,12 +140,12 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The target buffer, gets created automatically. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The target buffer. </dd></dl>
 
 </div>
 </div>
-<a id="a36e1b80b0e2023b4eea8edd84c34a049"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36e1b80b0e2023b4eea8edd84c34a049">&#9670;&nbsp;</a></span>toByte_lEndian()</h2>
+<a id="a62c1c053bcf39d8c7fd4f26cd5ac5169"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62c1c053bcf39d8c7fd4f26cd5ac5169">&#9670;&nbsp;</a></span>toShort()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -155,9 +154,9 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned char * ByteEncoder::toByte_lEndian </td>
+          <td class="memname">uint16_t * ByteEncoder::toShort </td>
           <td>(</td>
-          <td class="paramtype">uint16_t *&#160;</td>
+          <td class="paramtype">unsigned char *&#160;</td>
           <td class="paramname"><em>srcBuf</em>, </td>
         </tr>
         <tr>
@@ -185,9 +184,8 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Encodes the given source buffer using byte encoding. </p>
-<p>Must be used on little-endian systems or a runtime error will be thrown.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Decodes the given source buffer using byte encoding. </p>
+<p>Determines the endianness of the system and calls the appropriate toShort function. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">srcBuf</td><td>A pointer to the input buffer. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">srcSize</td><td>The size of the source buffer. </td></tr>
@@ -195,7 +193,7 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The target buffer, gets created automatically. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The target buffer. </dd></dl>
 
 </div>
 </div>
