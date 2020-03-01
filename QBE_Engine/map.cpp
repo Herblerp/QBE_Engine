@@ -1,7 +1,8 @@
 #include "map.h"
 #include <iostream>
 #include <thread>
-namespace NS_Data {
+
+namespace Data{
 
 	void SaveChunk(Chunk* _chunk);
 

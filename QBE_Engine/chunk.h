@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace NS_Data {
+namespace Data {
 
 	class Chunk
 	{

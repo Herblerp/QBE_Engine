@@ -7,7 +7,7 @@
 
 using namespace Compression;
 
-namespace NS_Data {
+namespace Data {
 
 	Chunk::Chunk(uint16_t* _nodeData)
 	{
@@ -44,7 +44,7 @@ namespace NS_Data {
 		delete[] rleBuf;
 
 		size_t dstBufSize = pow(config::CHUNK_DIM, 3);
-		unsigned char* dstBuf;
+		unsigned char* dstBuf = nullptr;
 			
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
 			dstBuf = Algorithms::compressLZMA(byteBuf, byteBufSize, dstBufSize);
@@ -57,7 +57,7 @@ namespace NS_Data {
 		//TODO: Save data to file
 		//TODO: Edit header
 
-		return false;
+		return nullptr;
 	}
 	char* Chunk::decompressChunk(char*)
 	{

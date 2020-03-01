@@ -4,7 +4,7 @@
 #include "config.h"
 #include "regionFile.h"
 
-namespace NS_Data {
+namespace Data {
 	class Map
 	{
 	public:

@@ -3,7 +3,8 @@
 
 using namespace std;
 
-NS_Data::RegionFile::RegionFile(Pos regionPos)
+
+Data::RegionFile::RegionFile(Pos regionPos)
 {
 	_regionPos = regionPos;
 
@@ -19,17 +20,17 @@ NS_Data::RegionFile::RegionFile(Pos regionPos)
 	}
 }
 
-NS_Data::RegionFile::~RegionFile()
+Data::RegionFile::~RegionFile()
 {
 
 }
 
-uint16_t* NS_Data::RegionFile::ReadChunkData(Pos chunkPos)
+uint16_t* Data::RegionFile::ReadChunkData(Pos chunkPos)
 {
 	return nullptr;
 }
 
-bool NS_Data::RegionFile::SaveChunkData(uint16_t* data)
+bool Data::RegionFile::SaveChunkData(uint16_t* data)
 {
 	return false;
 }

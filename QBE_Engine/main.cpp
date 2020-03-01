@@ -51,7 +51,7 @@
 #include <chrono>
 
 using namespace std;
-using namespace NS_Data;
+using namespace Data;
 
 typedef chrono::high_resolution_clock Clock;
 
@@ -65,12 +65,12 @@ int main()
 	config::load_config_file("ELLO");
 	auto t1 = Clock::now();
 	
-	if (dict.loadTypes()) {
+	//if (dict.loadTypes()) {
 		Map map = Map(Pos{ 0,0,0 });
 		cout << "Loaded " << map.blockCount << " blocks and " << map.chunkCount << " chunks." <<"\n";
 		t1 = Clock::now();
 		map.SaveMap();	
-	}
+	//}
 	auto t2 = Clock::now();
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
 	system("pause");

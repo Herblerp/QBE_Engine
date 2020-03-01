@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QBE_Engine_Test", "QBE_Engi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QBE_Engine_Compression", "QBE_Engine_Compression\QBE_Engine_Compression.vcxproj", "{77948BF8-0B23-43E0-A67F-8316D1A5C617}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QBE_Engine_Data", "QBE_Engine_Data\QBE_Engine_Data.vcxproj", "{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{77948BF8-0B23-43E0-A67F-8316D1A5C617}.Release|x64.Build.0 = Release|x64
 		{77948BF8-0B23-43E0-A67F-8316D1A5C617}.Release|x86.ActiveCfg = Release|Win32
 		{77948BF8-0B23-43E0-A67F-8316D1A5C617}.Release|x86.Build.0 = Release|Win32
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Debug|x64.ActiveCfg = Debug|x64
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Debug|x64.Build.0 = Debug|x64
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Debug|x86.ActiveCfg = Debug|Win32
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Debug|x86.Build.0 = Debug|Win32
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Release|x64.ActiveCfg = Release|x64
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Release|x64.Build.0 = Release|x64
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Release|x86.ActiveCfg = Release|Win32
+		{5D27BB1C-3CD1-4722-89DE-9368F37F7C24}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

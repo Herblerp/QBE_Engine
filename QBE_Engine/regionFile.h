@@ -5,7 +5,7 @@
 
 using namespace config;
 
-namespace NS_Data {
+namespace Data {
 
 	class RegionFile
 	{

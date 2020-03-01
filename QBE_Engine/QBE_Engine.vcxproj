@@ -97,6 +97,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\QBE_Engine\lib;$(VULKAN_SDK)\Lib32;$(VULKAN_SDK)\Third-Party\Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -115,6 +118,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\QBE_Engine\lib;$(VULKAN_SDK)\Lib;$(VULKAN_SDK)\Third-Party\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,6 +143,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\QBE_Engine\lib;$(VULKAN_SDK)\Lib32;$(VULKAN_SDK)\Third-Party\Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -159,28 +168,16 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\QBE_Engine\lib;$(VULKAN_SDK)\Lib;$(VULKAN_SDK)\Third-Party\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="map.cpp" />
-    <ClCompile Include="nodedictionary.cpp" />
-    <ClCompile Include="nodetype.cpp" />
-    <ClCompile Include="regionFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="INIReader.h" />
-    <ClInclude Include="map.h" />
-    <ClInclude Include="nodedictionary.h" />
-    <ClInclude Include="nodetype.h" />
-    <ClInclude Include="regionFile.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="INIReader_LICENSE.txt" />
-    <Text Include="Config.ini" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Nodetypes\Blue.qbenode" />
@@ -190,6 +187,9 @@
   <ItemGroup>
     <ProjectReference Include="..\QBE_Engine_Compression\QBE_Engine_Compression.vcxproj">
       <Project>{77948bf8-0b23-43e0-a67f-8316d1a5c617}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\QBE_Engine_Data\QBE_Engine_Data.vcxproj">
+      <Project>{5d27bb1c-3cd1-4722-89de-9368f37f7c24}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
