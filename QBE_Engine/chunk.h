@@ -3,32 +3,26 @@
 #include <vector>
 #include "config.h"
 #include <bitset>
+#include "globals.h"
 
 using namespace std;
+using namespace globals;
 
 namespace Data {
 
 	class Chunk
 	{
 	public:
-		Chunk(uint16_t* _nodeData);
+		Chunk(uint16_t* nodeData);
 		~Chunk();
+
+		char* serialize();
+		void deSerialize(char *);
+
+	private:
+		Pos chunkPos;
+		Pos regionPos;
 		uint16_t* nodeData;
-
-		void SaveChunk();
-		void LoadChunk();
-
-	//private:
-
-		enum class SystemEndianness { LITTLE, BIG };
-		SystemEndianness _systemEndianness;
-
-		config::Pos chunkPos;
-		config::Pos regionPos;
-
-		char* compressChunk();
-		char* decompressChunk(char*);	
-		
 	};
 }
 

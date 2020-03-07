@@ -1,28 +1,32 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
-#include "config.h"
+#include "globals.h"
 
-using namespace config;
+using namespace globals;
 
 namespace Data {
+
+	struct ChunkInfo 
+	{
+		Pos chunkPos;
+		int dataFirstBytePos;
+		int dataLastBytePos;
+	};
 
 	class RegionFile
 	{
 	public:
-		RegionFile(Pos _regionPos);
+		RegionFile(Pos regionPos, int regionSizeInChunks);
 		~RegionFile();
 
-		uint16_t* ReadChunkData(Pos _chunkPos);
-		bool SaveChunkData(uint16_t* _chunkData);
+		vector<char> readChunkData(Pos chunkPos);
+		void writeChunkData(vector<char> chunkData);
 
 	private:
-
-		enum class SystemEndianness{LITTLE, BIG};
-
-		SystemEndianness _systemEndianness;
-
-		Pos _regionPos;
+		Pos regionPos;
+		int regionSizeInChunks;
+		vector<ChunkInfo> header;
 	};
 }
 

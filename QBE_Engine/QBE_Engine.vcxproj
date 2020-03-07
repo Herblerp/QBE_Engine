@@ -178,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
+    <ClInclude Include="globals.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Nodetypes\Blue.qbenode" />

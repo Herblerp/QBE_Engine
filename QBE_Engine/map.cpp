@@ -1,26 +1,76 @@
 #include "map.h"
 #include <iostream>
 #include <thread>
+using namespace globals;
 
 namespace Data{
 
-	void SaveChunk(Chunk* _chunk);
-
-	Map::Map(Pos _userPos) : reg(Pos{ 0,0,0 })
+	Map::Map(int mapRadiusInChunks, int regionSizeInChunks, int chunkSizeInNodes)
 	{
-		blockCount = 0;
-		chunkCount = pow(MAP_DIM, 3);
-		mapData = new Chunk * **[MAP_DIM];
-		for (auto i = 0; i < MAP_DIM; i++) {
-			mapData[i] = new Chunk * *[MAP_DIM];
-			for (auto j = 0; j < MAP_DIM; j++) {
-				mapData[i][j] = new Chunk * [MAP_DIM];
-				for (auto k = 0; k < MAP_DIM; k++) {
-					//TODO: Load appropriate position
-					mapData[i][j][k] = LoadChunk(Pos{ 0,0,0 });
+		this->mapRadiusInChunks = mapRadiusInChunks;
+		this->regionSizeInChunks = regionSizeInChunks;
+		this->chunkSizeInNodes = chunkSizeInNodes;
+	}
+
+	void Map::loadMap(Pos playerPos) 
+	{
+		int mapSizeInChunks = mapRadiusInChunks * 2 + 1;
+		int regionSizeInNodes = regionSizeInChunks * chunkSizeInNodes;
+
+		mapData.reserve(pow(mapSizeInChunks, 3));
+
+		Pos minMapPos;
+		minMapPos.x = playerPos.x - (mapRadiusInChunks * chunkSizeInNodes);
+		minMapPos.y = playerPos.y - (mapRadiusInChunks * chunkSizeInNodes);
+		minMapPos.z = playerPos.z - (mapRadiusInChunks * chunkSizeInNodes);
+
+		Pos maxMapPos;
+		maxMapPos.x = playerPos.x + (mapRadiusInChunks * chunkSizeInNodes);
+		maxMapPos.y = playerPos.y + (mapRadiusInChunks * chunkSizeInNodes);
+		maxMapPos.z = playerPos.z + (mapRadiusInChunks * chunkSizeInNodes);
+
+		for (int z = minMapPos.z; z <= maxMapPos.z; z += chunkSizeInNodes)
+		{
+			for (int y = minMapPos.y; y <= maxMapPos.y; y += chunkSizeInNodes)
+			{
+				for (int x = minMapPos.x; x <= maxMapPos.x; x += chunkSizeInNodes)
+				{
+					Pos currentPos = { x,y,z };
+					Pos regionPos = calculateRegionPos(currentPos, regionSizeInNodes);
+					Pos chunkPos = calculateChunkPos(currentPos, regionPos, regionSizeInNodes);
+
+					mapData.push_back(loadChunk(regionPos, chunkPos));
 				}
 			}
 		}
+	}
+
+	Chunk Map::loadChunk(Pos regionPos, Pos chunkPos) 
+	{
+		//Check if the region file is cashed
+		//If not, load the file
+		//Load the chunk from te file
+		//Deserialize the chunk
+	}
+
+	Pos Map::calculateRegionPos(Pos pos, int regionSizeInNodes) 
+	{
+		Pos regionPos;
+		regionPos.x = pos.x / regionSizeInNodes;
+		regionPos.y = pos.y / regionSizeInNodes;
+		regionPos.z = pos.z / regionSizeInNodes;
+
+		return regionPos;
+	}
+
+	Pos Map::calculateChunkPos(Pos pos, Pos regionPos, int regionSizeInNodes) 
+	{
+		Pos chunkPos;
+		chunkPos.x = (pos.x - regionPos.x * regionSizeInNodes) / chunkSizeInNodes;
+		chunkPos.y = (pos.y - regionPos.y * regionSizeInNodes) / chunkSizeInNodes;
+		chunkPos.z = (pos.z - regionPos.z * regionSizeInNodes) / chunkSizeInNodes;
+
+		return chunkPos;
 	}
 
 	void Map::SaveMap()
@@ -150,34 +200,7 @@ namespace Data{
 
 	}
 
-	bool Map::UpdateUserPos(Pos _userpos)
-	{
-		return false;
-	}
-
-	Chunk* Map::LoadChunk(Pos _chunkPos)
-	{
-		const int arrLength = pow(CHUNK_DIM, 3);
-
-		uint16_t* nodeData = new uint16_t[arrLength];
-		for (auto i = 0; i < arrLength; i++) {
-			//TODO: Load appropriate node value
-			uint16_t x = rand() % 2 + 36;
-			nodeData[i] = x;
-			blockCount++;
-		}
-
-		Chunk* chunk = new Chunk(nodeData);
-		return chunk;
-	}
-
 	std::thread* Map::SpawnSaveThread(Chunk* _chunk) {
 		return new std::thread([=] {SaveChunk(_chunk); });
-	}
-
-	void SaveChunk(Chunk* _chunk)
-	{
-		_chunk->SaveChunk();
-		delete _chunk;
 	}
 }

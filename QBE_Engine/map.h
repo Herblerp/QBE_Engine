@@ -2,24 +2,29 @@
 #include <thread>
 #include "chunk.h"
 #include "config.h"
+#include "globals.h"
 #include "regionFile.h"
 
 namespace Data {
 	class Map
 	{
 	public:
-		Map(Pos _userPos);
-		void SaveMap();
+		Map(int mapSize, int regionSize, int chunkSize);
 		~Map();
-		bool UpdateUserPos(Pos _userpos);
-		int blockCount;
-		int chunkCount;
+		void loadMap(Pos userPos);
+		void updateMap(Pos userPos);
+		void saveMap();
 	private:
-		RegionFile reg;
-		Chunk**** mapData;
-		Pos userPos;
-		Chunk* LoadChunk(Pos _chunkPos);
-		std::thread* SpawnSaveThread(Chunk* _chunk);
+		int mapRadiusInChunks;
+		int regionSizeInChunks;
+		int chunkSizeInNodes;
+		vector<Chunk> mapData;
+		vector<RegionFile> regionFileCache;
+
+		Pos calculateRegionPos(Pos playerPos, int regionSizeInNodes);
+		Pos calculateChunkPos(Pos playerPos, Pos regionPos, int regionSizeInNodes);
+
+		Chunk loadChunk(Pos regionPos, Pos chunkPos);
 	};
 }
 

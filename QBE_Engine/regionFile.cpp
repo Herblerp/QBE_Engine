@@ -3,34 +3,29 @@
 
 using namespace std;
 
-
-Data::RegionFile::RegionFile(Pos regionPos)
+namespace Data 
 {
-	_regionPos = regionPos;
-
-	int n = 1;
-	// little endian if true
-	if (*(char*)&n == 1)
+	RegionFile::RegionFile(Pos regionPos, int regionSizeInChunks)
 	{
-		_systemEndianness = SystemEndianness::LITTLE;
+		this->regionPos = regionPos;
+		this->regionSizeInChunks = regionSizeInChunks;
+
+		header.reserve(pow(regionSizeInChunks, 3));
 	}
-	else
+
+	RegionFile::~RegionFile()
 	{
-		_systemEndianness = SystemEndianness::BIG;
+
+	}
+
+	vector<char> RegionFile::readChunkData(Pos chunkPos)
+	{
+		return vector<char>();
+	}
+
+	void RegionFile::writeChunkData(vector<char> chunkData)
+	{
 	}
 }
 
-Data::RegionFile::~RegionFile()
-{
 
-}
-
-uint16_t* Data::RegionFile::ReadChunkData(Pos chunkPos)
-{
-	return nullptr;
-}
-
-bool Data::RegionFile::SaveChunkData(uint16_t* data)
-{
-	return false;
-}

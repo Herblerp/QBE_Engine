@@ -14,11 +14,6 @@ namespace config {
 	enum SYS_ENDIANNESS { LITTLE, BIG };
 	extern SYS_ENDIANNESS ENDIANNESS;
 
-	struct Pos
-	{
-		int pos_x, pos_y, pos_z;
-	};
-
 	bool load_config_file(std::string filename);
 };
 

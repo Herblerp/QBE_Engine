@@ -18,16 +18,7 @@ namespace Data {
 		delete[] nodeData;
 	}
 
-	void Chunk::SaveChunk()
-	{
-		compressChunk();
-	}
-
-	void Chunk::LoadChunk()
-	{
-	}
-
-	char* Chunk::compressChunk()
+	char* Chunk::serialize()
 	{
 		size_t nodeDataSize = pow(config::CHUNK_DIM, 3);
 
@@ -45,7 +36,7 @@ namespace Data {
 
 		size_t dstBufSize = pow(config::CHUNK_DIM, 3);
 		unsigned char* dstBuf = nullptr;
-			
+
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZMA)
 			dstBuf = Algorithms::compressLZMA(byteBuf, byteBufSize, dstBufSize);
 		if (config::ALGORITHM == config::COMPRESSION_ALGORITHM::LZ4)
@@ -59,9 +50,9 @@ namespace Data {
 
 		return nullptr;
 	}
-	char* Chunk::decompressChunk(char*)
+
+	void Chunk::deSerialize(char*)
 	{
-		return nullptr;
 	}
 }
 
