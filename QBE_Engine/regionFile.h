@@ -1,8 +1,14 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
+#include <filesystem>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include "globals.h"
 #include "globals.h"
 
+using namespace std;
 using namespace globals;
 
 namespace Data {
@@ -17,7 +23,9 @@ namespace Data {
 	class RegionFile
 	{
 	public:
-		RegionFile(Pos regionPos, int regionSizeInChunks);
+		RegionFile(Pos regionPos);
+		void readFileHeader(string filename, int amountOfChunksInFile);
+		void writeFileHeader();
 		~RegionFile();
 
 		vector<char> readChunkData(Pos chunkPos);

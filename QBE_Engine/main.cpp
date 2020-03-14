@@ -60,28 +60,15 @@ int init();
 
 int main()
 {
-	Nodedictionary dict;
-
-	config::load_config_file("ELLO");
+	//Start app clock
 	auto t1 = Clock::now();
+	Pos regionPos{ 0, 0, 0 };
+	RegionFile test = RegionFile(regionPos);
 	
-	//if (dict.loadTypes()) {
-		Map map = Map(Pos{ 0,0,0 });
-		cout << "Loaded " << map.blockCount << " blocks and " << map.chunkCount << " chunks." <<"\n";
-		t1 = Clock::now();
-		map.SaveMap();	
-	//}
+	//Stop app clock
 	auto t2 = Clock::now();
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
 	system("pause");
-
-	/*std::cout << "Hello World!\n";
-	unsigned char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
-	int freq[] = { 5, 9, 12, 13, 16, 45 };
-
-	int size = sizeof(arr);
-
-	HuffmanCoding::HuffmanCodes(arr, freq, size);*/
 }
 
 int init() {
