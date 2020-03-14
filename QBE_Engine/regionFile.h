@@ -24,7 +24,7 @@ namespace Data {
 	{
 	public:
 		RegionFile(Pos regionPos);
-		void readFileHeader(string filename, int amountOfChunksInFile);
+		void readFileHeader();
 		void writeFileHeader();
 		~RegionFile();
 
@@ -33,7 +33,9 @@ namespace Data {
 
 	private:
 		Pos regionPos;
+		string filename;
 		int regionSizeInChunks;
+		int amountOfChunksInFile;
 		vector<ChunkInfo> header;
 	};
 }

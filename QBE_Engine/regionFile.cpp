@@ -6,23 +6,21 @@ namespace Data
 	{
 		this->regionPos = regionPos;
 		this->regionSizeInChunks = REGION_SIZE_IN_CHUNKS;
-
-		int amountOfChunksInFile = pow(regionSizeInChunks, 3);
+		this->amountOfChunksInFile = pow(regionSizeInChunks, 3);
 		this->header.reserve(amountOfChunksInFile);
+		this->filename = to_string(regionPos.x) + '_' + to_string(regionPos.y) + '_' + to_string(regionPos.z) + ".qbereg";
 
-		string filename = to_string(regionPos.x) + '_' + to_string(regionPos.y) + '_' + to_string(regionPos.z) + ".qbereg";
-
-		if (filesystem::exists(filename)) 
+		if (filesystem::exists(this->filename)) 
 		{
-
+			readFileHeader();
 		}
 		else 
 		{
-			for (int chunkPosZ = 0; chunkPosZ < regionSizeInChunks; chunkPosZ++)
+			for (int chunkPosZ = 0; chunkPosZ < this->regionSizeInChunks; chunkPosZ++)
 			{
-				for (int chunkPosY = 0; chunkPosY < regionSizeInChunks; chunkPosY++)
+				for (int chunkPosY = 0; chunkPosY < this->regionSizeInChunks; chunkPosY++)
 				{
-					for (int chunkPosX = 0; chunkPosX < regionSizeInChunks; chunkPosX++) 
+					for (int chunkPosX = 0; chunkPosX < this->regionSizeInChunks; chunkPosX++) 
 					{
 						Pos chunkPos;
 						chunkPos.x = chunkPosX;
@@ -40,22 +38,30 @@ namespace Data
 		}
 	}
 
-	void RegionFile::readFileHeader(string filename, int amountOfChunksInFile) 
+	void RegionFile::readFileHeader() 
 	{
-		fstream infile;
-		infile.open(filename, ios::in | ios::binary);
+		ifstream infile;
+		infile.open(this->filename, ios::in | ios::binary);
 		infile.seekg(0);
 
 		ChunkInfo info;
-		for (int chunkCount = 0; chunkCount < amountOfChunksInFile; chunkCount++)
+		for (int chunkCount = 0; chunkCount < this->amountOfChunksInFile; chunkCount++)
 		{
 			infile.read((char*)&info, sizeof(ChunkInfo));
 			this->header.push_back(info);
 		}
+		infile.close();
 	}
 
-	void RegionFile::writeFileHeader() {
+	void RegionFile::writeFileHeader()
+	{
+		ofstream outfile;
+		outfile.open(this->filename, ios::out | ios::binary);
 
+		for (int i = 0; i < header.size(); i++) {
+			outfile.write((char*)&header.at(i), sizeof(ChunkInfo));
+		}
+		outfile.close();
 	}
 
 	vector<char> RegionFile::readChunkData(Pos chunkPos)
@@ -69,7 +75,7 @@ namespace Data
 
 	RegionFile::~RegionFile()
 	{
-
+		writeFileHeader();
 	}
 }
 
