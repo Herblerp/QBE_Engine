@@ -9,7 +9,7 @@ namespace Data {
 	class Map
 	{
 	public:
-		Map(int mapRadius);
+		Map();
 		~Map();
 		void loadMap(Pos userPos);
 		void updateMap(Pos userPos);

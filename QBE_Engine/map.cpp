@@ -5,9 +5,9 @@ using namespace globals;
 
 namespace Data{
 
-	Map::Map(int mapRadiusInChunks)
+	Map::Map()
 	{
-		this->mapRadiusInChunks = mapRadiusInChunks;
+		this->mapRadiusInChunks = MAP_RADIUS_IN_CHUNKS;
 		this->mapSizeInChunks = mapRadiusInChunks * 2 + 1;
 
 		this->regionSizeInChunks = REGION_SIZE_IN_CHUNKS;
