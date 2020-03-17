@@ -14,6 +14,11 @@ using namespace globals;
 
 namespace Data {
 
+	struct RegionFileInitInfo
+	{
+
+	};
+
 	struct ChunkInfo 
 	{
 		Pos chunkPos;
@@ -24,13 +29,10 @@ namespace Data {
 	class RegionFile
 	{
 	public:
-		RegionFile(Pos regionPos);
+		RegionFile(Pos regionPos, int regionSizeInChunks);
 		~RegionFile();
 		
-		void readFileHeader();
-		void writeFileHeader();
-		void createFileHeader();
-
+		bool chunkHasData(Pos chunkPos);
 		vector<char> readChunkData(Pos chunkPos);
 		void writeChunkData(vector<char> chunkData, Pos chunkPos);
 
@@ -42,6 +44,9 @@ namespace Data {
 		int amountOfChunksInFile;
 		vector<ChunkInfo> header;
 
+		void createFileHeader();
+		void readFileHeader();
+		void writeFileHeader();
 		bool compareFirstByte(int i, int j);
 		int calculateChunkIndex(Pos chunkPos);
 		int calculateFirstBytePos(size_t dataSize);

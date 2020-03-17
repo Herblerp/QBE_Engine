@@ -2,12 +2,18 @@
 
 namespace Data 
 {
-	RegionFile::RegionFile(Pos regionPos)
+	//***********************************************
+	//	Constructor / Destructor
+	//***********************************************
+
+	RegionFile::RegionFile(Pos regionPos, int regionSizeInChunks)
 	{
 		this->regionPos = regionPos;
-		this->regionSizeInChunks = REGION_SIZE_IN_CHUNKS;
-		this->headerSizeInBytes = REGION_SIZE_IN_CHUNKS * sizeof(ChunkInfo);
+		this->regionSizeInChunks = regionSizeInChunks;
+
 		this->amountOfChunksInFile = pow(regionSizeInChunks, 3);
+		this->headerSizeInBytes = amountOfChunksInFile * sizeof(ChunkInfo);
+
 		this->header.reserve(amountOfChunksInFile);
 		this->filename = to_string(regionPos.x) + '_' + to_string(regionPos.y) + '_' + to_string(regionPos.z) + ".qbereg";
 
@@ -21,7 +27,56 @@ namespace Data
 		}
 	}
 
-	void RegionFile::createFileHeader() 
+	RegionFile::~RegionFile()
+	{
+		writeFileHeader();
+	}
+
+	//***********************************************
+	//	Public methods
+	//***********************************************
+
+	bool RegionFile::chunkHasData(Pos chunkPos) {
+		ChunkInfo info = this->header.at(calculateChunkIndex(chunkPos));
+		return(info.lastBytePos == 0);
+	}
+
+	vector<char> RegionFile::readChunkData(Pos chunkPos)
+	{
+		ifstream infile;
+		infile.open(filename, ios::in | ios::binary);
+
+		ChunkInfo chunkInfo = this->header.at(calculateChunkIndex(chunkPos));
+		infile.seekg(chunkInfo.firstBytePos);
+
+		vector<char> chunkData;
+		infile.read((char*)&chunkData, sizeof(chunkInfo.lastBytePos - chunkInfo.firstBytePos + 1));
+
+		return chunkData;
+	}
+
+	void RegionFile::writeChunkData(vector<char> chunkData, Pos chunkPos)
+	{
+		fstream file;
+
+		int infoIndex = calculateChunkIndex(chunkPos);
+		ChunkInfo& info = this->header.at(infoIndex);
+
+		int bestFirstBytePos = calculateFirstBytePos(chunkData.size());
+		file.open(filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
+		file.seekg(bestFirstBytePos);
+		file.write((char*)&chunkData, chunkData.size());
+		file.close();
+
+		info.firstBytePos = bestFirstBytePos;
+		info.lastBytePos = bestFirstBytePos + chunkData.size();
+	}
+
+	//***********************************************
+	//	Private Methods
+	//***********************************************
+
+	void RegionFile::createFileHeader()
 	{
 		for (int chunkPosZ = 0; chunkPosZ < this->regionSizeInChunks; chunkPosZ++)
 		{
@@ -44,7 +99,7 @@ namespace Data
 		}
 	}
 
-	void RegionFile::readFileHeader() 
+	void RegionFile::readFileHeader()
 	{
 		ifstream infile;
 		infile.open(this->filename, ios::in | ios::binary);
@@ -70,27 +125,9 @@ namespace Data
 		outfile.close();
 	}
 
-	vector<char> RegionFile::readChunkData(Pos chunkPos)
-	{
-		ifstream infile;
-		infile.open(filename, ios::in | ios::binary);
-		infile.seekg(0);
-
-		return vector<char>();
-	}
-
-	void RegionFile::writeChunkData(vector<char> chunkData, Pos chunkPos)
-	{
-		fstream file;
-
-		ChunkInfo info = this->header.at(calculateChunkIndex(chunkPos));
-
-		int bestFirstBytePos = calculateFirstBytePos(chunkData.size());
-		file.open(filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
-		file.seekg(bestFirstBytePos);
-		file.write((char*)&chunkData, chunkData.size());
-		file.close();
-	}
+	//***********************************************
+	//	Helper Methods
+	//***********************************************
 
 	int RegionFile::calculateFirstBytePos(size_t dataSize) 
 	{
@@ -99,16 +136,29 @@ namespace Data
 
 		int previousLastBytePos = headerSizeInBytes;
 
+		//Sort the chunks according to their position in the file
 		sort(this->header.begin(), this->header.end(), compareFirstByte);
+
+		//Try to find a gap to fit the chunk data in
 		for (int i = 0; i < this->header.size(); i++) 
 		{
-			int size = header.at(i).firstBytePos - previousLastBytePos - 1; //Because the bytes are included
+			int size = header.at(i).firstBytePos - previousLastBytePos - 1; //Because first and last bytes are not included
 			if (size > dataSize && size < bestSize) 
 			{
 				bestFirstBytePos = previousLastBytePos + 1; //We dont want to overwrite the last byte of the previous data
 				bestSize = size;
 			}
 			previousLastBytePos = this->header.at(i).lastBytePos;
+		}
+
+		//If no gap is found bestFirstByte will be 0
+		if (bestFirstBytePos == 0 && this->header.back().lastBytePos == 0) {
+			//If no chunk data is present append to header
+			bestFirstBytePos = headerSizeInBytes + 1;
+		}
+		else {
+			//If data is present append to last chunk data
+			bestFirstBytePos = this->header.back().lastBytePos + 1;
 		}
 		return bestFirstBytePos;
 	}
@@ -120,12 +170,13 @@ namespace Data
 
 	int RegionFile::calculateChunkIndex(Pos chunkPos) 
 	{
-		return chunkPos.x + chunkPos.y * pow(CHUNK_SIZE_IN_NODES, 2) + chunkPos.z * pow(CHUNK_SIZE_IN_NODES, 3);
-	}
-
-	RegionFile::~RegionFile()
-	{
-		writeFileHeader();
+		for (int i = 0; i < this->header.size(); i++) {
+			Pos temp = this->header.at(i).chunkPos;
+			if (temp.x == chunkPos.x && temp.y == chunkPos.y && temp.z == chunkPos.z) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }
 
