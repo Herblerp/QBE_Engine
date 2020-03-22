@@ -47,7 +47,7 @@ namespace Data {
 		void createFileHeader();
 		void readFileHeader();
 		void writeFileHeader();
-		bool compareFirstByte(int i, int j);
+		//bool compareFirstByte(ChunkInfo i, ChunkInfo j);
 		int calculateChunkIndex(Pos chunkPos);
 		int calculateFirstBytePos(size_t dataSize);
 	};

@@ -60,15 +60,28 @@ int init();
 
 int main()
 {
-	//Start app clock
-	auto t1 = Clock::now();
-	Pos regionPos{ 0, 0, 0 };
-	RegionFile test = RegionFile(regionPos);
-	
-	//Stop app clock
-	auto t2 = Clock::now();
-	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
-	system("pause");
+	try {
+		//Start app clock
+		auto t1 = Clock::now();
+
+		//Do stuff here
+		Pos regionPos{ 0, 0, 0 };
+		RegionFile test = RegionFile(regionPos, 8);
+		vector<char> writeme = { 'k', 'k', 'f', 'p', '5', 'x' };
+		test.writeChunkData(writeme, Pos{ 0,0,0 });
+		test.writeChunkData(writeme, Pos{ 1,0,0 });
+		vector<char> data = test.readChunkData(Pos{ 0, 0, 0 });
+		vector<char> data2 = test.readChunkData(Pos{ 1, 0, 0 });
+		cout << "Data size = " << data.size() << '\n';
+
+		//Stop app clock
+		auto t2 = Clock::now();
+		cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
+		system("pause");
+	}
+	catch (runtime_error e) {
+		cout << "ERROR: " << e.what();
+	}
 }
 
 int init() {
