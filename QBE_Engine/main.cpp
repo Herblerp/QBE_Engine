@@ -66,12 +66,18 @@ int main()
 
 		//Do stuff here
 		Pos regionPos{ 0, 0, 0 };
-		RegionFile test = RegionFile(regionPos, 8);
-		vector<char> writeme = { 'k', 'k', 'f', 'p', '5', 'x' };
-		test.writeChunkData(writeme, Pos{ 0,0,0 });
-		test.writeChunkData(writeme, Pos{ 1,0,0 });
-		vector<char> data = test.readChunkData(Pos{ 0, 0, 0 });
-		vector<char> data2 = test.readChunkData(Pos{ 1, 0, 0 });
+
+		RegionFile* temp = new RegionFile(regionPos, 8);
+		delete temp;
+
+		RegionFile* test = new RegionFile(regionPos, 8);
+		vector<unsigned char> writeme = { 'k', 'k', 'f', 'p', '5', 'x' };
+		test->writeChunkData(writeme, Pos{ 0,0,0 });
+		test->writeChunkData(writeme, Pos{ 1,0,0 });
+		delete test;
+		RegionFile* test2 = new RegionFile(regionPos, 8);
+		vector<unsigned char> data = test2->readChunkData(Pos{ 0, 0, 0 });
+		vector<unsigned char> data2 = test2->readChunkData(Pos{ 1, 0, 0 });
 		cout << "Data size = " << data.size() << '\n';
 
 		//Stop app clock

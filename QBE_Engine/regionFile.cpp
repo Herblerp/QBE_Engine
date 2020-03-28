@@ -3,9 +3,6 @@
 
 namespace Data
 {
-	//***********************************************
-	//	Constructor / Destructor
-	//***********************************************
 
 	RegionFile::RegionFile(Pos regionPos, int regionSizeInChunks)
 	{
@@ -33,16 +30,12 @@ namespace Data
 		writeFileHeader();
 	}
 
-	//***********************************************
-	//	Public methods
-	//***********************************************
-
 	bool RegionFile::chunkHasData(Pos chunkPos) {
 		ChunkInfo info = this->header.at(calculateChunkIndex(chunkPos));
 		return(info.lastBytePos == 0);
 	}
 
-	vector<char> RegionFile::readChunkData(Pos chunkPos)
+	vector<unsigned char> RegionFile::readChunkData(Pos chunkPos)
 	{
 		if (chunkPos.x >= regionSizeInChunks || chunkPos.y >= regionSizeInChunks || chunkPos.z >= regionSizeInChunks) {
 			throw runtime_error("Chunk pos out of bounds.");
@@ -58,38 +51,40 @@ namespace Data
 			throw runtime_error("Chunk data not present in file.");
 		}
 
-		int dataSize = chunkInfo.lastBytePos - chunkInfo.firstBytePos + 1;
+		int dataSize = chunkInfo.lastBytePos - chunkInfo.firstBytePos;
 
-		vector<char> chunkData;
+		vector<unsigned char> chunkData;
 		chunkData.reserve(dataSize);
 
 		char c;
+		unsigned char uc;
 		for (int i = 0; i < dataSize; i++) {
-			infile.read(&c, sizeof(char));
-			chunkData.push_back(c);
+			infile.read(&c, sizeof(unsigned char));
+			uc = static_cast<unsigned char>(c);
+			chunkData.push_back(uc);
 		}
 
 		return chunkData;
 	}
 
-	void RegionFile::writeChunkData(vector<char> chunkData, Pos chunkPos)
+	void RegionFile::writeChunkData(vector<unsigned char> chunkData, Pos chunkPos)
 	{
-		fstream file;
+		ofstream file;
 
 		int infoIndex = calculateChunkIndex(chunkPos);
 		ChunkInfo info = this->header.at(infoIndex);
 
 		int bestFirstBytePos = calculateFirstBytePos(chunkData.size());
 		file.open(filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
-		file.seekg(bestFirstBytePos);
+		file.seekp(bestFirstBytePos);
 
-		char c;
+		char c = 0;
+		unsigned char uc = 0;
 		for (int i = 0; i < chunkData.size(); i++) {
-			c = chunkData.at(i);
-			file.write((char *)&c, sizeof(char));
+			uc = chunkData.at(i);
+			c = static_cast<char>(uc);
+			file.write((char *)&uc, sizeof(char));
 		}
-
-		//file.write((char*)&chunkData, chunkData.size());
 		file.close();
 
 		info.firstBytePos = bestFirstBytePos;
@@ -98,10 +93,6 @@ namespace Data
 		infoIndex = calculateChunkIndex(chunkPos);
 		this->header.at(infoIndex) = info;
 	}
-
-	//***********************************************
-	//	Private Methods
-	//***********************************************
 
 	void RegionFile::createFileHeader()
 	{
@@ -144,17 +135,13 @@ namespace Data
 	void RegionFile::writeFileHeader()
 	{
 		ofstream outfile;
-		outfile.open(this->filename, ios::out | ios::binary);
+		outfile.open(this->filename, ios::out | ios::binary | ios::ate);
 
 		for (int i = 0; i < header.size(); i++) {
 			outfile.write((char*)&header.at(i), sizeof(ChunkInfo));
 		}
 		outfile.close();
 	}
-
-	//***********************************************
-	//	Helper Methods
-	//***********************************************
 
 	bool compareFirstByte(ChunkInfo i, ChunkInfo j)
 	{

@@ -33,8 +33,8 @@ namespace Data {
 		~RegionFile();
 		
 		bool chunkHasData(Pos chunkPos);
-		vector<char> readChunkData(Pos chunkPos);
-		void writeChunkData(vector<char> chunkData, Pos chunkPos);
+		vector<unsigned char> readChunkData(Pos chunkPos);
+		void writeChunkData(vector<unsigned char> chunkData, Pos chunkPos);
 
 	private:
 		Pos regionPos;
