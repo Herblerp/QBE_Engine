@@ -75,7 +75,8 @@ namespace Data
 		ChunkInfo info = this->header.at(infoIndex);
 
 		int bestFirstBytePos = calculateFirstBytePos(chunkData.size());
-		file.open(filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
+		file.clear();
+		file.open(filename, fstream::binary | fstream::out | fstream::in);
 		file.seekp(bestFirstBytePos);
 
 		char c = 0;
@@ -115,6 +116,8 @@ namespace Data
 				}
 			}
 		}
+		ofstream file;
+		file.open(filename, fstream::binary | fstream::out);
 	}
 
 	void RegionFile::readFileHeader()
@@ -134,13 +137,15 @@ namespace Data
 
 	void RegionFile::writeFileHeader()
 	{
-		ofstream outfile;
-		outfile.open(this->filename, ios::out | ios::binary | ios::ate);
+		ofstream file;
+		file.clear();
+		file.open(filename, fstream::binary | fstream::out | fstream::in);
+		file.seekp(0);
 
 		for (int i = 0; i < header.size(); i++) {
-			outfile.write((char*)&header.at(i), sizeof(ChunkInfo));
+			file.write((char*)&header.at(i), sizeof(ChunkInfo));
 		}
-		outfile.close();
+		file.close();
 	}
 
 	bool compareFirstByte(ChunkInfo i, ChunkInfo j)
@@ -190,7 +195,7 @@ namespace Data
 				return i;
 			}
 		}
-		throw runtime_error{ "Could not find chunkinfo in header." };
+		throw runtime_error{ "Could not find the index of the requested chunk in the header." };
 	}
 }
 
