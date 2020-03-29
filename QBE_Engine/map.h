@@ -3,7 +3,7 @@
 #include "chunk.h"
 #include "config.h"
 #include "globals.h"
-#include "regionFile.h"
+//#include "regionFile.h"
 
 namespace Data {
 	class Map
@@ -21,7 +21,7 @@ namespace Data {
 		int regionSizeInNodes;
 		int chunkSizeInNodes;
 		vector<Chunk> mapData;
-		vector<RegionFile> regionFileCache;
+		//vector<RegionFile> regionFileCache;
 
 		Pos calculateRegionPos(Pos playerPos);
 		Pos calculateChunkPos(Pos playerPos, Pos regionPos);

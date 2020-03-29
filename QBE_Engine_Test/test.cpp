@@ -2,7 +2,7 @@
 #include "../QBE_Engine_Compression/rlEncoder.h"
 #include "../QBE_Engine_Compression/byteEncoder.h"
 #include "../QBE_Engine_Compression/algorithms.h"
-#include "../QBE_Engine/regionFile.h"
+#include "../QBE_Engine_Data/regionFile.h"
 
 
 using namespace Compression;
@@ -67,11 +67,12 @@ TEST(DataIntegrityTests, LZMAcompression) {
 
 TEST(DataIntegrityTests, RegionFileRW) {
     
-    int regionSize = 8;
-    int chunkSize = 32;
+    srand(25);
+    int regionSize = 2;
+    int chunkSize = 2;
     
-    Pos regionPos{ 0, 0, 0 };
-    RegionFile* regFileW = new RegionFile(regionPos, regionSize);
+    RegionFileInfo regionFileInfo{ regionSize,"testRegion1" };
+    RegionFile* regFileW = new RegionFile(regionFileInfo);
 
     vector<vector<unsigned char>> regionData;
     vector<unsigned char> chunkData;
@@ -87,24 +88,24 @@ TEST(DataIntegrityTests, RegionFileRW) {
     }
 
     int chunkCount = 0;
-    for (int y = 0; y < regionSize; y++) {
-        for (int z = 0; z < regionSize; z++) {
-            for (int x = 0; x < regionSize; x++) {
-                regFileW->writeChunkData(regionData.at(chunkCount), Pos{ x, y, z });
+    for (uint16_t y = 0; y < regionSize; y++) {
+        for (uint16_t z = 0; z < regionSize; z++) {
+            for (uint16_t x = 0; x < regionSize; x++) {
+                regFileW->writeChunkData(regionData.at(chunkCount), ChunkPos{ x, y, z });
                 chunkCount++;
             }
         }
     }
     delete regFileW;
-    RegionFile* regFileR = new RegionFile(regionPos, regionSize);
+    RegionFile* regFileR = new RegionFile(regionFileInfo);
 
     chunkCount = 0;
     vector<unsigned char> temp;
-    for (int y = 0; y < regionSize; y++) {
-        for (int z = 0; z < regionSize; z++) {
-            for (int x = 0; x < regionSize; x++) {
+    for (uint16_t y = 0; y < regionSize; y++) {
+        for (uint16_t z = 0; z < regionSize; z++) {
+            for (uint16_t x = 0; x < regionSize; x++) {
                 temp.clear();
-                temp = regFileR->readChunkData(Pos{ x, y, z });
+                temp = regFileR->readChunkData(ChunkPos{ x, y, z });
                 for (int i = 0; i < temp.size(); i++) {
                     EXPECT_EQ(temp.at(i), regionData.at(chunkCount).at(i));
                 }

@@ -21,16 +21,13 @@
     <ClCompile Include="..\QBE_Engine\map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\QBE_Engine\regionFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\QBE_Engine\nodetype.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\QBE_Engine\nodedictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="regFile.cpp">
+    <ClCompile Include="regionFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,10 +44,7 @@
     <ClInclude Include="..\QBE_Engine\nodetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\QBE_Engine\regionFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="regFile.h">
+    <ClInclude Include="regionFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

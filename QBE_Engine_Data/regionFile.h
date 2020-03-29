@@ -13,12 +13,6 @@ namespace Data {
 		uint16_t z;
 	};
 
-	struct RegionPos {
-		uint16_t x;
-		uint16_t y;
-		uint16_t z;
-	};
-
 	struct RegionFileInfo {
 		int regionSize;
 		string filePath;
@@ -31,12 +25,13 @@ namespace Data {
 		uint16_t sizeInBytes;
 	};
 
-	class RegFile
+	class RegionFile
 	{
 	public:
-		RegFile(RegionFileInfo info);
-		~RegFile();
+		RegionFile(RegionFileInfo info);
+		~RegionFile();
 	private:
+		int headerSizeInBytes;
 		int regionSize;				//!< The 1D size of the region. 
 		string filePath;			//!< The path to the region file. 
 		vector<ChunkInfo> header;	//!< Contains essential information about the chunk data stored in the file.

@@ -42,13 +42,7 @@
 
 #include <iostream>
 #include <vector>
-
-#include "config.h"
-
-#include "Config.h"
-#include "nodedictionary.h"
-#include "map.h"
-#include <chrono>
+#include "../QBE_Engine_Data/regionFile.h"
 
 using namespace std;
 using namespace Data;
@@ -64,21 +58,26 @@ int main()
 		//Start app clock
 		auto t1 = Clock::now();
 
-		//Do stuff here
-		Pos regionPos{ 0, 0, 0 };
+		cout << sizeof(ChunkInfo);
 
-		RegionFile* temp = new RegionFile(regionPos, 8);
+		//Do stuff here
+		RegionFileInfo regionFileInfo{ 8,"testRegion1" };
+
+		RegionFile* temp = new RegionFile(regionFileInfo);
 		delete temp;
 
-		RegionFile* test = new RegionFile(regionPos, 8);
-		vector<unsigned char> writeme = { 'k', 'k', 'f', 'p', '5', 'x' };
-		test->writeChunkData(writeme, Pos{ 0,0,0 });
-		test->writeChunkData(writeme, Pos{ 1,0,0 });
+		RegionFile* test = new RegionFile(regionFileInfo);
+		vector<unsigned char> writeme = {'x','1', '2', '3', '4', 'x','F','F'};
+
+		test->writeChunkData(writeme, ChunkPos{ 0,0,0 });
+		test->writeChunkData(writeme, ChunkPos{ 1,0,0 });
+		//test->writeChunkData(writeme, ChunkPos{ 2,0,0 });
 		delete test;
-		RegionFile* test2 = new RegionFile(regionPos, 8);
-		vector<unsigned char> data = test2->readChunkData(Pos{ 0, 0, 0 });
-		vector<unsigned char> data2 = test2->readChunkData(Pos{ 1, 0, 0 });
+		RegionFile* test2 = new RegionFile(regionFileInfo);
+		vector<unsigned char> data = test2->readChunkData(ChunkPos{ 0, 0, 0 });
+		vector<unsigned char> data2 = test2->readChunkData(ChunkPos{ 1, 0, 0 });
 		cout << "Data size = " << data.size() << '\n';
+		delete test2;
 
 		//Stop app clock
 		auto t2 = Clock::now();
