@@ -30,6 +30,9 @@
     <ClCompile Include="..\QBE_Engine\nodedictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="regFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\QBE_Engine\chunk.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\QBE_Engine\regionFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="regFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

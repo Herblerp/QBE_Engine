@@ -151,6 +151,7 @@
     <ClCompile Include="..\QBE_Engine\nodedictionary.cpp" />
     <ClCompile Include="..\QBE_Engine\nodetype.cpp" />
     <ClCompile Include="..\QBE_Engine\regionFile.cpp" />
+    <ClCompile Include="regFile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\QBE_Engine\chunk.h" />
@@ -158,6 +159,7 @@
     <ClInclude Include="..\QBE_Engine\nodedictionary.h" />
     <ClInclude Include="..\QBE_Engine\nodetype.h" />
     <ClInclude Include="..\QBE_Engine\regionFile.h" />
+    <ClInclude Include="regFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

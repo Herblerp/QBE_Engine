@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 #include "globals.h"
-#include "globals.h"
 
 using namespace std;
 using namespace globals;

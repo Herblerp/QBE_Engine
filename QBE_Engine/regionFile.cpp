@@ -41,7 +41,7 @@ namespace Data
 			throw runtime_error("Chunk pos out of bounds.");
 		}
 
-		ifstream infile;
+		fstream infile;
 		infile.open(filename, ios::in | ios::binary);
 
 		ChunkInfo chunkInfo = this->header.at(calculateChunkIndex(chunkPos));
@@ -69,13 +69,12 @@ namespace Data
 
 	void RegionFile::writeChunkData(vector<unsigned char> chunkData, Pos chunkPos)
 	{
-		ofstream file;
+		fstream file;
 
 		int infoIndex = calculateChunkIndex(chunkPos);
 		ChunkInfo info = this->header.at(infoIndex);
 
 		int bestFirstBytePos = calculateFirstBytePos(chunkData.size());
-		file.clear();
 		file.open(filename, fstream::binary | fstream::out | fstream::in);
 		file.seekp(bestFirstBytePos);
 
@@ -86,6 +85,7 @@ namespace Data
 			c = static_cast<char>(uc);
 			file.write((char *)&uc, sizeof(char));
 		}
+		file.flush();
 		file.close();
 
 		info.firstBytePos = bestFirstBytePos;
@@ -97,6 +97,7 @@ namespace Data
 
 	void RegionFile::createFileHeader()
 	{
+		//Create header in object
 		for (int chunkPosZ = 0; chunkPosZ < this->regionSizeInChunks; chunkPosZ++)
 		{
 			for (int chunkPosY = 0; chunkPosY < this->regionSizeInChunks; chunkPosY++)
@@ -116,13 +117,18 @@ namespace Data
 				}
 			}
 		}
-		ofstream file;
+		//Create the file
+		fstream file;
 		file.open(filename, fstream::binary | fstream::out);
+		file.close();
+
+		//Write the header tot he file
+		writeFileHeader();
 	}
 
 	void RegionFile::readFileHeader()
 	{
-		ifstream infile;
+		fstream infile;
 		infile.open(this->filename, ios::in | ios::binary);
 		infile.seekg(0);
 
@@ -137,7 +143,7 @@ namespace Data
 
 	void RegionFile::writeFileHeader()
 	{
-		ofstream file;
+		fstream file;
 		file.clear();
 		file.open(filename, fstream::binary | fstream::out | fstream::in);
 		file.seekp(0);

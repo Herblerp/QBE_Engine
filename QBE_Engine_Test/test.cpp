@@ -67,8 +67,8 @@ TEST(DataIntegrityTests, LZMAcompression) {
 
 TEST(DataIntegrityTests, RegionFileRW) {
     
-    int regionSize = 1;
-    int chunkSize = 2;
+    int regionSize = 8;
+    int chunkSize = 32;
     
     Pos regionPos{ 0, 0, 0 };
     RegionFile* regFileW = new RegionFile(regionPos, regionSize);
