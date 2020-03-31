@@ -69,7 +69,7 @@ TEST(DataIntegrityTests, RegionFileRW) {
     
     srand(25);
     int regionSize = 2;
-    int chunkSize = 2;
+    int chunkSize = 32;
     
     RegionFileInfo regionFileInfo{ regionSize,"testRegion1" };
     RegionFile* regFileW = new RegionFile(regionFileInfo);

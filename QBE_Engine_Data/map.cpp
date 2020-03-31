@@ -46,7 +46,7 @@ namespace Data{
 		}
 	}
 
-	Chunk Map::loadChunk(Pos regionPos, Pos chunkPos) 
+	Chunk Map::loadChunk(ChunkPos regionPos, ChunkPos chunkPos)
 	{
 		//Check if the region file is cashed
 		//If not, load the file
@@ -56,9 +56,9 @@ namespace Data{
 		return nullptr;
 	}
 
-	Pos Map::calculateRegionPos(Pos pos) 
+	ChunkPos Map::calculateRegionPos(ChunkPos pos)
 	{
-		Pos regionPos;
+		ChunkPos regionPos;
 		regionPos.x = pos.x / regionSizeInNodes;
 		regionPos.y = pos.y / regionSizeInNodes;
 		regionPos.z = pos.z / regionSizeInNodes;
@@ -66,9 +66,9 @@ namespace Data{
 		return regionPos;
 	}
 
-	Pos Map::calculateChunkPos(Pos pos, Pos regionPos) 
+	ChunkPos Map::calculateChunkPos(ChunkPos pos, ChunkPos regionPos)
 	{
-		Pos chunkPos;
+		ChunkPos chunkPos;
 		chunkPos.x = (pos.x - regionPos.x * regionSizeInNodes) / chunkSizeInNodes;
 		chunkPos.y = (pos.y - regionPos.y * regionSizeInNodes) / chunkSizeInNodes;
 		chunkPos.z = (pos.z - regionPos.z * regionSizeInNodes) / chunkSizeInNodes;

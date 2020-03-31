@@ -1,8 +1,6 @@
 #pragma once
 #include <thread>
 #include "chunk.h"
-#include "config.h"
-#include "globals.h"
 //#include "regionFile.h"
 
 namespace Data {
@@ -11,8 +9,8 @@ namespace Data {
 	public:
 		Map();
 		~Map();
-		void loadMap(Pos userPos);
-		void updateMap(Pos userPos);
+		void loadMap(ChunkPos userPos);
+		void updateMap(ChunkPos userPos);
 		void saveMap();
 	private:
 		int mapSizeInChunks;
@@ -23,10 +21,10 @@ namespace Data {
 		vector<Chunk> mapData;
 		//vector<RegionFile> regionFileCache;
 
-		Pos calculateRegionPos(Pos playerPos);
-		Pos calculateChunkPos(Pos playerPos, Pos regionPos);
+		ChunkPos calculateRegionPos(ChunkPos playerPos);
+		ChunkPos calculateChunkPos(ChunkPos playerPos, ChunkPos regionPos);
 
-		Chunk loadChunk(Pos regionPos, Pos chunkPos);
+		Chunk loadChunk(ChunkPos regionPos, ChunkPos chunkPos);
 	};
 }
 
