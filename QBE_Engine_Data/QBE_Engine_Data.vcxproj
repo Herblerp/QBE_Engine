@@ -157,6 +157,7 @@
     <ClInclude Include="..\QBE_Engine\map.h" />
     <ClInclude Include="..\QBE_Engine\nodedictionary.h" />
     <ClInclude Include="..\QBE_Engine\nodetype.h" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="regionFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

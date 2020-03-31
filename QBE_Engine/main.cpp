@@ -68,14 +68,17 @@ int main()
 
 		RegionFile* test = new RegionFile(regionFileInfo);
 		vector<unsigned char> writeme = {'x','1', '2', '3', '4', 'x','F','F'};
+		vector<unsigned char> writeme2 = { '5','5', '5', '3', '4', 'x','F','F', '5', '8', '9' };
 
 		test->writeChunkData(writeme, ChunkPos{ 0,0,0 });
-		test->writeChunkData(writeme, ChunkPos{ 1,0,0 });
+		test->writeChunkData(writeme2, ChunkPos{ 1,0,0 });
+		test->writeChunkData(writeme, ChunkPos{ 1,0,1 });
 		//test->writeChunkData(writeme, ChunkPos{ 2,0,0 });
 		delete test;
 		RegionFile* test2 = new RegionFile(regionFileInfo);
 		vector<unsigned char> data = test2->readChunkData(ChunkPos{ 0, 0, 0 });
 		vector<unsigned char> data2 = test2->readChunkData(ChunkPos{ 1, 0, 0 });
+		vector<unsigned char> data3 = test2->readChunkData(ChunkPos{ 1, 0, 1 });
 		cout << "Data size = " << data.size() << '\n';
 		delete test2;
 
