@@ -16,6 +16,9 @@
     <Filter Include="Exceptions">
       <UniqueIdentifier>{4ae6dc06-b57a-42ce-a873-1b08d3f4c560}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{7d2b8c69-2ec3-437a-b886-2495a0134a8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,12 +27,18 @@
     <ClCompile Include="config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="app.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,5 +52,13 @@
     <None Include="Nodetypes\Red.qbenode">
       <Filter>Node Types</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Shaders\frag.spv">
+      <Filter>Shaders</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Shaders\vert.spv">
+      <Filter>Shaders</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
