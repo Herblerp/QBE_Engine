@@ -69,6 +69,7 @@ private:
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	std::vector<VkFence> imagesInFlight;
+
 	size_t currentFrame = 0;
 
 	std::vector<VkImage> swapChainImages;
@@ -76,6 +77,8 @@ private:
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 	std::vector<VkCommandBuffer> commandBuffers;
 	
+	void mainLoop();
+	void drawFrame();
 	void initWindow();
 	void initVulkan();
 	void initSurface();
@@ -88,8 +91,8 @@ private:
 	void initCommandPool();
 	void initCommandBuffers();
 	void initSyncObjects();
-	void mainLoop();
-	void drawFrame();
+	void recreateSwapChain();
+	void cleanupSwapChain();
 	void cleanup();
 
 	bool isDeviceSuitable(VkPhysicalDevice device);

@@ -22,12 +22,68 @@ void App::run()
 	cleanup();
 }
 
+void App::mainLoop()
+{
+	bool stillRunning = true;
+	bool minimized = false;
+	while (stillRunning) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+
+			switch (event.type) {
+
+			case SDL_QUIT:
+				stillRunning = false;
+				break;
+
+			case SDL_WINDOWEVENT:
+
+				switch (event.window.event) {
+
+				case SDL_WINDOWEVENT_MAXIMIZED:
+					recreateSwapChain();
+					minimized = false;
+					break;
+
+				case SDL_WINDOWEVENT_MINIMIZED:
+					minimized = true;
+					break;
+
+				case SDL_WINDOWEVENT_RESIZED:
+					recreateSwapChain();
+					break;
+
+				default:
+					break;
+				}
+
+			default:
+				break;
+			}
+		}
+		//SDL_Delay(10);
+
+		if (!minimized) {
+			drawFrame();
+		}
+	}
+	vkDeviceWaitIdle(device);
+}
+
 void App::drawFrame() {
 
 	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
 	uint32_t imageIndex;
-	vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+	VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+	if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+		recreateSwapChain();
+		return;
+	}
+	else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+		throw new std::runtime_error("Failed to acquire swap chain image!");
+	}
 
 	// Check if a previous frame is using this image (i.e. there is its fence to wait on)
 	if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
@@ -67,40 +123,27 @@ void App::drawFrame() {
 	presentInfo.pSwapchains = swapChains;
 	presentInfo.pImageIndices = &imageIndex;
 	presentInfo.pResults = nullptr; // Optional
-	vkQueuePresentKHR(presentQueue, &presentInfo);
+
+	result = vkQueuePresentKHR(presentQueue, &presentInfo);
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+		recreateSwapChain();
+	}
+	else if (result != VK_SUCCESS) {
+		throw new std::runtime_error("Failed to present swap chain image!");
+	}
 
 	currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void App::mainLoop()
-{
-	bool stillRunning = true;
-	while (stillRunning) {
-		drawFrame();
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-
-			case SDL_QUIT:
-				stillRunning = false;
-				break;
-
-			default:
-				break;
-			}
-		}
-		SDL_Delay(10);
-	}
-	vkDeviceWaitIdle(device);
-}
-
 void App::initWindow()
 {
+	Uint32 flags = SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE;
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		throw std::runtime_error("Could not initialize SDL.");
 	}
 	window = SDL_CreateWindow("Vulkan Window", SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_VULKAN);
+		SDL_WINDOWPOS_CENTERED, 640, 480, flags);
 	if (window == NULL) {
 		throw std::runtime_error("Could not create SDL window.");
 	}
@@ -265,7 +308,9 @@ void App::initSwapchain()
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-	if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+	VkResult result = vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain);
+
+	if (result != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create swap chain.");
 	}
 
@@ -601,19 +646,24 @@ void App::initSyncObjects() {
 	}
 }
 
-void App::cleanup()
-{
-	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-		vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
-		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
-		vkDestroyFence(device, inFlightFences[i], nullptr);
-	}
-	vkDestroyCommandPool(device, commandPool, nullptr);
+void App::recreateSwapChain() {
+	vkDeviceWaitIdle(device);
+	cleanupSwapChain();
 
+	initSwapchain();
+	initViews();
+	initRenderPass();
+	initPipeline();
+	initFramebuffers();
+	initCommandBuffers();
+}
+
+void App::cleanupSwapChain() {
 	for (auto framebuffer : swapChainFramebuffers) {
 		vkDestroyFramebuffer(device, framebuffer, nullptr);
 	}
 
+	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 	vkDestroyPipeline(device, graphicsPipeline, nullptr);
 	vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 	vkDestroyRenderPass(device, renderPass, nullptr);
@@ -623,6 +673,19 @@ void App::cleanup()
 	}
 
 	vkDestroySwapchainKHR(device, swapChain, nullptr);
+
+}
+
+void App::cleanup()
+{
+	cleanupSwapChain();
+	for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
+		vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
+		vkDestroyFence(device, inFlightFences[i], nullptr);
+	}
+
+	vkDestroyCommandPool(device, commandPool, nullptr);
 	vkDestroySurfaceKHR(instance, surface, nullptr);
 	vkDestroyDevice(this->device, nullptr);
 	vkDestroyInstance(this->instance, nullptr);
@@ -655,7 +718,13 @@ VkExtent2D App::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) {
 		return capabilities.currentExtent;
 	}
 	else {
-		VkExtent2D actualExtent = { WIDTH, HEIGHT };
+		int width, height;
+		SDL_Vulkan_GetDrawableSize(window, &width, &height);
+
+		VkExtent2D actualExtent = {
+			static_cast<uint32_t>(width),
+			static_cast<uint32_t>(height)
+		};
 
 		actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
 		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
