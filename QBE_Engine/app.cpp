@@ -90,8 +90,8 @@ void App::mainLoop()
 			}
 		}
 		SDL_Delay(10);
-		//vkDeviceWaitIdle(device);
 	}
+	vkDeviceWaitIdle(device);
 }
 
 void App::initWindow()
