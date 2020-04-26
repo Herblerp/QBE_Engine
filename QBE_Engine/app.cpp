@@ -40,6 +40,11 @@ void App::mainLoop()
 
 				switch (event.window.event) {
 
+				case SDL_WINDOWEVENT_RESTORED:
+					recreateSwapChain();
+					minimized = false;
+					break;
+
 				case SDL_WINDOWEVENT_MAXIMIZED:
 					recreateSwapChain();
 					minimized = false;
