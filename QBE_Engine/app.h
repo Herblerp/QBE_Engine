@@ -51,9 +51,11 @@ struct Vertex {
 };
 
 const std::vector<Vertex> vertices = {
-	{{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+	{{-0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
+	{{-0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
 	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-	{{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+	{{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}
+	
 };
 
 struct QueueFamilyIndices {
@@ -88,6 +90,8 @@ public:
 private:
 	SDL_Window* window;
 
+	VkBuffer vertexBuffer;
+	VkDeviceMemory vertexBufferMemory;
 	VkCommandPool commandPool;
 	VkPipeline graphicsPipeline;
 	VkRenderPass renderPass;
@@ -133,6 +137,9 @@ private:
 	void cleanupSwapChain();
 	void cleanup();
 
+	//Helpers
+	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 	bool isDeviceSuitable(VkPhysicalDevice device);
 	bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
@@ -143,5 +150,6 @@ private:
 	VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 	static std::vector<char> readFile(const std::string& filename);
 	VkShaderModule createShaderModule(const std::vector<char>& code);
+	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 };
 

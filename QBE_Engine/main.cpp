@@ -53,6 +53,7 @@ typedef chrono::high_resolution_clock Clock;
 int main()
 {
 	//Start app clock
+	cout << "Hello world!";
 	auto t1 = Clock::now();
 
 	App* app = new App();
@@ -65,5 +66,5 @@ int main()
 	//Stop app clock
 	auto t2 = Clock::now();
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
-	system("pause");
+	//system("pause");
 }

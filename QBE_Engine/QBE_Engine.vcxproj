@@ -37,6 +37,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -51,6 +52,7 @@
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -186,14 +188,14 @@
     <None Include="Nodetypes\Blue.qbenode" />
     <None Include="Nodetypes\Green.qbenode" />
     <None Include="Nodetypes\Red.qbenode" />
-    <None Include="Shaders\frag.spv">
+    <CopyFileToFolders Include="Shaders\frag.spv">
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
-    </None>
-    <None Include="Shaders\vert.spv">
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Shaders\vert.spv">
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
-    </None>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QBE_Engine_Compression\QBE_Engine_Compression.vcxproj">
