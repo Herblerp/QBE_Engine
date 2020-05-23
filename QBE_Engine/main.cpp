@@ -66,5 +66,5 @@ int main()
 	//Stop app clock
 	auto t2 = Clock::now();
 	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
-	//system("pause");
+	system("pause");
 }

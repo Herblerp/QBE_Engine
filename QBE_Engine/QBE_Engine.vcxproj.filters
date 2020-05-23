@@ -52,6 +52,12 @@
     <None Include="Nodetypes\Red.qbenode">
       <Filter>Node Types</Filter>
     </None>
+    <None Include="Shaders\shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Shaders\frag.spv">

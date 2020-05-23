@@ -19,6 +19,12 @@
 #include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan_core.h>
 
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
+
 struct Vertex {
 	glm::vec2 pos;
 	glm::vec3 color;
@@ -50,12 +56,21 @@ struct Vertex {
 	}
 };
 
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
 const std::vector<Vertex> vertices = {
 	{{-0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
 	{{-0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
 	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
 	{{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}
-	
+};
+
+const std::vector<uint16_t> indices = {
+	0, 1, 2, 2, 1, 3
 };
 
 struct QueueFamilyIndices {
@@ -92,9 +107,12 @@ private:
 
 	VkBuffer vertexBuffer;
 	VkDeviceMemory vertexBufferMemory;
+	VkBuffer indexBuffer;
+	VkDeviceMemory indexBufferMemory;
 	VkCommandPool commandPool;
 	VkPipeline graphicsPipeline;
 	VkRenderPass renderPass;
+	VkDescriptorSetLayout descriptorSetLayout;
 	VkPipelineLayout pipelineLayout;
 	VkInstance instance;
 	VkDevice device;
@@ -105,7 +123,11 @@ private:
 	VkSwapchainKHR swapChain;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
+	VkDescriptorPool descriptorPool;
 
+	std::vector<VkDescriptorSet> descriptorSets;
+	std::vector<VkBuffer> uniformBuffers;
+	std::vector<VkDeviceMemory> uniformBuffersMemory;
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
@@ -127,15 +149,22 @@ private:
 	void initSwapchain();
 	void initViews();
 	void initRenderPass();
+	void initDescriptorSetLayout();
 	void initPipeline();
 	void initFramebuffers();
 	void initCommandPool();
 	void initVertexBuffer();
+	void initIndexBuffer();
+	void initUniformBuffers();
+	void initDescriptorPool();
+	void initDescriptorSets();
 	void initCommandBuffers();
 	void initSyncObjects();
 	void recreateSwapChain();
 	void cleanupSwapChain();
 	void cleanup();
+
+	void updateUniformBuffer(uint32_t currentImage);
 
 	//Helpers
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

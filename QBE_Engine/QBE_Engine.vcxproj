@@ -196,6 +196,8 @@
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <None Include="Shaders\shader.frag" />
+    <None Include="Shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QBE_Engine_Compression\QBE_Engine_Compression.vcxproj">
