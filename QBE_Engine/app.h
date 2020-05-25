@@ -20,14 +20,16 @@
 #include <vulkan/vulkan_core.h>
 
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <chrono>
 
 struct Vertex {
-	glm::vec2 pos;
+	glm::vec3 pos;
 	glm::vec3 color;
+	glm::vec2 texCoord;
 
 	static VkVertexInputBindingDescription getBindingDescription() {
 		VkVertexInputBindingDescription bindingDescription{};
@@ -39,18 +41,23 @@ struct Vertex {
 		return bindingDescription;
 	}
 
-	static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+	static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
-		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
 		attributeDescriptions[1].binding = 0;
 		attributeDescriptions[1].location = 1;
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+		attributeDescriptions[2].binding = 0;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
 		return attributeDescriptions;
 	}
@@ -95,6 +102,12 @@ private:
 
 	SDL_Window* window;
 
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
+
+	VkSampler textureSampler;
+	VkImageView textureImageView;
 	VkImage textureImage;
 	VkDeviceMemory textureImageMemory;
 	VkBuffer vertexBuffer;
@@ -140,15 +153,17 @@ private:
 	void initWindow();
 	void initVulkan();
 	void initSurface();
-	void initDevice();
+	void createDevice();
 	void initSwapchain();
-	void initViews();
-	void initRenderPass();
-	void initDescriptorSetLayout();
-	void initPipeline();
-	void initFramebuffers();
+	void createImageViews();
+	void createRenderPass();
+	void createDescriptorSetLayout();
+	void createPipeline();
+	void createFramebuffers();
 	void initCommandPool();
+	void createDepthResources();
 	void createTextureImage();
+	void createTextureSampler();
 
 	void createVertexBuffers();
 	void recreateVertexBuffers();
@@ -156,17 +171,22 @@ private:
 	void initUniformBuffers();
 	void updateUniformBuffer(uint32_t currentImage);
 
-	void initDescriptorPool();
-	void initDescriptorSets();
+	void createDescriptorPool();
+	void createDescriptorSets();
 	void createCommandBuffers();
 	void initSyncObjects();
 	void recreateSwapChain();
+	void createTextureImageView();
 	
 
 	void cleanupSwapChain();
 	void cleanup();
 
 	//Helpers
+	bool hasStencilComponent(VkFormat format);
+	VkFormat findDepthFormat();
+	VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 	VkCommandBuffer beginSingleTimeCommands();
