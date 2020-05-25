@@ -62,17 +62,6 @@ struct UniformBufferObject {
 	glm::mat4 proj;
 };
 
-const std::vector<Vertex> vertices = {
-	{{-0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
-	{{-0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
-	{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-	{{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}
-};
-
-const std::vector<uint16_t> indices = {
-	0, 1, 2, 2, 1, 3
-};
-
 struct QueueFamilyIndices {
 	std::optional<uint32_t> graphicsFamily;
 	std::optional<uint32_t> presentFamily;
@@ -103,6 +92,7 @@ public:
 	void run();
 
 private:
+
 	SDL_Window* window;
 
 	VkBuffer vertexBuffer;
@@ -124,6 +114,9 @@ private:
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	VkDescriptorPool descriptorPool;
+
+	std::vector<uint16_t> indices;
+	std::vector<Vertex> vertices;
 
 	std::vector<VkDescriptorSet> descriptorSets;
 	std::vector<VkBuffer> uniformBuffers;
@@ -153,18 +146,22 @@ private:
 	void initPipeline();
 	void initFramebuffers();
 	void initCommandPool();
-	void initVertexBuffer();
-	void initIndexBuffer();
+
+	void createVertexBuffers();
+	void recreateVertexBuffers();
+
 	void initUniformBuffers();
+	void updateUniformBuffer(uint32_t currentImage);
+
 	void initDescriptorPool();
 	void initDescriptorSets();
-	void initCommandBuffers();
+	void createCommandBuffers();
 	void initSyncObjects();
 	void recreateSwapChain();
+	
+
 	void cleanupSwapChain();
 	void cleanup();
-
-	void updateUniformBuffer(uint32_t currentImage);
 
 	//Helpers
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

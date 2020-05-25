@@ -6,6 +6,19 @@ App::App()
 
 void App::run()
 {
+	//Initial vertex data can not be of size 0!
+
+	vertices = {
+			{{-0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}},
+			{{-0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
+			{{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+			{{0.5f, -0.5f}, {1.0f, 0.0f, 1.0f}}
+	};
+
+	indices = {
+			0, 1, 2, 2, 1, 3
+	};
+
 	initWindow();
 	initVulkan();
 	initSurface();
@@ -17,12 +30,11 @@ void App::run()
 	initPipeline();
 	initFramebuffers();
 	initCommandPool();
-	initVertexBuffer();
-	initIndexBuffer();
+	createVertexBuffers();
 	initUniformBuffers();
 	initDescriptorPool();
 	initDescriptorSets();
-	initCommandBuffers();
+	createCommandBuffers();
 	initSyncObjects();
 	mainLoop();
 	cleanup();
@@ -32,54 +44,57 @@ void App::mainLoop()
 {
 	bool stillRunning = true;
 	bool minimized = false;
+
 	while (stillRunning) {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
+		//SDL_Event event;
+		//while (SDL_PollEvent(&event)) {
 
-			switch (event.type) {
+		//	switch (event.type) {
 
-			case SDL_QUIT:
-				stillRunning = false;
-				break;
+		//	case SDL_QUIT:
+		//		stillRunning = false;
+		//		break;
 
-			case SDL_WINDOWEVENT:
+		//	case SDL_WINDOWEVENT:
 
-				switch (event.window.event) {
+		//		switch (event.window.event) {
 
-				case SDL_WINDOWEVENT_RESTORED:
-					recreateSwapChain();
-					minimized = false;
-					break;
+		//		case SDL_WINDOWEVENT_RESTORED:
+		//			recreateSwapChain();
+		//			minimized = false;
+		//			break;
 
-				case SDL_WINDOWEVENT_MAXIMIZED:
-					recreateSwapChain();
-					minimized = false;
-					break;
+		//		case SDL_WINDOWEVENT_MAXIMIZED:
+		//			recreateSwapChain();
+		//			minimized = false;
+		//			break;
 
-				case SDL_WINDOWEVENT_MINIMIZED:
-					minimized = true;
-					break;
+		//		case SDL_WINDOWEVENT_MINIMIZED:
+		//			minimized = true;
+		//			break;
 
-				case SDL_WINDOWEVENT_RESIZED:
-					recreateSwapChain();
-					break;
+		//		case SDL_WINDOWEVENT_RESIZED:
+		//			recreateSwapChain();
+		//			break;
 
-				default:
-					break;
-				}
+		//		default:
+		//			break;
+		//		}
 
-			default:
-				break;
-			}
-		}
-		//SDL_Delay(10);
+		//	default:
+		//		break;
+		//	}
+		//}
+		////SDL_Delay(10);
 
-		if (!minimized) {
-			drawFrame();
-		}
-		else {
-			std::cout << "Window minimized, not drawing.";
-		}
+		//if (!minimized) {
+		//	drawFrame();
+		//}
+		//else {
+		//	std::cout << "Window minimized, not drawing.";
+		//}
+		
+		drawFrame();
 	}
 	vkDeviceWaitIdle(device);
 }
@@ -569,17 +584,19 @@ void App::initCommandPool() {
 	}
 }
 
-void App::initVertexBuffer()
+void App::createVertexBuffers()
 {
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
+
+	//Vertex buffer
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void* data;
-	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, vertices.data(), (size_t)bufferSize);
+	void* vertexData;
+	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &vertexData);
+	memcpy(vertexData, vertices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
@@ -588,19 +605,13 @@ void App::initVertexBuffer()
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
-}
 
-void App::initIndexBuffer()
-{
-	VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-	VkBuffer stagingBuffer;
-	VkDeviceMemory stagingBufferMemory;
+	//Index buffer
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
-	void* data;
-	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-	memcpy(data, indices.data(), (size_t)bufferSize);
+	void* indexData;
+	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &indexData);
+	memcpy(indexData, indices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
@@ -609,6 +620,22 @@ void App::initIndexBuffer()
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
+}
+
+void App::recreateVertexBuffers() {
+
+	vkDeviceWaitIdle(device);
+
+	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
+	vkDestroyBuffer(device, indexBuffer, nullptr);
+	vkFreeMemory(device, indexBufferMemory, nullptr);
+
+	vkDestroyBuffer(device, vertexBuffer, nullptr);
+	vkFreeMemory(device, vertexBufferMemory, nullptr);
+
+	createVertexBuffers();
+	createCommandBuffers();
 }
 
 void App::initUniformBuffers()
@@ -621,6 +648,25 @@ void App::initUniformBuffers()
 	for (size_t i = 0; i < swapChainImages.size(); i++) {
 		createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
 	}
+}
+
+void App::updateUniformBuffer(uint32_t currentImage)
+{
+	static auto startTime = std::chrono::high_resolution_clock::now();
+
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+	UniformBufferObject ubo{};
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+	ubo.proj[1][1] *= -1;
+
+	void* data;
+	vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+	memcpy(data, &ubo, sizeof(ubo));
+	vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
 }
 
 void App::initDescriptorPool()
@@ -673,7 +719,7 @@ void App::initDescriptorSets()
 	}
 }
 
-void App::initCommandBuffers() {
+void App::createCommandBuffers() {
 	commandBuffers.resize(swapChainFramebuffers.size());
 
 	VkCommandBufferAllocateInfo allocInfo{};
@@ -761,7 +807,7 @@ void App::recreateSwapChain() {
 	initUniformBuffers();
 	initDescriptorPool();
 	initDescriptorSets();
-	initCommandBuffers();
+	createCommandBuffers();
 }
 
 void App::cleanupSwapChain() {
@@ -813,25 +859,6 @@ void App::cleanup()
 
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-}
-
-void App::updateUniformBuffer(uint32_t currentImage)
-{
-	static auto startTime = std::chrono::high_resolution_clock::now();
-
-	auto currentTime = std::chrono::high_resolution_clock::now();
-	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-	UniformBufferObject ubo{};
-	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
-	ubo.proj[1][1] *= -1;
-
-	void* data;
-	vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-	memcpy(data, &ubo, sizeof(ubo));
-	vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
 }
 
 void App::createBuffer(	VkDeviceSize size, 
