@@ -11,6 +11,7 @@
 #include <optional>
 #include <set>
 #include <fstream>
+#include <thread>
 
 #include <glm/glm.hpp>
 #include <SDL2/SDL.h>
@@ -25,6 +26,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <chrono>
+
+typedef std::chrono::high_resolution_clock Clock;
+
 
 struct Vertex {
 	glm::vec3 pos;
@@ -92,6 +96,8 @@ const int WIDTH = 800;
 const int HEIGHT = 600;
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
+enum DrawStatus{SUSPEND, RESUME, RELOAD, ACTIVE};
+
 class App
 {
 public:
@@ -99,6 +105,12 @@ public:
 	void run();
 
 private:
+
+	DrawStatus drawStatus = ACTIVE;
+
+	bool appIsRunning = true;
+	bool drawLoopActive = true;
+	bool windowIsMinimized = false;
 
 	SDL_Window* window;
 
@@ -149,12 +161,14 @@ private:
 	std::vector<VkCommandBuffer> commandBuffers;
 	
 	void mainLoop();
+	void drawLoop(int max_fps);
+	
 	void drawFrame();
 	void initWindow();
 	void initVulkan();
 	void initSurface();
 	void createDevice();
-	void initSwapchain();
+	void createSwapChain();
 	void createImageViews();
 	void createRenderPass();
 	void createDescriptorSetLayout();

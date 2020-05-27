@@ -148,6 +148,9 @@
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy $(VULKAN_SDK)\Third-Party\Bin\SDL2.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -162,7 +165,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -173,6 +176,9 @@
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>copy $(VULKAN_SDK)\Third-Party\Bin\SDL2.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="app.cpp" />
@@ -189,12 +195,18 @@
     <None Include="Nodetypes\Green.qbenode" />
     <None Include="Nodetypes\Red.qbenode" />
     <CopyFileToFolders Include="Shaders\frag.spv">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent>false</DeploymentContent>
       <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Shaders</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shaders</DestinationFolders>
     </CopyFileToFolders>
     <CopyFileToFolders Include="Shaders\vert.spv">
       <DeploymentContent>true</DeploymentContent>
       <FileType>Document</FileType>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Shaders</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Shaders</DestinationFolders>
     </CopyFileToFolders>
     <None Include="Shaders\shader.frag" />
     <None Include="Shaders\shader.vert" />
@@ -206,6 +218,12 @@
     <ProjectReference Include="..\QBE_Engine_Data\QBE_Engine_Data.vcxproj">
       <Project>{5d27bb1c-3cd1-4722-89de-9368f37f7c24}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Textures\grass_texture_512.png">
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)Textures</DestinationFolders>
+      <DestinationFolders Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)Textures</DestinationFolders>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

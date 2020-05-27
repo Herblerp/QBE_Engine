@@ -11,34 +11,45 @@ void App::run()
 	//Initial vertex data can not be of size 0!
 
 	vertices = {
-	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-	{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-	{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}, //0
+	{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}}, //1
+	{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}}, //2
+	{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}, //3
 
-	{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-	{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-	{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}, //4
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}}, //6
+	{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}, //7
+	{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}}, //5
+
+	{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}, //8
+	{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}}, //10
+	{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}}, //11
+	{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}}, //9	
+
+	{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}, //12
+	{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}, //14
+	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, //15
+	{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, //13
+
+	{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, //17
+	{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, //19
+	{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}}, //18
+	{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}} //16
 	};
 
 	indices = {
 			0, 1, 2, 2, 3, 0,
-			0, 4, 5, 5, 1, 0,
-			1, 5, 6, 6, 2, 1,
-			2, 6, 7, 7, 3, 2,
-			3, 7, 4, 4, 0, 3
-			//0, 3, 6, 6, 4, 0,
-			//0, 4, 5, 5, 1, 0,
-			//2, 1, 5, 5, 7, 2,
-			//2, 7, 6, 6, 3, 2
+			4,5,6,6,7,4,
+			8,9,10,10,11,8,
+			12,13,14,14,15,12,
+			16,17,18,18,19,16
 	};
 
 	initWindow();
 	initVulkan();
 	initSurface();
 	createDevice();
-	initSwapchain();
+	createSwapChain();
 	createImageViews();
 	createRenderPass();
 	createDescriptorSetLayout();
@@ -55,65 +66,116 @@ void App::run()
 	createDescriptorSets();
 	createCommandBuffers();
 	initSyncObjects();
+
 	mainLoop();
 	cleanup();
 }
 
 void App::mainLoop()
 {
-	bool stillRunning = true;
-	bool minimized = false;
+	//Start drawing
+	drawLoopActive = true;
+	std::thread drawThread;
+	drawThread = std::thread([this] { this->drawLoop(300); });
 
-	while (stillRunning) {
-		//SDL_Event event;
-		//while (SDL_PollEvent(&event)) {
+	while (appIsRunning) {
+			SDL_Event event;
+			while (SDL_PollEvent(&event)) {
 
-		//	switch (event.type) {
+				switch (event.type) {
 
-		//	case SDL_QUIT:
-		//		stillRunning = false;
-		//		break;
+				case SDL_QUIT:
+					appIsRunning = false;
+					break;
 
-		//	case SDL_WINDOWEVENT:
+				case SDL_WINDOWEVENT:
 
-		//		switch (event.window.event) {
+					switch (event.window.event) {
 
-		//		case SDL_WINDOWEVENT_RESTORED:
-		//			recreateSwapChain();
-		//			minimized = false;
-		//			break;
+					case SDL_WINDOWEVENT_RESTORED:	
+						if (drawStatus != SUSPEND) {
+							drawStatus = RELOAD;
+						}
+						else{
+							drawStatus = RESUME;
+						}
+						break;
 
-		//		case SDL_WINDOWEVENT_MAXIMIZED:
-		//			recreateSwapChain();
-		//			minimized = false;
-		//			break;
+					case SDL_WINDOWEVENT_MAXIMIZED:
+						drawStatus = RELOAD;
+						break;
 
-		//		case SDL_WINDOWEVENT_MINIMIZED:
-		//			minimized = true;
-		//			break;
+					case SDL_WINDOWEVENT_MINIMIZED:
+						drawStatus = SUSPEND;
+						break;
 
-		//		case SDL_WINDOWEVENT_RESIZED:
-		//			recreateSwapChain();
-		//			break;
+					case SDL_WINDOWEVENT_RESIZED:
+						drawStatus = RELOAD;
+						break;
 
-		//		default:
-		//			break;
-		//		}
+					default:
+						break;
+					}
 
-		//	default:
-		//		break;
-		//	}
-		//}
-		////SDL_Delay(10);
+				default:
+					break;
+				}
+			}
 
-		//if (!minimized) {
-		//	drawFrame();
-		//}
-		//else {
-		//	std::cout << "Window minimized, not drawing.";
-		//}
-		
+			switch (drawStatus)
+			{
+			case RESUME:
+
+				recreateSwapChain();
+				drawLoopActive = true;
+				drawThread = std::thread([this] { this->drawLoop(60); });
+				drawStatus = ACTIVE;
+				break;
+
+			case RELOAD:
+
+				drawLoopActive = false;
+
+				if (drawThread.joinable()) {
+					drawThread.join();
+				}
+
+				recreateSwapChain();
+				drawLoopActive = true;
+				drawThread = std::thread([this] { this->drawLoop(60); });
+				drawStatus = ACTIVE;
+
+				break;
+
+			case SUSPEND:
+
+				drawLoopActive = false;
+
+				if (drawThread.joinable()) {
+					drawThread.join();
+				}
+
+				break;
+
+			case ACTIVE:
+				break;
+
+			default:
+				break;
+			}
+			SDL_Delay(10);
+		}	
+	drawThread.join();
+}
+
+void App::drawLoop(int max_fps)
+{
+	max_fps = max_fps + 8;
+
+	while (drawLoopActive && appIsRunning) {
 		drawFrame();
+		std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
+		std::this_thread::sleep_for(refresh_rate);
 	}
 	vkDeviceWaitIdle(device);
 }
@@ -177,7 +239,7 @@ void App::drawFrame() {
 	result = vkQueuePresentKHR(presentQueue, &presentInfo);
 
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
-		recreateSwapChain();
+		drawLoopActive = false;
 	}
 	else if (result != VK_SUCCESS) {
 		throw std::runtime_error("failed to present swap chain image!");
@@ -222,10 +284,10 @@ void App::initVulkan()
 
 	//Use validation layers if this is a debug build
 	std::vector<const char*> layers;
-	#if defined(_DEBUG)
+#if defined(_DEBUG)
 	layers.push_back("VK_LAYER_LUNARG_standard_validation");
 	layers.push_back("VK_LAYER_LUNARG_monitor");
-	#endif
+#endif
 
 	VkInstanceCreateInfo instInfo = {};
 	instInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -311,7 +373,7 @@ void App::createDevice()
 	vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
-void App::initSwapchain()
+void App::createSwapChain()
 {
 	SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
@@ -633,7 +695,7 @@ void App::createTextureImage()
 	transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 	copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 	transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-	
+
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -738,12 +800,63 @@ void App::updateUniformBuffer(uint32_t currentImage)
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 	UniformBufferObject ubo{};
-	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	//ubo.model = glm::translate(glm::mat4(1.0f), time * glm::vec3(0.001f, 0.0f, 0.0f));
-	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+
+	//Start playground
+
+	float camera_fov = 45.0f;
+	float ratio = swapChainExtent.width / (float)swapChainExtent.height;
+
+
+	float camera_verticalAngle = -45.0f;
+	float camera_horizontalAngle = 0.0f;
+	glm::vec3 camera_position(-2.0f, 0.0f, 2.0f);
+	glm::vec3 camera_direction(
+		cos(glm::radians(camera_verticalAngle)) * cos(glm::radians(camera_horizontalAngle)),
+		cos(glm::radians(camera_verticalAngle)) * sin(glm::radians(camera_horizontalAngle)),
+		sin(glm::radians(camera_verticalAngle))
+	);
+	glm::vec3 world_direction_up;
+
+	//Do not use angles greater than 180! 
+	//TODO: use modulus to determine what sign to use
+	if (camera_verticalAngle >= -90.0f && camera_verticalAngle <= 90.0f) {
+		world_direction_up = glm::vec3(0.0f, 0.0f, -1.0f);
+	}
+	else {
+		world_direction_up = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+	
+	glm::vec3 camera_direction_right(glm::normalize(glm::cross(world_direction_up, camera_direction)));
+	glm::vec3 camera_direction_up(glm::normalize(glm::cross(camera_direction_right, camera_direction)));
+	glm::vec3 camera_target = camera_position + camera_direction;
+
+	float terrain_rotation_angle = time * 45.0f;
+	glm::vec3 terrain_scale(1.0f, 1.0f, 1.0f);
+	glm::vec3 terrain_position(0.0f, 0.0f, 0.0f);
+	glm::vec3 terrain_rotation_direction(1.0f, 1.0f, 0.0f);
+
+	glm::mat4 model_matrix;
+	model_matrix = glm::translate(glm::mat4(1.0f), terrain_position);
+	model_matrix = glm::rotate(model_matrix, glm::radians(terrain_rotation_angle), terrain_rotation_direction);
+	model_matrix = glm::scale(model_matrix, terrain_scale);
+
+	
+
+	ubo.model = model_matrix;
+	ubo.view = glm::lookAt(camera_position, camera_target, camera_direction_up);
+	ubo.proj = glm::perspective(glm::radians(camera_fov), ratio, 0.1f, 100.0f);
 	ubo.proj[1][1] *= -1;
 
+
+	//Stop playground
+
+	//ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//ubo.model = glm::translate(glm::mat4(1.0f), time * glm::vec3(0.001f, 0.0f, 0.0f));
+	//ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+	//ubo.proj[1][1] *= -1;
+
+	//This part should be made thread safe
 	void* data;
 	vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
 	memcpy(data, &ubo, sizeof(ubo));
@@ -922,13 +1035,15 @@ void App::initSyncObjects() {
 }
 
 void App::recreateSwapChain() {
+	
 	vkDeviceWaitIdle(device);
-	cleanupSwapChain();
 
-	initSwapchain();
+	cleanupSwapChain();
+	createSwapChain();
 	createImageViews();
 	createRenderPass();
 	createPipeline();
+	createDepthResources();
 	createFramebuffers();
 	initUniformBuffers();
 	createDescriptorPool();
@@ -942,6 +1057,11 @@ void App::createTextureImageView()
 }
 
 void App::cleanupSwapChain() {
+
+	vkDestroyImageView(device, depthImageView, nullptr);
+	vkDestroyImage(device, depthImage, nullptr);
+	vkFreeMemory(device, depthImageMemory, nullptr);
+
 	for (auto framebuffer : swapChainFramebuffers) {
 		vkDestroyFramebuffer(device, framebuffer, nullptr);
 	}
@@ -1203,11 +1323,11 @@ void App::createImage(uint32_t width, uint32_t height, VkFormat format, VkImageT
 	vkBindImageMemory(device, image, imageMemory, 0);
 }
 
-void App::createBuffer(	VkDeviceSize size,
-						VkBufferUsageFlags usage, 
-						VkMemoryPropertyFlags properties, 
-						VkBuffer& buffer, 
-						VkDeviceMemory& bufferMemory) {
+void App::createBuffer(VkDeviceSize size,
+	VkBufferUsageFlags usage,
+	VkMemoryPropertyFlags properties,
+	VkBuffer& buffer,
+	VkDeviceMemory& bufferMemory) {
 
 	VkBufferCreateInfo bufferInfo{};
 	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -1318,7 +1438,7 @@ bool App::checkDeviceExtensionSupport(VkPhysicalDevice device)
 
 QueueFamilyIndices App::findQueueFamilies(VkPhysicalDevice device) {
 	QueueFamilyIndices indices;
-	
+
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
@@ -1373,7 +1493,7 @@ std::vector<char> App::readFile(const std::string& filename) {
 	std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
 	if (!file.is_open()) {
-		throw std::runtime_error("Failed to open file: " + filename );
+		throw std::runtime_error("Failed to open file: " + filename);
 	}
 
 	size_t fileSize = (size_t)file.tellg();
