@@ -106,14 +106,29 @@ public:
 
 private:
 
+	//Variables for controlling loops
 	DrawStatus drawStatus = ACTIVE;
-
 	bool appIsRunning = true;
 	bool drawLoopActive = true;
 	bool windowIsMinimized = false;
 
-	SDL_Window* window;
+	//Variables for controlling input and movement
+	bool KEYS[322];
+	bool relative_mode_enabled;
+	float movement_speed;
+	float mouse_speed;
+	int mouseDeltaX;
+	int mouseDeltaY;
+	float horizontal_camera_angle;
+	float vertical_camera_angle;
 
+	glm::vec3 camera_position;
+	glm::vec3 camera_direction_up;
+	glm::vec3 camera_target;
+	
+
+	//Vulkan related variabled
+	SDL_Window* window;
 	VkImage depthImage;
 	VkDeviceMemory depthImageMemory;
 	VkImageView depthImageView;
@@ -161,6 +176,8 @@ private:
 	std::vector<VkCommandBuffer> commandBuffers;
 	
 	void mainLoop();
+	void processInput(int deltaTime);
+	void handleWindowEvent(SDL_Event event);
 	void drawLoop(int max_fps);
 	
 	void drawFrame();

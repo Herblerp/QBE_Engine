@@ -4,10 +4,6 @@
 
 App::App()
 {
-}
-
-void App::run()
-{
 	//Initial vertex data can not be of size 0!
 
 	vertices = {
@@ -45,6 +41,23 @@ void App::run()
 			16,17,18,18,19,16
 	};
 
+	//Initialize keys array
+	for (int i = 0; i < 322; i++) {
+		KEYS[i] = false;
+	}
+
+	//Initialize input and movement parameters
+	camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	movement_speed = 0.005f;
+	mouse_speed = 0.010f;
+	mouseDeltaX = 0;
+	mouseDeltaY = 0;
+	horizontal_camera_angle = 0.0f;
+	vertical_camera_angle = -45.0f;
+}
+
+void App::run()
+{
 	initWindow();
 	initVulkan();
 	initSurface();
@@ -73,12 +86,15 @@ void App::run()
 
 void App::mainLoop()
 {
+	relative_mode_enabled = false;
+
 	//Start drawing
 	drawLoopActive = true;
 	std::thread drawThread;
 	drawThread = std::thread([this] { this->drawLoop(300); });
 
 	while (appIsRunning) {
+
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 
@@ -89,39 +105,38 @@ void App::mainLoop()
 					break;
 
 				case SDL_WINDOWEVENT:
+					handleWindowEvent(event);
+					break;
 
-					switch (event.window.event) {
+				case SDL_KEYDOWN:
+					KEYS[event.key.keysym.sym] = true;
+					break;
 
-					case SDL_WINDOWEVENT_RESTORED:	
-						if (drawStatus != SUSPEND) {
-							drawStatus = RELOAD;
-						}
-						else{
-							drawStatus = RESUME;
-						}
-						break;
+				case SDL_KEYUP:
+					KEYS[event.key.keysym.sym] = false;
+					break;
 
-					case SDL_WINDOWEVENT_MAXIMIZED:
-						drawStatus = RELOAD;
-						break;
-
-					case SDL_WINDOWEVENT_MINIMIZED:
-						drawStatus = SUSPEND;
-						break;
-
-					case SDL_WINDOWEVENT_RESIZED:
-						drawStatus = RELOAD;
-						break;
-
-					default:
-						break;
+				case SDL_MOUSEMOTION:
+					if (relative_mode_enabled) {
+						mouseDeltaX = event.motion.xrel;
+						mouseDeltaY = event.motion.yrel;
 					}
+					break;
 
+				case SDL_MOUSEBUTTONDOWN:
+					if (!relative_mode_enabled) {
+						int i = SDL_SetRelativeMouseMode(SDL_TRUE);
+						std::cout << i;
+						relative_mode_enabled = true;
+					}
+					else {
+						//do something
+					}
+					break;
 				default:
 					break;
 				}
 			}
-
 			switch (drawStatus)
 			{
 			case RESUME:
@@ -168,11 +183,111 @@ void App::mainLoop()
 	drawThread.join();
 }
 
+void::App::processInput(int deltaTime) {
+
+	//Calculate camera angle based upon mouse movement. Set back to 0 or the mouse will keep moving.
+	horizontal_camera_angle += -mouseDeltaX * deltaTime * mouse_speed;
+	vertical_camera_angle += -mouseDeltaY * deltaTime * mouse_speed;
+	mouseDeltaX = 0;
+	mouseDeltaY = 0;
+
+	//Make sure the angles stay between 0 and 360
+	if (horizontal_camera_angle < 0) {
+		horizontal_camera_angle = 360 + horizontal_camera_angle;
+	}
+	else if (horizontal_camera_angle > 360) {
+		horizontal_camera_angle = horizontal_camera_angle - 360;
+	}
+
+	if (vertical_camera_angle < 0) {
+		vertical_camera_angle = 360 + vertical_camera_angle;
+	}
+	else if (vertical_camera_angle > 360) {
+		vertical_camera_angle = vertical_camera_angle - 360;
+	}
+
+	//Set the direction sign based on the angle, or the cross product and camera will flip over.
+	glm::vec3 world_direction_up;
+	if (vertical_camera_angle < 90 || vertical_camera_angle > 270) {
+		world_direction_up = glm::vec3(0.0f, 0.0f, -1.0f);
+	}
+	else if (vertical_camera_angle >= 90 && vertical_camera_angle <= 270) {
+		world_direction_up = glm::vec3(0.0f, 0.0f, 1.0f);
+	}
+
+	//Calculate the camera directions
+	glm::vec3 camera_direction(
+		cos(glm::radians(vertical_camera_angle)) * cos(glm::radians(horizontal_camera_angle)),
+		cos(glm::radians(vertical_camera_angle)) * sin(glm::radians(horizontal_camera_angle)),
+		sin(glm::radians(vertical_camera_angle))
+	);
+	glm::vec3 camera_direction_right(glm::normalize(glm::cross(world_direction_up, camera_direction)));
+
+	//Calculate the final vectors needed for ubo updates based upon input.
+	camera_direction_up = glm::normalize(glm::cross(camera_direction_right, camera_direction));
+	camera_target = camera_position + camera_direction;
+
+	if (KEYS[SDLK_z]) {
+		camera_position += camera_direction * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+	}
+	if (KEYS[SDLK_s]) {
+		camera_position -= camera_direction * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+	}
+	if (KEYS[SDLK_q]) {
+		camera_position -= camera_direction_right * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+	}
+	if (KEYS[SDLK_d]) {
+		camera_position += camera_direction_right * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+	}
+	if (KEYS[SDLK_ESCAPE]) {
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+		relative_mode_enabled = false;
+	}
+}
+
+void::App::handleWindowEvent(SDL_Event event) {
+	switch (event.window.event) {
+
+	case SDL_WINDOWEVENT_RESTORED:
+		if (drawStatus != SUSPEND) {
+			drawStatus = RELOAD;
+		}
+		else {
+			drawStatus = RESUME;
+		}
+		break;
+
+	case SDL_WINDOWEVENT_MAXIMIZED:
+		drawStatus = RELOAD;
+		break;
+
+	case SDL_WINDOWEVENT_MINIMIZED:
+		drawStatus = SUSPEND;
+		break;
+
+	case SDL_WINDOWEVENT_RESIZED:
+		drawStatus = RELOAD;
+		break;
+
+	default:
+		break;
+	}
+}
+
 void App::drawLoop(int max_fps)
 {
 	max_fps = max_fps + 8;
+	int input_timer_1;
+	int input_timer_2;
 
 	while (drawLoopActive && appIsRunning) {
+
+		//Deltatime is used to determine 'mouse and movement speed' independent of framerate.
+		input_timer_1 = SDL_GetTicks();
+		int deltaTime = input_timer_1 - input_timer_2;
+		input_timer_2 = SDL_GetTicks();
+
+		processInput(deltaTime);
 		drawFrame();
 		std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
 		std::this_thread::sleep_for(refresh_rate);
@@ -801,37 +916,16 @@ void App::updateUniformBuffer(uint32_t currentImage)
 
 	UniformBufferObject ubo{};
 
-	//Start playground
-
 	float camera_fov = 45.0f;
 	float ratio = swapChainExtent.width / (float)swapChainExtent.height;
 
 
-	float camera_verticalAngle = -45.0f;
-	float camera_horizontalAngle = 0.0f;
-	glm::vec3 camera_position(-2.0f, 0.0f, 2.0f);
-	glm::vec3 camera_direction(
-		cos(glm::radians(camera_verticalAngle)) * cos(glm::radians(camera_horizontalAngle)),
-		cos(glm::radians(camera_verticalAngle)) * sin(glm::radians(camera_horizontalAngle)),
-		sin(glm::radians(camera_verticalAngle))
-	);
-	glm::vec3 world_direction_up;
+	//float vertical_camera_angle = -45.0f;
+	//float horizontal_camera_angle = 0.0f;
+	//glm::vec3 camera_position(-2.0f, 0.0f, 2.0f);
 
-	//Do not use angles greater than 180! 
-	//TODO: use modulus to determine what sign to use
-	if (camera_verticalAngle >= -90.0f && camera_verticalAngle <= 90.0f) {
-		world_direction_up = glm::vec3(0.0f, 0.0f, -1.0f);
-	}
-	else {
-		world_direction_up = glm::vec3(0.0f, 0.0f, 1.0f);
-	}
-	
-	glm::vec3 camera_direction_right(glm::normalize(glm::cross(world_direction_up, camera_direction)));
-	glm::vec3 camera_direction_up(glm::normalize(glm::cross(camera_direction_right, camera_direction)));
-	glm::vec3 camera_target = camera_position + camera_direction;
-
-	float terrain_rotation_angle = time * 45.0f;
-	glm::vec3 terrain_scale(1.0f, 1.0f, 1.0f);
+	float terrain_rotation_angle = 0.0f;
+	glm::vec3 terrain_scale(0.5f, 0.5f, 0.5f);
 	glm::vec3 terrain_position(0.0f, 0.0f, 0.0f);
 	glm::vec3 terrain_rotation_direction(1.0f, 1.0f, 0.0f);
 
@@ -840,23 +934,11 @@ void App::updateUniformBuffer(uint32_t currentImage)
 	model_matrix = glm::rotate(model_matrix, glm::radians(terrain_rotation_angle), terrain_rotation_direction);
 	model_matrix = glm::scale(model_matrix, terrain_scale);
 
-	
-
 	ubo.model = model_matrix;
 	ubo.view = glm::lookAt(camera_position, camera_target, camera_direction_up);
 	ubo.proj = glm::perspective(glm::radians(camera_fov), ratio, 0.1f, 100.0f);
 	ubo.proj[1][1] *= -1;
 
-
-	//Stop playground
-
-	//ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	//ubo.model = glm::translate(glm::mat4(1.0f), time * glm::vec3(0.001f, 0.0f, 0.0f));
-	//ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	//ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
-	//ubo.proj[1][1] *= -1;
-
-	//This part should be made thread safe
 	void* data;
 	vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
 	memcpy(data, &ubo, sizeof(ubo));
