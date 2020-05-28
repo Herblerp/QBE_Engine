@@ -48,8 +48,11 @@ App::App()
 
 	//Initialize input and movement parameters
 	camera_position = glm::vec3(0.0f, 0.0f, 0.0f);
-	movement_speed = 0.005f;
-	mouse_speed = 0.010f;
+	max_movement_speed = 0.004f;
+	movement_acceleration = 0.00001f;
+	movement_speed_forward = 0.0f;
+	movement_speed_right = 0.0f;
+	mouse_speed = 0.8f;
 	mouseDeltaX = 0;
 	mouseDeltaY = 0;
 	horizontal_camera_angle = 0.0f;
@@ -91,7 +94,7 @@ void App::mainLoop()
 	//Start drawing
 	drawLoopActive = true;
 	std::thread drawThread;
-	drawThread = std::thread([this] { this->drawLoop(300); });
+	drawThread = std::thread([this] { this->drawLoop(5000); });
 
 	while (appIsRunning) {
 
@@ -118,8 +121,10 @@ void App::mainLoop()
 
 				case SDL_MOUSEMOTION:
 					if (relative_mode_enabled) {
-						mouseDeltaX = event.motion.xrel;
-						mouseDeltaY = event.motion.yrel;
+
+						//Use actual coordinates
+						mouseDeltaX = static_cast<float>(event.motion.xrel / 100.0f);
+						mouseDeltaY = static_cast<float>(event.motion.yrel / 100.0f);
 					}
 					break;
 
@@ -137,6 +142,9 @@ void App::mainLoop()
 					break;
 				}
 			}
+			
+
+
 			switch (drawStatus)
 			{
 			case RESUME:
@@ -179,6 +187,8 @@ void App::mainLoop()
 				break;
 			}
 			SDL_Delay(10);
+			mouseDeltaX = 0;
+			mouseDeltaY = 0;
 		}	
 	drawThread.join();
 }
@@ -188,8 +198,8 @@ void::App::processInput(int deltaTime) {
 	//Calculate camera angle based upon mouse movement. Set back to 0 or the mouse will keep moving.
 	horizontal_camera_angle += -mouseDeltaX * deltaTime * mouse_speed;
 	vertical_camera_angle += -mouseDeltaY * deltaTime * mouse_speed;
-	mouseDeltaX = 0;
-	mouseDeltaY = 0;
+	//mouseDeltaX = 0;
+	//mouseDeltaY = 0;
 
 	//Make sure the angles stay between 0 and 360
 	if (horizontal_camera_angle < 0) {
@@ -222,27 +232,74 @@ void::App::processInput(int deltaTime) {
 		sin(glm::radians(vertical_camera_angle))
 	);
 	glm::vec3 camera_direction_right(glm::normalize(glm::cross(world_direction_up, camera_direction)));
-
 	//Calculate the final vectors needed for ubo updates based upon input.
 	camera_direction_up = glm::normalize(glm::cross(camera_direction_right, camera_direction));
-	camera_target = camera_position + camera_direction;
+
+	bool forward_idle = true;
+	bool right_idle = true;
 
 	if (KEYS[SDLK_z]) {
-		camera_position += camera_direction * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+		movement_speed_forward += movement_acceleration;
+		if (movement_speed_forward > max_movement_speed) {
+			movement_speed_forward = max_movement_speed;
+		}
+		forward_idle = false;
 	}
 	if (KEYS[SDLK_s]) {
-		camera_position -= camera_direction * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+		movement_speed_forward -= movement_acceleration;
+		if (movement_speed_forward < -max_movement_speed) {
+			movement_speed_forward = -max_movement_speed;
+		}
+		forward_idle = false;
 	}
 	if (KEYS[SDLK_q]) {
-		camera_position -= camera_direction_right * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+		movement_speed_right -= movement_acceleration;
+		if (movement_speed_right < -max_movement_speed) {
+			movement_speed_right = -max_movement_speed;
+		}
+		right_idle = false;
 	}
 	if (KEYS[SDLK_d]) {
-		camera_position += camera_direction_right * static_cast<float>(movement_speed)* static_cast<float>(deltaTime);
+		movement_speed_right += movement_acceleration;
+		if (movement_speed_right > max_movement_speed) {
+			movement_speed_right = max_movement_speed;
+		}
+		right_idle = false;
 	}
+
+	if (forward_idle) {
+
+		if (movement_speed_forward > 0.0001f) {
+			movement_speed_forward -= movement_acceleration;
+		}
+		else if (movement_speed_forward < -0.0001f) {
+			movement_speed_forward += movement_acceleration;
+		}
+		else {
+			movement_speed_forward = 0.0f;
+		}
+	}
+
+	if (right_idle) {
+
+		if (movement_speed_right > 0.0001f) {
+			movement_speed_right -= movement_acceleration;
+		}
+		else if (movement_speed_right < -0.0001f) {
+			movement_speed_right += movement_acceleration;
+		}
+		else {
+			movement_speed_right = 0.0f;
+		}
+	}
+
 	if (KEYS[SDLK_ESCAPE]) {
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 		relative_mode_enabled = false;
 	}
+
+	camera_position += ((movement_speed_forward * camera_direction) + (movement_speed_right * camera_direction_right)) * static_cast<float>(deltaTime);
+	camera_target = camera_position + camera_direction;
 }
 
 void::App::handleWindowEvent(SDL_Event event) {
@@ -277,8 +334,8 @@ void::App::handleWindowEvent(SDL_Event event) {
 void App::drawLoop(int max_fps)
 {
 	max_fps = max_fps + 8;
-	int input_timer_1;
-	int input_timer_2;
+	int input_timer_1 = 0;
+	int input_timer_2 = 0;
 
 	while (drawLoopActive && appIsRunning) {
 
@@ -289,8 +346,8 @@ void App::drawLoop(int max_fps)
 
 		processInput(deltaTime);
 		drawFrame();
-		std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
-		std::this_thread::sleep_for(refresh_rate);
+		//std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
+		//std::this_thread::sleep_for(refresh_rate);
 	}
 	vkDeviceWaitIdle(device);
 }
@@ -918,7 +975,6 @@ void App::updateUniformBuffer(uint32_t currentImage)
 
 	float camera_fov = 45.0f;
 	float ratio = swapChainExtent.width / (float)swapChainExtent.height;
-
 
 	//float vertical_camera_angle = -45.0f;
 	//float horizontal_camera_angle = 0.0f;

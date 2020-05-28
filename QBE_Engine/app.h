@@ -115,10 +115,13 @@ private:
 	//Variables for controlling input and movement
 	bool KEYS[322];
 	bool relative_mode_enabled;
-	float movement_speed;
+	float movement_acceleration;
+	float max_movement_speed;
+	float movement_speed_forward;
+	float movement_speed_right;
 	float mouse_speed;
-	int mouseDeltaX;
-	int mouseDeltaY;
+	float mouseDeltaX;
+	float mouseDeltaY;
 	float horizontal_camera_angle;
 	float vertical_camera_angle;
 
