@@ -17,6 +17,7 @@ namespace Data {
 	class Chunk
 	{
 	public:
+		Chunk();
 		Chunk(vector<uint16_t> nodeData, ChunkInfo chunkInfo);
 		~Chunk();
 

@@ -182,13 +182,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="app.cpp" />
+    <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="map.cpp" />
+    <ClCompile Include="renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.h" />
+    <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="map.h" />
+    <ClInclude Include="renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Nodetypes\Blue.qbenode" />
@@ -214,9 +220,6 @@
   <ItemGroup>
     <ProjectReference Include="..\QBE_Engine_Compression\QBE_Engine_Compression.vcxproj">
       <Project>{77948bf8-0b23-43e0-a67f-8316d1a5c617}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\QBE_Engine_Data\QBE_Engine_Data.vcxproj">
-      <Project>{5d27bb1c-3cd1-4722-89de-9368f37f7c24}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

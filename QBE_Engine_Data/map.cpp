@@ -48,12 +48,7 @@
 //
 //	Chunk Map::loadChunk(ChunkPos regionPos, ChunkPos chunkPos)
 //	{
-//		//Check if the region file is cashed
-//		//If not, load the file
-//		//Load the chunk from te file
-//		//Deserialize the chunk
-//
-//		return nullptr;
+//		return Chunk();
 //	}
 //
 //	ChunkPos Map::calculateRegionPos(ChunkPos pos)

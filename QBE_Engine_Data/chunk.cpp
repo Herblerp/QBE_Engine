@@ -9,6 +9,8 @@ using namespace Compression;
 
 namespace Data {
 
+	Chunk::Chunk() {};
+
 	Chunk::Chunk(vector<uint16_t> nodeData, ChunkInfo chunkInfo)
 	{
 		this->nodeData = nodeData;

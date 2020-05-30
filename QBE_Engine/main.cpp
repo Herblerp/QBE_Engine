@@ -56,9 +56,9 @@ int main()
 	cout << "Hello world!";
 	auto t1 = Clock::now();
 
-	App* app = new App();
+	App app;
 
-    try { app->run(); }
+    try { app.run(); }
     catch (exception e) {
         cout << e.what();
     }
