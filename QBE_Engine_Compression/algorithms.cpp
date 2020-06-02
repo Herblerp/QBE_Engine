@@ -71,7 +71,6 @@ unsigned char* Compression::Algorithms::decompressLZMA(unsigned char* srcBuf, si
 
 	return dstBuf;
 }
-
 unsigned char* Algorithms::compressLZ4(unsigned char* srcBuf, size_t srcSize, size_t& dstSize)
 {
 	int tmpSrcSize = srcSize;

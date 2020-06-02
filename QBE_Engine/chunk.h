@@ -4,8 +4,14 @@
 #include <glm/glm.hpp>
 #include "renderer.h"
 
+struct Pos {
+	int32_t x;
+	int32_t y;
+	int32_t z;
+};
+
 struct ChunkCreateInfo {
-	uint8_t chunkDim;
+	uint8_t chunkDim;				
 	std::vector<uint16_t> nodeData;
 };
 

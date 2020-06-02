@@ -57,7 +57,7 @@ int main()
 
 	MapInfo mapInfo;
 	mapInfo.chunkDim = 2;
-	mapInfo.mapDim = 2;
+	mapInfo.mapDim = 1;
 	mapInfo.regionDim = 10;
 
 	Pos cameraPos = { 0,0,0 };
@@ -67,6 +67,10 @@ int main()
 	map.createMap(mapInfo);
 	map.loadMap();
 	map.loadMapData();
+
+	App app;
+	app.run(map.getMapVertexData(),map.getMapIndexData());
+
 	map.deleteMap();
 
 	cout << "[INFO] Stopping app clock." << std::endl;

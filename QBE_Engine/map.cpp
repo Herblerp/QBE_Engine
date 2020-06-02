@@ -118,36 +118,67 @@ void Map::deleteMap()
 
 void Map::loadMapData()
 {
+	uint32_t indecesCount = 0;
 	mapData.reserve(pow(mapSizeInChunks, 3));
 
-	int32_t minMapPos_x = cameraPos.x - (mapRadiusInChunks * chunkSizeInNodes);
-	int32_t minMapPos_y = cameraPos.y - (mapRadiusInChunks * chunkSizeInNodes);
-	int32_t minMapPos_z = cameraPos.z - (mapRadiusInChunks * chunkSizeInNodes);
-
-	int32_t maxMapPos_x = cameraPos.x + (mapRadiusInChunks * chunkSizeInNodes);
-	int32_t maxMapPos_y = cameraPos.y + (mapRadiusInChunks * chunkSizeInNodes);
-	int32_t maxMapPos_z = cameraPos.z + (mapRadiusInChunks * chunkSizeInNodes);
-
-	for (int z = minMapPos_z; z <= maxMapPos_z; z += chunkSizeInNodes)
+	for (int chunk_offset_z = -mapRadiusInChunks; chunk_offset_z <= mapRadiusInChunks; chunk_offset_z += 1)
 	{
-		for (int y = minMapPos_y; y <= maxMapPos_y; y += chunkSizeInNodes)
+		for (int chunk_offset_y = -mapRadiusInChunks; chunk_offset_y <= mapRadiusInChunks; chunk_offset_y += 1)
 		{
-			for (int x = minMapPos_x; x <= maxMapPos_x; x += chunkSizeInNodes)
+			for (int chunk_offset_x = -mapRadiusInChunks; chunk_offset_x <= mapRadiusInChunks; chunk_offset_x += 1)
 			{
-				Pos currentPos = { x,y,z };
+				int32_t currentPos_x = cameraPos.x + (chunk_offset_x * chunkSizeInNodes);
+				int32_t currentPos_y = cameraPos.y + (chunk_offset_y * chunkSizeInNodes);
+				int32_t currentPos_z = cameraPos.z + (chunk_offset_z * chunkSizeInNodes);
+
+				Pos currentPos = { currentPos_x, currentPos_y, currentPos_z};
 				Pos regionPos = calculateRegionPos(currentPos);
 				Pos chunkPos = calculateChunkPos(currentPos, regionPos);
 
-				//mapData.push_back(loadChunk(regionPos, chunkPos));
+				loadChunk(regionPos, chunkPos, indecesCount);
+				indecesCount = mapIndexData.size();
 			}
 		}
 	}
 }
 
-void Map::loadChunk(Pos regionPos, Pos chunkPos)
+void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t indecesCount)
 {
+	//Perlin noise algorithm and region file loading here 
+	std::vector<uint16_t> nodeData;
+	if (regionPos.z >= 0) {
+		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 0);
+	}
+	else {
+		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 1);
+	}
+	//end of perlin noise algorithm
 
-	//Region file magic here
+	ChunkCreateInfo info;
+	info.nodeData = nodeData;
+	info.chunkDim = chunkSizeInNodes;
+
+	Chunk chunk = Chunk(info);
+	chunk.calculateVertexData();
+
+	float offset_x = static_cast<float>((regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x));
+	float offset_y = static_cast<float>((regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y));;
+	float offset_z = static_cast<float>((regionSizeInNodes * regionPos.z) + (chunkSizeInNodes * chunkPos.z));;
+
+	glm::vec3 offset(offset_x,offset_y,offset_z);
+
+	std::vector<Vertex> vertexData = chunk.getVertexData();
+	for (Vertex &vertex : vertexData) {
+		vertex.pos += offset;
+	}
+
+	std::vector<uint32_t> indexData = chunk.getIndexData();
+	for (uint32_t &index : indexData) {
+		index += indecesCount;
+	}
+
+	mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
+	mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
 }
 
 Pos Map::calculateRegionPos(Pos pos)
@@ -172,6 +203,16 @@ Pos Map::calculateChunkPos(Pos pos, Pos regionPos)
 
 void Map::updateMapData(Pos cameraPos)
 {
+}
+
+std::vector<Vertex> const& Map::getMapVertexData()
+{
+	return mapVertexData;
+}
+
+std::vector<uint32_t> const& Map::getMapIndexData()
+{
+	return mapIndexData;
 }
 
 void Map::calculateMapParameters(MapInfo mapInfo) {

@@ -37,7 +37,7 @@ class App
 public:
 
 	App();
-	void run();
+	void run(std::vector<Vertex> vert, std::vector<uint32_t> ind);
 	void mainLoop();
 	void rendererLoop();
 	void processInput(int deltaTime);

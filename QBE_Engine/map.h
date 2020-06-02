@@ -5,12 +5,6 @@
 
 #include "chunk.h"
 
-struct Pos {
-	int32_t x;
-	int32_t y;
-	int32_t z;
-};
-
 struct MapInfo {
 	Pos cameraPos;
 	uint8_t chunkDim;
@@ -31,6 +25,9 @@ public:
 
 	void loadMapData();
 	void updateMapData(Pos cameraPos);
+
+	std::vector<Vertex> const& getMapVertexData();
+	std::vector<uint32_t> const& getMapIndexData();
 
 private:
 
@@ -54,6 +51,6 @@ private:
 	void calculateMapParameters(MapInfo maptinfo);
 	Pos calculateRegionPos(Pos pos);
 	Pos calculateChunkPos(Pos pos, Pos regionPos);
-	void loadChunk(Pos regionPos, Pos chunkPos);
+	void loadChunk(Pos regionPos, Pos chunkPos, uint32_t count);
 };
 
