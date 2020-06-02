@@ -2,12 +2,12 @@
 
 namespace Data {
 
-	RegionFile::RegionFile(RegionFileInfo initInfo)
+	RegionFile::RegionFile(RegionFileCreateInfo info)
 	{
-		this->regionSize = initInfo.regionSize;
-		this->filePath = initInfo.filePath;
+		this->regionSize = info.regionDim;
+		this->filePath = info.filePath;
 		this->header.reserve(pow(regionSize, 3));
-		this->headerSizeInBytes = pow(regionSize, 3) * sizeof(ChunkInfo);
+		this->headerSizeInBytes = pow(regionSize, 3) * sizeof(ChunkHeaderInfo);
 
 		if (filesystem::exists(this->filePath))
 		{
@@ -39,7 +39,7 @@ namespace Data {
 				chunkInfoIndex = i;
 			}
 		}
-		ChunkInfo info = this->header.at(chunkInfoIndex);
+		ChunkHeaderInfo info = this->header.at(chunkInfoIndex);
 
 		file.seekg(info.firstBytePos);
 
@@ -57,7 +57,7 @@ namespace Data {
 		return chunkData;
 	}
 
-	bool compareFirstByte(ChunkInfo i, ChunkInfo j)
+	bool compareFirstByte(ChunkHeaderInfo i, ChunkHeaderInfo j)
 	{
 		return (i.firstBytePos < j.firstBytePos);
 	}
@@ -72,7 +72,7 @@ namespace Data {
 				chunkInfoIndex = i;
 			}
 		}
-		ChunkInfo info = this->header.at(chunkInfoIndex);
+		ChunkHeaderInfo info = this->header.at(chunkInfoIndex);
 		info.firstBytePos = this->headerSizeInBytes;
 		info.lastBytePos = this->headerSizeInBytes;
 		info.sizeInBytes = 0;
@@ -103,7 +103,7 @@ namespace Data {
 		}
 		//If no chunk data is present, append to the header.
 		else if (firstBytePos == 0 && this->header.back().lastBytePos == this->headerSizeInBytes) {
-			firstBytePos = this->header.size() * sizeof(ChunkInfo) + 1;
+			firstBytePos = this->header.size() * sizeof(ChunkHeaderInfo) + 1;
 		}
 
 		//Write the data to the file
@@ -155,7 +155,7 @@ namespace Data {
 					chunkPos.y = y;
 					chunkPos.z = z;
 
-					ChunkInfo chunkInfo;
+					ChunkHeaderInfo chunkInfo;
 					chunkInfo.chunkPos = chunkPos;
 					chunkInfo.firstBytePos = this->headerSizeInBytes;
 					chunkInfo.lastBytePos = this->headerSizeInBytes;
@@ -172,10 +172,10 @@ namespace Data {
 		file.open(this->filePath, ios::in | ios::binary);
 		file.seekg(0);
 
-		ChunkInfo info;
+		ChunkHeaderInfo info;
 		for (int i = 0; i < pow(this->regionSize, 3); i++)
 		{
-			file.read((char*)&info, sizeof(ChunkInfo));
+			file.read((char*)&info, sizeof(ChunkHeaderInfo));
 			this->header.push_back(info);
 		}
 		file.close();
@@ -188,7 +188,7 @@ namespace Data {
 		file.seekp(0);
 
 		for (int i = 0; i < header.size(); i++) {
-			file.write((char*)&header.at(i), sizeof(ChunkInfo));
+			file.write((char*)&header.at(i), sizeof(ChunkHeaderInfo));
 		}
 		file.close();
 	}

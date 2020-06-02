@@ -146,16 +146,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="chunk.cpp" />
-    <ClCompile Include="map.cpp" />
     <ClCompile Include="nodedictionary.cpp" />
     <ClCompile Include="nodetype.cpp" />
     <ClCompile Include="regionFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chunk.h" />
-    <ClInclude Include="enums.h" />
-    <ClInclude Include="map.h" />
     <ClInclude Include="nodedictionary.h" />
     <ClInclude Include="nodetype.h" />
     <ClInclude Include="regionFile.h" />

@@ -52,19 +52,25 @@ typedef chrono::high_resolution_clock Clock;
 
 int main()
 {
-	//Start app clock
-	cout << "Hello world!";
+	cout << "[INFO] Starting app clock. \n";
 	auto t1 = Clock::now();
 
-	App app;
+	MapInfo mapInfo;
+	mapInfo.chunkDim = 2;
+	mapInfo.mapDim = 2;
+	mapInfo.regionDim = 10;
 
-    try { app.run(); }
-    catch (exception e) {
-        cout << e.what();
-    }
+	Pos cameraPos = { 0,0,0 };
+	mapInfo.cameraPos = cameraPos;
 
-	//Stop app clock
+	Map map("testmap");
+	map.createMap(mapInfo);
+	map.loadMap();
+	map.loadMapData();
+	map.deleteMap();
+
+	cout << "[INFO] Stopping app clock." << std::endl;
 	auto t2 = Clock::now();
-	cout << "Done in: " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " milliseconds" << std::endl;
+	cout << "[INFO] App ran for '" << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << "' milliseconds.\n";
 	system("pause");
 }

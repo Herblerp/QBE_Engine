@@ -3,18 +3,29 @@
 #include <fstream>
 #include <filesystem>
 
-#include "enums.h"
-
 using namespace std;
 
 namespace Data {
 
-	struct RegionFileInfo {
-		int regionSize;
+	struct ChunkPos {
+		uint16_t x;
+		uint16_t y;
+		uint16_t z;
+	};
+
+	struct RegionPos
+	{
+		uint16_t x;
+		uint16_t y;
+		uint16_t z;
+	};
+
+	struct RegionFileCreateInfo {
+		int regionDim;
 		string filePath;
 	};
 
-	struct ChunkInfo {
+	struct ChunkHeaderInfo {
 		ChunkPos chunkPos;
 		uint16_t firstBytePos;
 		uint16_t lastBytePos;
@@ -24,13 +35,13 @@ namespace Data {
 	class RegionFile
 	{
 	public:
-		RegionFile(RegionFileInfo info);
+		RegionFile(RegionFileCreateInfo info);
 		~RegionFile();
 	private:
 		int headerSizeInBytes;		//!< Size of the header in bytes.
 		int regionSize;				//!< The 1D size of the region. 
 		string filePath;			//!< The path to the region file. 
-		vector<ChunkInfo> header;	//!< Contains essential information about the chunk data stored in the file.
+		vector<ChunkHeaderInfo> header;	//!< Contains essential information about the chunk data stored in the file.
 
 	public:
 

@@ -18,12 +18,6 @@
     <ClCompile Include="regionFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="map.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="nodedictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,15 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="regionFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="chunk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="nodedictionary.h">

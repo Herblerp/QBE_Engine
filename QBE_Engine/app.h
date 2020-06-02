@@ -45,9 +45,6 @@ public:
 	
 private:
 
-	Map map;
-	Chunk chunk;
-
 	Renderer renderer;
 	DrawStatus drawStatus = ACTIVE;
 	bool appIsRunning = true;
