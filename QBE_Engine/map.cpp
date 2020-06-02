@@ -115,11 +115,13 @@ void Map::deleteMap()
 		std::cout << "[ERROR] Map '" << mapName << "' not found. Aborting deletion.\n";
 	}
 }
-
 void Map::loadMapData()
 {
-	uint32_t indecesCount = 0;
-	mapData.reserve(pow(mapSizeInChunks, 3));
+	mapVertexData.clear();
+	mapIndexData.clear();
+
+	uint32_t totalIndexCount = 0;
+	//mapData.reserve(pow(mapSizeInChunks, 3));
 
 	for (int chunk_offset_z = -mapRadiusInChunks; chunk_offset_z <= mapRadiusInChunks; chunk_offset_z += 1)
 	{
@@ -134,15 +136,13 @@ void Map::loadMapData()
 				Pos currentPos = { currentPos_x, currentPos_y, currentPos_z};
 				Pos regionPos = calculateRegionPos(currentPos);
 				Pos chunkPos = calculateChunkPos(currentPos, regionPos);
-
-				loadChunk(regionPos, chunkPos, indecesCount);
-				indecesCount = mapIndexData.size();
+				loadChunk(regionPos, chunkPos, totalIndexCount);
 			}
 		}
 	}
 }
 
-void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t indecesCount)
+void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t &indexCount)
 {
 	//Perlin noise algorithm and region file loading here 
 	std::vector<uint16_t> nodeData;
@@ -159,7 +159,8 @@ void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t indecesCount)
 	info.chunkDim = chunkSizeInNodes;
 
 	Chunk chunk = Chunk(info);
-	chunk.calculateVertexData();
+	uint32_t chunkIndexCount = 0;
+	chunk.calculateVertexData(chunkIndexCount);
 
 	float offset_x = static_cast<float>((regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x));
 	float offset_y = static_cast<float>((regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y));;
@@ -174,11 +175,12 @@ void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t indecesCount)
 
 	std::vector<uint32_t> indexData = chunk.getIndexData();
 	for (uint32_t &index : indexData) {
-		index += indecesCount;
+		index += indexCount;
 	}
 
 	mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
 	mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
+	indexCount += chunkIndexCount;
 }
 
 Pos Map::calculateRegionPos(Pos pos)
@@ -203,6 +205,16 @@ Pos Map::calculateChunkPos(Pos pos, Pos regionPos)
 
 void Map::updateMapData(Pos cameraPos)
 {
+	Pos currentRegionPos = calculateRegionPos(this->cameraPos);
+	Pos currentChunkPos = calculateChunkPos(this->cameraPos, currentRegionPos);
+
+	Pos newRegionPos = calculateRegionPos(cameraPos);
+	Pos newChunkPos = calculateChunkPos(cameraPos, currentRegionPos);
+
+	if (newChunkPos.x != currentChunkPos.x || newChunkPos.y != currentChunkPos.y || newChunkPos.z != currentChunkPos.z) {
+		this->cameraPos = cameraPos;
+		loadMapData();
+	}
 }
 
 std::vector<Vertex> const& Map::getMapVertexData()

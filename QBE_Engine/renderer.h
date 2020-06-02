@@ -123,7 +123,7 @@ public:
 	void cleanup();
 	void cleanupSwapChain();
 	void recreateSwapChain();
-	void setRenderInfo(WorldRenderInfo &renderInfo);
+	void setRenderInfo(WorldRenderInfo renderInfo);
 
 private:
 

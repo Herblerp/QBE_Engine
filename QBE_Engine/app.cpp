@@ -2,12 +2,11 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-App::App()
+App::App(Map& map) : map(map)
 {
-
 }
 
-void App::run(std::vector<Vertex> vert, std::vector<uint32_t> ind)
+void App::run()
 {
 	//Initialize keys array
 	for (int i = 0; i < 322; i++) {
@@ -25,6 +24,7 @@ void App::run(std::vector<Vertex> vert, std::vector<uint32_t> ind)
 	mouseDeltaY = 0;
 	horizontal_camera_angle = 0.0f;
 	vertical_camera_angle = -45.0f;
+	max_fps = 60;
 
 	//Initialize renderInfo
 	renderInfo.camera_fov = 45.0f;
@@ -34,43 +34,11 @@ void App::run(std::vector<Vertex> vert, std::vector<uint32_t> ind)
 	renderInfo.terrain_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	renderInfo.terrain_rotation_direction = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	renderInfo.vertices = vert;
-	renderInfo.indices = ind;
+	map.loadMapData();
 
-	//renderInfo.indices = {
-//		0, 1, 2, 2, 3, 0,
-//		4,5,6,6,7,4,
-//		8,9,10,10,11,8,
-//		12,13,14,14,15,12,
-//		16,17,18,18,19,16
-//};
+	renderInfo.vertices = map.getMapVertexData();
+	renderInfo.indices = map.getMapIndexData();
 
-	//{
-	//{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}, //0
-	//{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}}, //1
-	//{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}}, //2
-	//{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}, //3
-
-	//{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}}, //4
-	//{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}}, //6
-	//{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}, //7
-	//{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}}, //5
-
-	//{{0.5f, -0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}, //8
-	//{{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}}, //10
-	//{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}}, //11
-	//{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}}, //9	
-
-	//{{0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}, //12
-	//{{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}}, //14
-	//{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, //15
-	//{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, //13
-
-	//{{-0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, //17
-	//{{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, //19
-	//{{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}}, //18
-	//{{-0.5f, -0.5f, 0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}} //16
-	//};
 	renderer.setRenderInfo(renderInfo);
 	renderer.initialize();
 	mainLoop();
@@ -199,6 +167,13 @@ void App::rendererLoop()
 		renderInfo.camera_direction_up = camera_direction_up;
 		renderInfo.camera_position = camera_position;
 		renderInfo.camera_target = camera_target;
+		renderInfo.vertices = map.getMapVertexData();
+		renderInfo.indices = map.getMapIndexData();
+		renderer.setRenderInfo(renderInfo);
+		renderer.recreateVertexBuffers();
+
+		//std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
+		//std::this_thread::sleep_for(refresh_rate);
 
 		if (renderer.drawFrame() != 0) {
 			drawLoopActive = false;
@@ -312,6 +287,12 @@ void::App::processInput(int deltaTime) {
 
 	camera_position += ((movement_speed_forward * camera_direction) + (movement_speed_right * camera_direction_right)) * static_cast<float>(deltaTime);
 	camera_target = camera_position + camera_direction;
+
+	Pos newCameraPosition{
+	static_cast<uint32_t>(camera_position.x),
+	static_cast<uint32_t>(camera_position.y),
+	static_cast<uint32_t>(camera_position.z) };
+	map.updateMapData(newCameraPosition);
 }
 
 void::App::processWindowEvent(SDL_Event event) {

@@ -38,6 +38,7 @@ private:
 	int32_t chunkSizeInNodes;
 
 	Pos cameraPos;
+	Pos currentChunkPos;
 
 	std::string mapName;
 	std::string relMapDirPath;
@@ -51,6 +52,6 @@ private:
 	void calculateMapParameters(MapInfo maptinfo);
 	Pos calculateRegionPos(Pos pos);
 	Pos calculateChunkPos(Pos pos, Pos regionPos);
-	void loadChunk(Pos regionPos, Pos chunkPos, uint32_t count);
+	void loadChunk(Pos regionPos, Pos chunkPos, uint32_t &count);
 };
 

@@ -56,8 +56,8 @@ int main()
 	auto t1 = Clock::now();
 
 	MapInfo mapInfo;
-	mapInfo.chunkDim = 2;
-	mapInfo.mapDim = 1;
+	mapInfo.chunkDim = 16;
+	mapInfo.mapDim = 2;
 	mapInfo.regionDim = 10;
 
 	Pos cameraPos = { 0,0,0 };
@@ -66,10 +66,9 @@ int main()
 	Map map("testmap");
 	map.createMap(mapInfo);
 	map.loadMap();
-	map.loadMapData();
 
-	App app;
-	app.run(map.getMapVertexData(),map.getMapIndexData());
+	App app(map);
+	app.run();
 
 	map.deleteMap();
 

@@ -36,8 +36,8 @@ class App
 {
 public:
 
-	App();
-	void run(std::vector<Vertex> vert, std::vector<uint32_t> ind);
+	App(Map& map);
+	void run();
 	void mainLoop();
 	void rendererLoop();
 	void processInput(int deltaTime);
@@ -45,7 +45,9 @@ public:
 	
 private:
 
+	Map map;
 	Renderer renderer;
+
 	DrawStatus drawStatus = ACTIVE;
 	bool appIsRunning = true;
 	bool drawLoopActive = true;

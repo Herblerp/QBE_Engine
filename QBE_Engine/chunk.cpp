@@ -6,9 +6,9 @@ Chunk::Chunk(ChunkCreateInfo info)
 	this->nodeData = info.nodeData;
 }
 
-void Chunk::calculateVertexData()
+void Chunk::calculateVertexData(uint32_t &indexCount)
 {
-	uint32_t indexCount = 0;
+	indexCount = 0;
 
 	vertexData.clear();
 	indexData.clear();

@@ -21,7 +21,7 @@ public:
 
 	Chunk(ChunkCreateInfo info);
 	
-	void calculateVertexData();
+	void calculateVertexData(uint32_t &indexCount);
 
 	std::vector<Vertex> const &getVertexData();
 	std::vector<uint32_t> const &getIndexData();

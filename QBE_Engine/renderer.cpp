@@ -31,7 +31,7 @@ void Renderer::initialize() {
 
 int Renderer::drawFrame() {
 
-	vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+	VkResult oof = vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
 	uint32_t imageIndex;
 	VkResult result = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
@@ -66,11 +66,12 @@ int Renderer::drawFrame() {
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores = signalSemaphores;
 
-	vkResetFences(device, 1, &inFlightFences[currentFrame]);
+	VkResult res = vkResetFences(device, 1, &inFlightFences[currentFrame]);
+	res = vkGetFenceStatus(device, inFlightFences[currentFrame]);
 
 	if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
-		std::cout << "Hmm somethings wrong \n";
-		//throw std::runtime_error("failed to submit draw command buffer!");
+		//std::cout << "Hmm somethings wrong \n";
+		throw std::runtime_error("failed to submit draw command buffer!");
 	}
 
 	VkPresentInfoKHR presentInfo{};
@@ -619,6 +620,8 @@ void Renderer::recreateVertexBuffers() {
 
 	vkDeviceWaitIdle(device);
 
+
+
 	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
 	vkDestroyBuffer(device, indexBuffer, nullptr);
@@ -853,7 +856,7 @@ void Renderer::recreateSwapChain() {
 	createCommandBuffers();
 }
 
-void Renderer::setRenderInfo(WorldRenderInfo& renderInfo)
+void Renderer::setRenderInfo(WorldRenderInfo renderInfo)
 {
 	this->renderInfo = renderInfo;
 }
