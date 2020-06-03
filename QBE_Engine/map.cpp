@@ -146,41 +146,45 @@ void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t &indexCount)
 {
 	//Perlin noise algorithm and region file loading here 
 	std::vector<uint16_t> nodeData;
-	if (regionPos.z >= 0) {
+	if (regionPos.z != -1 || chunkPos.z != 9) {
 		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 0);
 	}
 	else {
-		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 1);
+		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3));
+		for (uint16_t& i : nodeData) {
+			i = rand() % 2;
+		}
+
+		//end of perlin noise algorithm
+
+		ChunkCreateInfo info;
+		info.nodeData = nodeData;
+		info.chunkDim = chunkSizeInNodes;
+
+		Chunk chunk = Chunk(info);
+		uint32_t chunkIndexCount = 0;
+		chunk.calculateVertexData(chunkIndexCount);
+
+		float offset_x = static_cast<float>((regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x));
+		float offset_y = static_cast<float>((regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y));;
+		float offset_z = static_cast<float>((regionSizeInNodes * regionPos.z) + (chunkSizeInNodes * chunkPos.z));;
+
+		glm::vec3 offset(offset_x, offset_y, offset_z);
+
+		std::vector<Vertex> vertexData = chunk.getVertexData();
+		for (Vertex& vertex : vertexData) {
+			vertex.pos += offset;
+		}
+
+		std::vector<uint32_t> indexData = chunk.getIndexData();
+		for (uint32_t& index : indexData) {
+			index += indexCount;
+		}
+
+		mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
+		mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
+		indexCount += chunkIndexCount;
 	}
-	//end of perlin noise algorithm
-
-	ChunkCreateInfo info;
-	info.nodeData = nodeData;
-	info.chunkDim = chunkSizeInNodes;
-
-	Chunk chunk = Chunk(info);
-	uint32_t chunkIndexCount = 0;
-	chunk.calculateVertexData(chunkIndexCount);
-
-	float offset_x = static_cast<float>((regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x));
-	float offset_y = static_cast<float>((regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y));;
-	float offset_z = static_cast<float>((regionSizeInNodes * regionPos.z) + (chunkSizeInNodes * chunkPos.z));;
-
-	glm::vec3 offset(offset_x,offset_y,offset_z);
-
-	std::vector<Vertex> vertexData = chunk.getVertexData();
-	for (Vertex &vertex : vertexData) {
-		vertex.pos += offset;
-	}
-
-	std::vector<uint32_t> indexData = chunk.getIndexData();
-	for (uint32_t &index : indexData) {
-		index += indexCount;
-	}
-
-	mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
-	mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
-	indexCount += chunkIndexCount;
 }
 
 Pos Map::calculateRegionPos(Pos pos)
@@ -203,7 +207,7 @@ Pos Map::calculateChunkPos(Pos pos, Pos regionPos)
 	return chunkPos;
 }
 
-void Map::updateMapData(Pos cameraPos)
+bool Map::updateMapData(Pos cameraPos)
 {
 	Pos currentRegionPos = calculateRegionPos(this->cameraPos);
 	Pos currentChunkPos = calculateChunkPos(this->cameraPos, currentRegionPos);
@@ -214,7 +218,9 @@ void Map::updateMapData(Pos cameraPos)
 	if (newChunkPos.x != currentChunkPos.x || newChunkPos.y != currentChunkPos.y || newChunkPos.z != currentChunkPos.z) {
 		this->cameraPos = cameraPos;
 		loadMapData();
+		return true;
 	}
+	return false;
 }
 
 std::vector<Vertex> const& Map::getMapVertexData()

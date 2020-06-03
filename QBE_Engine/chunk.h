@@ -27,6 +27,8 @@ public:
 	std::vector<uint32_t> const &getIndexData();
 
 private:
+	bool dataCalculated;
+
 	uint8_t chunkDim;
 	std::vector<uint16_t> nodeData;
 	std::vector<Vertex> vertexData;

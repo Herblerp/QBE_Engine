@@ -42,6 +42,7 @@ public:
 	void rendererLoop();
 	void processInput(int deltaTime);
 	void processWindowEvent(SDL_Event event);
+	void mapLoop();
 	
 private:
 
@@ -52,6 +53,8 @@ private:
 	bool appIsRunning = true;
 	bool drawLoopActive = true;
 	bool windowIsMinimized = false;
+	bool mapHasBeenUpdated = false;
+	bool mapLoopActive;
 
 	int max_fps;
 	bool KEYS[322];
@@ -66,7 +69,9 @@ private:
 	float horizontal_camera_angle;
 	float vertical_camera_angle;
 
-	WorldRenderInfo renderInfo;
+	RenderCameraInfo renderCameraInfo;
+	RenderTerrainInfo renderTerrainInfo;
+	RenderVertexInfo renderVertexInfo;
 
 	glm::vec3 camera_position;
 	glm::vec3 camera_direction_up;

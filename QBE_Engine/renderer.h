@@ -86,16 +86,19 @@ struct SwapChainSupportDetails {
 	std::vector<VkPresentModeKHR> presentModes;
 };
 
-struct WorldRenderInfo {
-
+struct RenderVertexInfo {
 	std::vector<uint32_t> indices;
 	std::vector<Vertex> vertices;
+};
 
+struct RenderCameraInfo {
 	float camera_fov;
 	glm::vec3 camera_position;
 	glm::vec3 camera_direction_up;
 	glm::vec3 camera_target;
+};
 
+struct RenderTerrainInfo {
 	float terrain_rotation_angle;
 	glm::vec3 terrain_scale;
 	glm::vec3 terrain_position;
@@ -123,11 +126,16 @@ public:
 	void cleanup();
 	void cleanupSwapChain();
 	void recreateSwapChain();
-	void setRenderInfo(WorldRenderInfo renderInfo);
+
+	void setRenderCameraInfo(RenderCameraInfo &renderCameraInfo);
+	void setRenderVertexInfo(RenderVertexInfo& renderVertexInfo);
+	void setRenderTerrainInfo(RenderTerrainInfo& renderTerrainInfo);
 
 private:
 
-	WorldRenderInfo renderInfo{};
+	RenderCameraInfo renderCameraInfo{};
+	RenderVertexInfo renderVertexInfo{};
+	RenderTerrainInfo renderTerrainInfo{};
 
 	SDL_Window* window;
 	VkImage depthImage;

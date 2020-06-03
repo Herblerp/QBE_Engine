@@ -4,6 +4,7 @@
 #include <filesystem>
 
 #include "chunk.h"
+#include "FastNoise.h"
 
 struct MapInfo {
 	Pos cameraPos;
@@ -24,7 +25,7 @@ public:
 	void saveMap();
 
 	void loadMapData();
-	void updateMapData(Pos cameraPos);
+	bool updateMapData(Pos cameraPos);
 
 	std::vector<Vertex> const& getMapVertexData();
 	std::vector<uint32_t> const& getMapIndexData();

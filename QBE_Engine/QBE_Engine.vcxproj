@@ -184,6 +184,7 @@
     <ClCompile Include="app.cpp" />
     <ClCompile Include="chunk.cpp" />
     <ClCompile Include="config.cpp" />
+    <ClCompile Include="FastNoise.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="renderer.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="app.h" />
     <ClInclude Include="chunk.h" />
     <ClInclude Include="config.h" />
+    <ClInclude Include="FastNoise.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="renderer.h" />

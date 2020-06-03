@@ -4,10 +4,15 @@ Chunk::Chunk(ChunkCreateInfo info)
 {
 	this->chunkDim = info.chunkDim;
 	this->nodeData = info.nodeData;
+	this->dataCalculated = false;
 }
 
 void Chunk::calculateVertexData(uint32_t &indexCount)
 {
+	if (dataCalculated) {
+		return;
+	}
+
 	indexCount = 0;
 
 	vertexData.clear();
@@ -88,6 +93,7 @@ void Chunk::calculateVertexData(uint32_t &indexCount)
 			indexCount += 4;
 		}
 	}
+	dataCalculated = true;
 }
 
 std::vector<Vertex> const& Chunk::getVertexData()

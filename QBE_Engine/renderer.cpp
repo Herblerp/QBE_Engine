@@ -1,8 +1,23 @@
 #include "renderer.h"
 
+void Renderer::setRenderCameraInfo(RenderCameraInfo& renderInfo)
+{
+	this->renderCameraInfo = renderInfo;
+}
+
+void Renderer::setRenderVertexInfo(RenderVertexInfo& renderVertexInfo)
+{
+	this->renderVertexInfo = renderVertexInfo;
+}
+
+void Renderer::setRenderTerrainInfo(RenderTerrainInfo& renderTerrainInfo)
+{
+	this->renderTerrainInfo = renderTerrainInfo;
+}
+
 void Renderer::initialize() {
 
-	if (renderInfo.vertices.size() == 0) {
+	if (renderVertexInfo.vertices.size() == 0 || renderVertexInfo.indices.size() == 0) {
 		throw std::runtime_error("Vertices must be specified before initialisation!");
 	}
 
@@ -579,7 +594,7 @@ void Renderer::createTextureSampler()
 
 void Renderer::createVertexBuffers()
 {
-	VkDeviceSize bufferSize = sizeof(renderInfo.vertices[0]) * renderInfo.vertices.size();
+	VkDeviceSize bufferSize = sizeof(renderVertexInfo.vertices[0]) * renderVertexInfo.vertices.size();
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -589,7 +604,7 @@ void Renderer::createVertexBuffers()
 
 	void* vertexData;
 	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &vertexData);
-	memcpy(vertexData, renderInfo.vertices.data(), (size_t)bufferSize);
+	memcpy(vertexData, renderVertexInfo.vertices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
@@ -600,12 +615,12 @@ void Renderer::createVertexBuffers()
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
 
 	//Index buffer
-	bufferSize = sizeof(renderInfo.indices[0]) * renderInfo.indices.size();
+	bufferSize = sizeof(renderVertexInfo.indices[0]) * renderVertexInfo.indices.size();
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
 	void* indexData;
 	vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &indexData);
-	memcpy(indexData, renderInfo.indices.data(), (size_t)bufferSize);
+	memcpy(indexData, renderVertexInfo.indices.data(), (size_t)bufferSize);
 	vkUnmapMemory(device, stagingBufferMemory);
 
 	createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
@@ -619,8 +634,6 @@ void Renderer::createVertexBuffers()
 void Renderer::recreateVertexBuffers() {
 
 	vkDeviceWaitIdle(device);
-
-
 
 	vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
@@ -653,13 +666,13 @@ void Renderer::updateUniformBuffer(uint32_t currentImage)
 	float ratio = swapChainExtent.width / (float)swapChainExtent.height;
 
 	glm::mat4 model_matrix;
-	model_matrix = glm::translate(glm::mat4(1.0f), renderInfo.terrain_position);
-	model_matrix = glm::rotate(model_matrix, glm::radians(renderInfo.terrain_rotation_angle), renderInfo.terrain_rotation_direction);
-	model_matrix = glm::scale(model_matrix, renderInfo.terrain_scale);
+	model_matrix = glm::translate(glm::mat4(1.0f), renderTerrainInfo.terrain_position);
+	model_matrix = glm::rotate(model_matrix, glm::radians(renderTerrainInfo.terrain_rotation_angle), renderTerrainInfo.terrain_rotation_direction);
+	model_matrix = glm::scale(model_matrix, renderTerrainInfo.terrain_scale);
 
 	ubo.model = model_matrix;
-	ubo.view = glm::lookAt(renderInfo.camera_position, renderInfo.camera_target, renderInfo.camera_direction_up);
-	ubo.proj = glm::perspective(glm::radians(renderInfo.camera_fov), ratio, 0.1f, 100.0f);
+	ubo.view = glm::lookAt(renderCameraInfo.camera_position, renderCameraInfo.camera_target, renderCameraInfo.camera_direction_up);
+	ubo.proj = glm::perspective(glm::radians(renderCameraInfo.camera_fov), ratio, 0.1f, 100.0f);
 	ubo.proj[1][1] *= -1;
 
 	void* data;
@@ -807,7 +820,7 @@ void Renderer::createCommandBuffers() {
 
 		vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(renderInfo.indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(renderVertexInfo.indices.size()), 1, 0, 0, 0);
 
 		vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -854,11 +867,6 @@ void Renderer::recreateSwapChain() {
 	createDescriptorPool();
 	createDescriptorSets();
 	createCommandBuffers();
-}
-
-void Renderer::setRenderInfo(WorldRenderInfo renderInfo)
-{
-	this->renderInfo = renderInfo;
 }
 
 void Renderer::createTextureImageView()

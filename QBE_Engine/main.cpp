@@ -57,7 +57,7 @@ int main()
 
 	MapInfo mapInfo;
 	mapInfo.chunkDim = 16;
-	mapInfo.mapDim = 2;
+	mapInfo.mapDim = 8;
 	mapInfo.regionDim = 10;
 
 	Pos cameraPos = { 0,0,0 };

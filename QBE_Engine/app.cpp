@@ -27,19 +27,22 @@ void App::run()
 	max_fps = 60;
 
 	//Initialize renderInfo
-	renderInfo.camera_fov = 45.0f;
-	renderInfo.camera_position = glm::vec3(-2.0f, 0.0f, 2.0f);
-	renderInfo.terrain_position = glm::vec3(0.0f, 0.0f, 0.0f);
-	renderInfo.terrain_rotation_angle = 0.0f;
-	renderInfo.terrain_scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	renderInfo.terrain_rotation_direction = glm::vec3(1.0f, 1.0f, 1.0f);
+	renderCameraInfo.camera_fov = 45.0f;
+	renderCameraInfo.camera_position = glm::vec3(-2.0f, 0.0f, 2.0f);
+	renderTerrainInfo.terrain_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	renderTerrainInfo.terrain_rotation_angle = 0.0f;
+	renderTerrainInfo.terrain_scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	renderTerrainInfo.terrain_rotation_direction = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	map.loadMapData();
 
-	renderInfo.vertices = map.getMapVertexData();
-	renderInfo.indices = map.getMapIndexData();
+	renderVertexInfo.vertices = map.getMapVertexData();
+	renderVertexInfo.indices = map.getMapIndexData();
 
-	renderer.setRenderInfo(renderInfo);
+	renderer.setRenderCameraInfo(renderCameraInfo);
+	renderer.setRenderTerrainInfo(renderTerrainInfo);
+	renderer.setRenderVertexInfo(renderVertexInfo);
+
 	renderer.initialize();
 	mainLoop();
 	renderer.cleanup();
@@ -51,10 +54,14 @@ void App::mainLoop()
 
 	//Start drawing
 	drawLoopActive = true;
+	mapLoopActive = true;
 	std::thread rendererThread;
+	std::thread mapThread;
 	rendererThread = std::thread([this] { this->rendererLoop(); });
+	mapThread = std::thread([this] { this->mapLoop(); });
 
 	while (appIsRunning) {
+
 			SDL_Event event;
 			while (SDL_PollEvent(&event)) {
 
@@ -63,6 +70,7 @@ void App::mainLoop()
 				case SDL_QUIT:
 
 					appIsRunning = false;
+					mapLoopActive = false;
 					break;
 
 				case SDL_WINDOWEVENT:
@@ -147,6 +155,7 @@ void App::mainLoop()
 			mouseDeltaY = 0;
 		}	
 	rendererThread.join();
+	mapThread.join();
 }
 
 void App::rendererLoop()
@@ -164,22 +173,43 @@ void App::rendererLoop()
 
 		processInput(deltaTime);
 
-		renderInfo.camera_direction_up = camera_direction_up;
-		renderInfo.camera_position = camera_position;
-		renderInfo.camera_target = camera_target;
-		renderInfo.vertices = map.getMapVertexData();
-		renderInfo.indices = map.getMapIndexData();
-		renderer.setRenderInfo(renderInfo);
-		renderer.recreateVertexBuffers();
+		renderCameraInfo.camera_direction_up = camera_direction_up;
+		renderCameraInfo.camera_position = camera_position;
+		renderCameraInfo.camera_target = camera_target;
 
-		//std::chrono::microseconds refresh_rate((int)round(1000000 / max_fps));
-		//std::this_thread::sleep_for(refresh_rate);
+		Pos newCameraPosition{
+			static_cast<uint32_t>(camera_position.x),
+			static_cast<uint32_t>(camera_position.y),
+			static_cast<uint32_t>(camera_position.z) };
+		if (mapHasBeenUpdated){
+			renderer.recreateVertexBuffers();
+			mapHasBeenUpdated = false;
+		}
+		renderer.setRenderCameraInfo(renderCameraInfo);
 
 		if (renderer.drawFrame() != 0) {
 			drawLoopActive = false;
 		}
 	}
 	renderer.waitIdle();
+}
+
+void App::mapLoop() {
+
+	while (mapLoopActive) {
+		Pos newCameraPosition{
+				static_cast<uint32_t>(camera_position.x),
+				static_cast<uint32_t>(camera_position.y),
+				static_cast<uint32_t>(camera_position.z) };
+		if (!mapHasBeenUpdated && map.updateMapData(newCameraPosition)) {
+			renderVertexInfo.vertices = map.getMapVertexData();
+			renderVertexInfo.indices = map.getMapIndexData();
+			renderer.setRenderVertexInfo(renderVertexInfo);
+			mapHasBeenUpdated = true;
+		}
+		std::chrono::milliseconds map_refresh_idle_dureation(100);
+		std::this_thread::sleep_for(map_refresh_idle_dureation);
+	}
 }
 
 void::App::processInput(int deltaTime) {
@@ -287,12 +317,6 @@ void::App::processInput(int deltaTime) {
 
 	camera_position += ((movement_speed_forward * camera_direction) + (movement_speed_right * camera_direction_right)) * static_cast<float>(deltaTime);
 	camera_target = camera_position + camera_direction;
-
-	Pos newCameraPosition{
-	static_cast<uint32_t>(camera_position.x),
-	static_cast<uint32_t>(camera_position.y),
-	static_cast<uint32_t>(camera_position.z) };
-	map.updateMapData(newCameraPosition);
 }
 
 void::App::processWindowEvent(SDL_Event event) {
