@@ -9,13 +9,20 @@ using namespace Compression;
 
 unsigned char* Algorithms::compressLZMA(unsigned char* srcBuf, size_t srcSize, size_t& dstSize) {
 
+	for (int i = 0; i < srcSize; i++) {
+		std::cout << srcBuf[i];
+	}
+
+
 	const int tmpSize = srcSize + ceil(srcSize * 0.01) + 600;
 	size_t propSize = LZMA_PROPS_SIZE;
 
 	unsigned char* tmpBuf = new unsigned char[tmpSize];
 	unsigned char* props = new unsigned char[LZMA_PROPS_SIZE];
 
-	LzmaCompress(tmpBuf, &dstSize, srcBuf, srcSize, props, &propSize, -1, 0, -1, -1, -1, -1, 2);
+	size_t dstLen = 0;
+
+	LzmaCompress(tmpBuf, &dstLen, srcBuf, srcSize, props, &propSize, -1, 0, -1, -1, -1, -1, 2);
 
 	std::cout << "Chunk compressed to " << dstSize << " bytes. \n";
 

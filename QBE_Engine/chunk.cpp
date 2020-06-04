@@ -10,7 +10,7 @@ Chunk::Chunk(ChunkCreateInfo info)
 	this->dataCalculated = false;
 }
 
-void Chunk::calculateVertexData(uint32_t &indexCount)
+void Chunk::calculateVertexData()
 {
 	if (dataCalculated) {
 		return;
@@ -106,6 +106,26 @@ void Chunk::calculateVertexData(uint32_t &indexCount)
 	dataCalculated = true;
 }
 
+Pos Chunk::getChunkPos()
+{
+	return this->chunkPos;
+}
+
+Pos Chunk::getRegionPos()
+{
+	return this->regionPos;
+}
+
+std::uint32_t Chunk::getIndexCount()
+{
+	return this->indexCount;
+}
+
+std::vector<uint16_t> & Chunk::getNodeData()
+{
+	return nodeData;
+}
+
 std::vector<Vertex> const& Chunk::getVertexData()
 {
 	return vertexData;
@@ -114,6 +134,7 @@ std::vector<uint32_t> const& Chunk::getIndexData()
 {
 	return indexData;
 }
+
 
 bool Chunk::has_pos_x_neighbour_node(int i)
 {

@@ -3,7 +3,6 @@
 Map::Map(std::string mapName)
 {
 	this->mapName = mapName;
-
 	this->relMapDirPath = "maps/" + mapName;
 	this->relMapRegionDirPath = "maps/" + mapName + "/regions";
 	this->relMapFilePath = "maps/" + mapName + "/mapData.qbemap";
@@ -114,14 +113,12 @@ void Map::deleteMap()
 		std::cout << "[ERROR] Map '" << mapName << "' not found. Aborting deletion.\n";
 	}
 }
+
 void Map::loadMapData()
 {
-	mapVertexData.clear();
-	mapIndexData.clear();
+	std::vector<int> activeChunkIndices;
 
-	uint32_t totalIndexCount = 0;
-	//mapData.reserve(pow(mapSizeInChunks, 3));
-
+	//Load all chunks and keep track of the loaded chunks
 	for (int chunk_offset_z = -mapRadiusInChunks; chunk_offset_z <= mapRadiusInChunks; chunk_offset_z += 1)
 	{
 		for (int chunk_offset_y = -mapRadiusInChunks; chunk_offset_y <= mapRadiusInChunks; chunk_offset_y += 1)
@@ -135,14 +132,90 @@ void Map::loadMapData()
 				Pos currentPos = { currentPos_x, currentPos_y, currentPos_z };
 				Pos regionPos = calculateRegionPos(currentPos);
 				Pos chunkPos = calculateChunkPos(currentPos, regionPos);
-				loadChunk(regionPos, chunkPos, totalIndexCount);
+
+				int index = 0;
+				loadChunk(regionPos, chunkPos, index);
+				if (index >= 0) {
+					activeChunkIndices.push_back(index);
+				}
 			}
 		}
 	}
+	
+	vector<int> chunkIndecesToRemove;
+
+	//Save all chunks that are not needed anymore and save their index
+	for (int i = 0; i < chunks.size(); i++) {
+
+		bool unload = true;
+
+		for (int chunkIndex : activeChunkIndices) {
+			if (i == chunkIndex) {
+				unload = false;
+				break;
+			}
+		}
+		if (unload) {
+
+			Pos chunkPos = chunks[i].getChunkPos();
+			Pos chunkRegPos = chunks[i].getRegionPos();
+
+			size_t rle_dstSize = 0;
+			size_t byte_dstSize = 0;
+			size_t lzma_dstSize = 0;
+			size_t rle_srcSize = chunks[i].getNodeData().size();
+
+			vector<uint16_t> vecChunkData = chunks[i].getNodeData();
+			uint16_t * chunkData = &vecChunkData[0];
+
+			uint16_t * rlencoded_data = Compression::RLEncoder::encodeRLE(chunkData, rle_srcSize, rle_dstSize);
+			unsigned char* byte_data = Compression::ByteEncoder::toChar(rlencoded_data, rle_dstSize, byte_dstSize);
+			delete[] rlencoded_data;
+			unsigned char* lzma_data = Compression::Algorithms::compressLZ4(byte_data, byte_dstSize, lzma_dstSize);
+			delete[] byte_data;
+			vector<unsigned char> compressed_data(lzma_data, lzma_data + lzma_dstSize);
+			delete[] lzma_data;
+
+			Data::RegionFileCreateInfo regionCreateInfo;
+			regionCreateInfo.regionDim = regionSizeInChunks;
+			regionCreateInfo.filePath = "maps/" + mapName + "/regions/region" + std::to_string(chunkRegPos.x) + "." + std::to_string(chunkRegPos.y) + "." + std::to_string(chunkRegPos.z);
+
+			Data::RegionFile reg(regionCreateInfo);
+
+			Data::ChunkPos regChunkPos;
+			
+			regChunkPos.x = static_cast<uint16_t>(chunkPos.x);
+			regChunkPos.y = static_cast<uint16_t>(chunkPos.y);
+			regChunkPos.z = static_cast<uint16_t>(chunkPos.z);
+
+			reg.writeChunkData(compressed_data, regChunkPos);
+			chunkIndecesToRemove.push_back(i);
+		}
+	}
+	std::sort(chunkIndecesToRemove.begin(), chunkIndecesToRemove.end(), std::greater<>());
+	
+	for (int index : chunkIndecesToRemove) {
+		chunks.erase(chunks.begin() + index);
+	}
 }
 
-void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t& indexCount)
+void Map::loadChunk(Pos regionPos, Pos chunkPos, int& chunkIndex)
 {
+	for (int i = 0; i < chunks.size(); i++) {
+
+		Pos tempRegionPos = chunks[i].getRegionPos();
+		Pos tempChunkPos = chunks[i].getChunkPos();
+
+		if (tempRegionPos.x == regionPos.x && tempRegionPos.y == regionPos.y && tempRegionPos.z == regionPos.z) {
+			if (tempChunkPos.x == chunkPos.x && tempChunkPos.y == chunkPos.y && tempChunkPos.z == chunkPos.z) {
+				chunkIndex = i;
+				return;
+			}
+		}
+	}
+
+	//TODO: load chunk from region file or generate new.
+
 	FastNoise myNoise;
 	myNoise.SetNoiseType(FastNoise::SimplexFractal);
 
@@ -177,18 +250,12 @@ void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t& indexCount)
 		info.regionPos = regionPos;
 
 		Chunk chunk = Chunk(info);
-		uint32_t chunkIndexCount = 0;
-		chunk.calculateVertexData(chunkIndexCount);
-
-		std::vector<Vertex> vertexData = chunk.getVertexData();
-		std::vector<uint32_t> indexData = chunk.getIndexData();
-		for (uint32_t& index : indexData) {
-			index += indexCount;
-		}
-
-		mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
-		mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
-		indexCount += chunkIndexCount;
+		chunk.calculateVertexData();
+		chunks.push_back(chunk);
+		chunkIndex = chunks.size() - 1;
+	}
+	else {
+		chunkIndex = -1;
 	}
 }
 
@@ -215,7 +282,7 @@ Pos Map::calculateChunkPos(Pos pos, Pos regionPos)
 bool Map::updateMapData(Pos cameraPos)
 {
 	//This is a temporary fix to prevent empty vertex buffers.
-	//Needs to be cleaned up in v2
+	//TODO:Needs to be cleaned up
 	cameraPos.z = 2;
 
 	Pos currentRegionPos = calculateRegionPos(this->cameraPos);
@@ -232,13 +299,30 @@ bool Map::updateMapData(Pos cameraPos)
 	return false;
 }
 
-std::vector<Vertex> const& Map::getMapVertexData()
+std::vector<Vertex> Map::getMapVertexData()
 {
+	std::vector<Vertex> mapVertexData;
+	for(Chunk chunk : chunks){
+		std::vector<Vertex> vertexData = chunk.getVertexData();
+		mapVertexData.insert(mapVertexData.end(), vertexData.begin(), vertexData.end());
+	}
 	return mapVertexData;
 }
 
-std::vector<uint32_t> const& Map::getMapIndexData()
+std::vector<uint32_t> Map::getMapIndexData()
 {
+	std::vector<uint32_t> mapIndexData;
+
+	uint32_t indexCount = 0;
+
+	for (Chunk chunk : chunks) {
+		std::vector<uint32_t> indexData = chunk.getIndexData();
+		for (uint32_t& index : indexData) {
+			index += indexCount;
+		}
+		mapIndexData.insert(mapIndexData.end(), indexData.begin(), indexData.end());
+		indexCount += chunk.getIndexCount();
+	}
 	return mapIndexData;
 }
 
