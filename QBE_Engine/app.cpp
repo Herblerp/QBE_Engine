@@ -19,6 +19,7 @@ void App::run()
 	movement_acceleration = 0.00002f;
 	movement_speed_forward = 0.0f;
 	movement_speed_right = 0.0f;
+	movement_speed_up = 0.0f;
 	mouse_speed = 0.8f;
 	mouseDeltaX = 0;
 	mouseDeltaY = 0;
@@ -78,11 +79,22 @@ void App::mainLoop()
 					break;
 
 				case SDL_KEYDOWN:
-					KEYS[event.key.keysym.sym] = true;
+					if (event.key.keysym.sym > 127) {
+						int i = event.key.keysym.sym - 1073741880 + 127;
+						KEYS[i] = true;
+					}
+					else {
+						KEYS[event.key.keysym.sym] = true;
+					}
 					break;
 
 				case SDL_KEYUP:
-					KEYS[event.key.keysym.sym] = false;
+					if (event.key.keysym.sym > 127) {
+						KEYS[event.key.keysym.sym - 1073741880 + 127] = false;
+					}
+					else {
+						KEYS[event.key.keysym.sym] = false;
+					}
 					break;
 
 				case SDL_MOUSEMOTION:
@@ -254,6 +266,7 @@ void::App::processInput(int deltaTime) {
 
 	bool forward_idle = true;
 	bool right_idle = true;
+	bool up_idle = true;
 
 	if (KEYS[SDLK_z]) {
 		movement_speed_forward += movement_acceleration * deltaTime;
@@ -283,6 +296,13 @@ void::App::processInput(int deltaTime) {
 		}
 		right_idle = false;
 	}
+	if (KEYS[SDLK_SPACE]) {
+		movement_speed_up += movement_acceleration * deltaTime;
+		if (movement_speed_up > max_movement_speed) {
+			movement_speed_up = max_movement_speed;
+		}
+		up_idle = false;
+	}
 
 	if (forward_idle) {
 
@@ -310,12 +330,27 @@ void::App::processInput(int deltaTime) {
 		}
 	}
 
+	if (up_idle) {
+		if (movement_speed_up > 0.0001f) {
+			movement_speed_up -= movement_acceleration * deltaTime;
+		}
+		else if (movement_speed_up < -0.0001f) {
+			movement_speed_up += movement_acceleration * deltaTime;
+		}
+		else {
+			movement_speed_up = 0.0f;
+		}
+	}
+
 	if (KEYS[SDLK_ESCAPE]) {
 		SDL_SetRelativeMouseMode(SDL_FALSE);
 		relative_mode_enabled = false;
 	}
 
-	camera_position += ((movement_speed_forward * camera_direction) + (movement_speed_right * camera_direction_right)) * static_cast<float>(deltaTime);
+	camera_position += ((movement_speed_forward * camera_direction) 
+		+ (movement_speed_right * camera_direction_right) 
+		+ (movement_speed_up * camera_direction_up)) 
+		* static_cast<float>(deltaTime);
 	camera_target = camera_position + camera_direction;
 }
 

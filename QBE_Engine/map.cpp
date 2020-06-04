@@ -172,22 +172,15 @@ void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t& indexCount)
 		ChunkCreateInfo info;
 		info.nodeData = nodeData;
 		info.chunkDim = chunkSizeInNodes;
+		info.chunkPos = chunkPos;
+		info.regionSizeInNodes = regionSizeInNodes;
+		info.regionPos = regionPos;
 
 		Chunk chunk = Chunk(info);
 		uint32_t chunkIndexCount = 0;
 		chunk.calculateVertexData(chunkIndexCount);
 
-		float offset_x = static_cast<float>((regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x));
-		float offset_y = static_cast<float>((regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y));;
-		float offset_z = static_cast<float>((regionSizeInNodes * regionPos.z) + (chunkSizeInNodes * chunkPos.z));;
-
-		glm::vec3 offset(offset_x, offset_y, offset_z);
-
 		std::vector<Vertex> vertexData = chunk.getVertexData();
-		for (Vertex& vertex : vertexData) {
-			vertex.pos += offset;
-		}
-
 		std::vector<uint32_t> indexData = chunk.getIndexData();
 		for (uint32_t& index : indexData) {
 			index += indexCount;
@@ -221,6 +214,10 @@ Pos Map::calculateChunkPos(Pos pos, Pos regionPos)
 
 bool Map::updateMapData(Pos cameraPos)
 {
+	//This is a temporary fix to prevent empty vertex buffers.
+	//Needs to be cleaned up in v2
+	cameraPos.z = 2;
+
 	Pos currentRegionPos = calculateRegionPos(this->cameraPos);
 	Pos currentChunkPos = calculateChunkPos(this->cameraPos, currentRegionPos);
 

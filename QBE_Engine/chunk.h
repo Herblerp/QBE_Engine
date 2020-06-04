@@ -11,7 +11,10 @@ struct Pos {
 };
 
 struct ChunkCreateInfo {
-	uint8_t chunkDim;				
+	Pos chunkPos;
+	Pos regionPos;
+	int32_t chunkDim;
+	int32_t regionSizeInNodes;
 	std::vector<uint16_t> nodeData;
 };
 
@@ -29,7 +32,11 @@ public:
 private:
 	bool dataCalculated;
 
-	uint8_t chunkDim;
+	Pos chunkPos;
+	Pos regionPos;
+	int32_t chunkDim;
+	int32_t regionSizeInNodes;
+
 	std::vector<uint16_t> nodeData;
 	std::vector<Vertex> vertexData;
 	std::vector<uint32_t> indexData;

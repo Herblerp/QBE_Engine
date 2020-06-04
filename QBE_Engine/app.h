@@ -63,6 +63,7 @@ private:
 	float max_movement_speed;
 	float movement_speed_forward;
 	float movement_speed_right;
+	float movement_speed_up;
 	float mouse_speed;
 	float mouseDeltaX;
 	float mouseDeltaY;
