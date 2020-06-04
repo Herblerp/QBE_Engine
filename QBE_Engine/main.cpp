@@ -52,12 +52,14 @@ typedef chrono::high_resolution_clock Clock;
 
 int main()
 {
+	
+
 	cout << "[INFO] Starting app clock. \n";
 	auto t1 = Clock::now();
 
 	MapInfo mapInfo;
-	mapInfo.chunkDim = 16;
-	mapInfo.mapDim = 8;
+	mapInfo.chunkDim = 32;
+	mapInfo.mapDim = 2;
 	mapInfo.regionDim = 10;
 
 	Pos cameraPos = { 0,0,0 };

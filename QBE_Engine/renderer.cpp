@@ -672,7 +672,7 @@ void Renderer::updateUniformBuffer(uint32_t currentImage)
 
 	ubo.model = model_matrix;
 	ubo.view = glm::lookAt(renderCameraInfo.camera_position, renderCameraInfo.camera_target, renderCameraInfo.camera_direction_up);
-	ubo.proj = glm::perspective(glm::radians(renderCameraInfo.camera_fov), ratio, 0.1f, 100.0f);
+	ubo.proj = glm::perspective(glm::radians(renderCameraInfo.camera_fov), ratio, 0.1f, 200.0f);
 	ubo.proj[1][1] *= -1;
 
 	void* data;

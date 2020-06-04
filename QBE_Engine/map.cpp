@@ -7,7 +7,6 @@ Map::Map(std::string mapName)
 	this->relMapDirPath = "maps/" + mapName;
 	this->relMapRegionDirPath = "maps/" + mapName + "/regions";
 	this->relMapFilePath = "maps/" + mapName + "/mapData.qbemap";
-
 }
 
 void Map::createMap(MapInfo createInfo)
@@ -40,7 +39,7 @@ void Map::createMap(MapInfo createInfo)
 		catch (std::exception e) {
 			std::cout << "[ERROR] An unexpected error occured when creating the map directory: " << e.what() << "\n";
 		}
-		
+
 		std::cout << "[INFO] Map created.\n";
 	}
 	else {
@@ -133,7 +132,7 @@ void Map::loadMapData()
 				int32_t currentPos_y = cameraPos.y + (chunk_offset_y * chunkSizeInNodes);
 				int32_t currentPos_z = cameraPos.z + (chunk_offset_z * chunkSizeInNodes);
 
-				Pos currentPos = { currentPos_x, currentPos_y, currentPos_z};
+				Pos currentPos = { currentPos_x, currentPos_y, currentPos_z };
 				Pos regionPos = calculateRegionPos(currentPos);
 				Pos chunkPos = calculateChunkPos(currentPos, regionPos);
 				loadChunk(regionPos, chunkPos, totalIndexCount);
@@ -142,20 +141,33 @@ void Map::loadMapData()
 	}
 }
 
-void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t &indexCount)
+void Map::loadChunk(Pos regionPos, Pos chunkPos, uint32_t& indexCount)
 {
-	//Perlin noise algorithm and region file loading here 
-	std::vector<uint16_t> nodeData;
-	if (regionPos.z != -1 || chunkPos.z != 9) {
-		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 0);
-	}
-	else {
-		nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3));
-		for (uint16_t& i : nodeData) {
-			i = rand() % 2;
-		}
+	FastNoise myNoise;
+	myNoise.SetNoiseType(FastNoise::SimplexFractal);
 
-		//end of perlin noise algorithm
+	std::vector<uint16_t> nodeData;
+
+	nodeData = std::vector<uint16_t>(pow(chunkSizeInNodes, 3), 0);
+	if (regionPos.z == -1 && chunkPos.z == 9) {
+		for (int x = 0; x < chunkSizeInNodes; x++) {
+			for (int y = 0; y < chunkSizeInNodes; y++) {
+				int node_world_x_pos = (regionSizeInNodes * regionPos.x) + (chunkSizeInNodes * chunkPos.x) + x;
+				int node_world_y_pos = (regionSizeInNodes * regionPos.y) + (chunkSizeInNodes * chunkPos.y) + y;
+				int height = (myNoise.GetNoise(node_world_x_pos, node_world_y_pos) + 1) * (chunkSizeInNodes / 2);
+
+				//Iterate over chunk column
+				for (int currentHeight = 0; currentHeight < chunkSizeInNodes; currentHeight++) {
+					int index = x + (y * chunkSizeInNodes) + (currentHeight * pow(chunkSizeInNodes, 2));
+					if (currentHeight <= height) {
+						nodeData[index] = 1;
+					}
+					else {
+						nodeData[index] = 0;
+					}
+				}
+			}
+		}
 
 		ChunkCreateInfo info;
 		info.nodeData = nodeData;

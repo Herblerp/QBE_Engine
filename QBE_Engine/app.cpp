@@ -15,7 +15,7 @@ void App::run()
 
 	//Initialize input and movement parameters
 	camera_position = glm::vec3(-2.0f, 0.0f, 2.0f);
-	max_movement_speed = 0.004f;
+	max_movement_speed = 0.008f;
 	movement_acceleration = 0.00002f;
 	movement_speed_forward = 0.0f;
 	movement_speed_right = 0.0f;
