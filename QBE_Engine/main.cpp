@@ -70,7 +70,7 @@ int main()
 	App app(map);
 	app.run();
 
-	//map.deleteMap();
+	map.deleteMap();
 
 	cout << "[INFO] Stopping app clock." << std::endl;
 	auto t2 = Clock::now();
